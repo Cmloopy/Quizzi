@@ -1,4 +1,4 @@
-package com.cmloopy.quizzi;
+package com.cmloopy.quizzi.views;
 
 import android.os.Bundle;
 
