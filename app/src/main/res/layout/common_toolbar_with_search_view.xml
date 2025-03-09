@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_with_search_view"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@android:color/white"
+    android:elevation="4dp"
+    app:navigationIcon="@drawable/ic_arrow_back"
+    app:title="Discover"
+    app:titleTextAppearance="@style/ToolbarTitleTextAppearance"
+    app:titleTextColor="#333333">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        app:queryHint="Search"
+        app:iconifiedByDefault="true" />
+</androidx.appcompat.widget.Toolbar>
