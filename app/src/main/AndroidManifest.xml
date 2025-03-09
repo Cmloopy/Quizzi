@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Quizzi"
         tools:targetApi="31">
         <activity
-            android:name=".views.MainActivity"
+            android:name=".views.TopCollections"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

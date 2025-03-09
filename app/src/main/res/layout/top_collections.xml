@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Thanh tiêu đề -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/TopCollectionsBackButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_05_back"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/textTopCollections"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top Collections"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@+id/TopCollectionsSearchIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_17_find"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <!-- Grid danh mục -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/TopCollectionsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:scrollbars="vertical"/>
+</LinearLayout>
