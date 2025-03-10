@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    android:layout_marginBottom="8dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/detail_top_collections_rounded_background">
+<!--        android:padding="12dp">-->
+
+        <!-- Hình ảnh thumbnail -->
+        <ImageView
+            android:id="@+id/imgQuizThumbnail"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_04"/>
+
+        <!-- Tiêu đề quiz -->
+        <TextView
+            android:id="@+id/txtQuizTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/imgQuizThumbnail"
+            android:text="Quiz Title"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Tác giả -->
+        <TextView
+            android:id="@+id/txtQuizAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/imgQuizThumbnail"
+            android:text="Author Name"
+            android:textSize="14sp"
+            android:textColor="#888888"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/txtQuizTitle"/>
+
+        <!-- Thời gian đăng -->
+        <TextView
+            android:id="@+id/txtQuizTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/imgQuizThumbnail"
+            android:text="2 weeks ago"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginStart="10dp"
+            android:layout_below="@id/txtQuizAuthor"/>
+
+        <!-- Số lượt chơi -->
+        <TextView
+            android:id="@+id/txtQuizPlays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/txtQuizTime"
+            android:text="2.6K plays"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginStart="50dp"
+            android:layout_below="@id/txtQuizAuthor"/>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

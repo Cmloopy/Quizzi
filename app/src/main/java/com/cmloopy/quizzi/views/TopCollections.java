@@ -27,18 +27,18 @@ public class TopCollections extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
         categoryList = new ArrayList<>();
-        categoryList.add(new TopCollectionsCategory("Education", R.drawable.img_19_education));
-        categoryList.add(new TopCollectionsCategory("Games", R.drawable.img_19_game));
-        categoryList.add(new TopCollectionsCategory("Business", R.drawable.img_19_business));
-        categoryList.add(new TopCollectionsCategory("Entertainment", R.drawable.img_19_entertainment));
-        categoryList.add(new TopCollectionsCategory("Art", R.drawable.img_19_art));
-        categoryList.add(new TopCollectionsCategory("Plants", R.drawable.img_19_plan));
-        categoryList.add(new TopCollectionsCategory("Finance", R.drawable.img_19_finance));
-        categoryList.add(new TopCollectionsCategory("Food & Drink", R.drawable.img_19_food_and_drink));
-        categoryList.add(new TopCollectionsCategory("Health", R.drawable.img_19_health));
-        categoryList.add(new TopCollectionsCategory("Kids", R.drawable.img_19_kids));
-        categoryList.add(new TopCollectionsCategory("Sports", R.drawable.img_19_sports));
-        categoryList.add(new TopCollectionsCategory("Lifestyle", R.drawable.img_19_lifestyle));
+        categoryList.add(new TopCollectionsCategory("Education", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Games", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Business", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Entertainment", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Art", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Plants", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Finance", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Food & Drink", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Health", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Kids", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Sports", R.drawable.img_02));
+        categoryList.add(new TopCollectionsCategory("Lifestyle", R.drawable.img_02));
 
 
         adapter = new TopCollectionsCategoryAdapter(this, categoryList);
