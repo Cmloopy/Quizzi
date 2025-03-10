@@ -24,6 +24,10 @@ public class TopCollectionsCategoryAdapter extends RecyclerView.Adapter<TopColle
         this.categories = categories;
     }
 
+    public List<TopCollectionsCategory> getCategoryList(){
+        return this.categories;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -53,4 +57,6 @@ public class TopCollectionsCategoryAdapter extends RecyclerView.Adapter<TopColle
             categoryImage = itemView.findViewById(R.id.categoryImage);
         }
     }
+
+
 }

@@ -13,19 +13,42 @@
         android:theme="@style/Theme.Quizzi"
         tools:targetApi="31">
         <activity
-            android:name=".views.RecommendAuthorActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.DiscoveryActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.RecommendUserActivity"
+            android:name=".views.SearchActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+<!--        <activity-->
+<!--            android:name=".views.RecommendAuthorActivity"-->
+<!--            android:exported="true" >-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+        <activity
+            android:name=".views.DiscoveryActivity"
+            android:exported="false">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".views.RecommendUserActivity"
+            android:exported="true">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
     </application>
 

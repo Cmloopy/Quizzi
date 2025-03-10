@@ -46,6 +46,10 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
         return items.size();
     }
 
+    public List<Quiz> getListQuiz() {
+        return items;
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView podcastImage;
         TextView titleText;

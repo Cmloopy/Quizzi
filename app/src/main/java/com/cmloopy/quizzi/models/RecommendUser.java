@@ -17,7 +17,7 @@ public class RecommendUser {
         this.name = name;
         this.username = username;
         this.profileImageResource = profileImageResource;
-        this.isFollowing = false;
+        this.isFollowing = Math.random()<0.5;
     }
 
     public String getName() {
