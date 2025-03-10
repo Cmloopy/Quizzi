@@ -27,6 +27,10 @@ public class RecommendUserAdapter extends RecyclerView.Adapter<RecommendUserAdap
         this.friendsList = friendsList;
     }
 
+    public List<RecommendUser> getFriendsList() {
+        return this.friendsList;
+    }
+
     @NonNull
     @Override
     public FriendViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
