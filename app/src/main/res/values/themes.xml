@@ -3,7 +3,25 @@
     <style name="Base.Theme.Quizzi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowLightStatusBar">true</item> -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/nunitomedium</item>
     </style>
 
+    <style name="CornerShapableImageView">
+        <item name="cornerSize">12dp</item>
+    </style>
+    <style name="CornerShapableImageView2">
+        <item name="cornerSize">18dp</item>
+    </style>
+    <style name="CornerShapableImageView3">
+        <item name="cornerSize">21dp</item>
+    </style>
+    <style name="CornerShapableImageView4">
+        <item name="cornerSize">9dp</item>
+    </style>
+    <style name="CornerShapableImageView5">
+        <item name="cornerSize">40dp</item>
+    </style>
     <style name="Theme.Quizzi" parent="Base.Theme.Quizzi" />
 </resources>
