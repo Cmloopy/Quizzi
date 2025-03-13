@@ -21,14 +21,14 @@
         <RadioButton
             android:id="@+id/radioQuizBtn"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/radio_button_selector"
             android:text="Quiz"
             android:textSize="16sp"
             android:textColor="@drawable/radio_button_text_color"
-            android:padding="10dp"
+            android:paddingHorizontal="12dp"
             android:layout_marginEnd="8dp"
             android:checked="true"
             android:button="@null" />
@@ -37,7 +37,7 @@
         <RadioButton
             android:id="@+id/radioPeopleBtn"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:layout_marginEnd="8dp"
@@ -46,14 +46,14 @@
             android:text="People"
             android:textSize="16sp"
             android:textColor="@drawable/radio_button_text_color"
-            android:padding="10dp"
+            android:paddingHorizontal="12dp"
             android:button="@null" />
 
         <!-- Collections Tab (Unselected) -->
         <RadioButton
             android:id="@+id/radioCollectionBtn"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:gravity="center"
@@ -61,7 +61,7 @@
             android:text="Collections"
             android:textSize="16sp"
             android:textColor="@drawable/radio_button_text_color"
-            android:padding="10dp"
+            android:paddingHorizontal="12dp"
             android:button="@null"
              />
     </RadioGroup>
