@@ -25,6 +25,7 @@ public class TopCollections extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.TopCollectionsRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setNestedScrollingEnabled(false);
 
         categoryList = new ArrayList<>();
         categoryList.add(new TopCollectionsCategory("Education", R.drawable.img_02));
@@ -37,9 +38,6 @@ public class TopCollections extends AppCompatActivity {
         categoryList.add(new TopCollectionsCategory("Food & Drink", R.drawable.img_02));
         categoryList.add(new TopCollectionsCategory("Health", R.drawable.img_02));
         categoryList.add(new TopCollectionsCategory("Kids", R.drawable.img_02));
-        categoryList.add(new TopCollectionsCategory("Sports", R.drawable.img_02));
-        categoryList.add(new TopCollectionsCategory("Lifestyle", R.drawable.img_02));
-
 
         adapter = new TopCollectionsCategoryAdapter(this, categoryList);
         recyclerView.setAdapter(adapter);
