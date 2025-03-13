@@ -148,16 +148,16 @@
                 <Button
                     android:id="@+id/btn_follow"
                     android:layout_width="wrap_content"
-                    android:layout_height="44dp"
+                    android:layout_height="48dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="Follow"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
                     android:backgroundTint="#5D5FEF"
                     android:paddingHorizontal="24dp"
                     android:paddingVertical="4dp"
-                    app:cornerRadius="22dp"/>
+                    android:text="Follow"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    app:cornerRadius="22dp" />
             </RelativeLayout>
 
             <!-- Stats -->
@@ -338,43 +338,42 @@
                 <Button
                     android:id="@+id/btn_quizzo"
                     android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    app:cornerRadius="25dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_weight="1"
+                    android:backgroundTint="#F0F0F0"
                     android:text="Quizzo"
                     android:textAllCaps="false"
-                    android:backgroundTint="#F0F0F0"
-                    android:layout_marginHorizontal="16dp"
+                    android:textColor="#5D5FEF"
+                    app:cornerRadius="25dp"
                     app:strokeColor="#5D5FEF"
-                    app:strokeWidth="2dp"
-                    android:textColor="#5D5FEF"/>
+                    app:strokeWidth="2dp" />
 
                 <Button
                     android:id="@+id/btn_collections"
                     android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    app:cornerRadius="25dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="0dp"
                     android:layout_weight="1"
+                    android:backgroundTint="#5D5FEF"
                     android:text="Collections"
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF"
-                    android:backgroundTint="#5D5FEF"
-                    android:layout_marginHorizontal="0dp"
-                    />
+                    app:cornerRadius="25dp" />
 
                 <Button
                     android:id="@+id/btn_about"
                     android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    app:cornerRadius="25dp"
+                    android:layout_height="48dp"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_weight="1"
+                    android:backgroundTint="#F0F0F0"
                     android:text="About"
                     android:textAllCaps="false"
-                    android:backgroundTint="#F0F0F0"
-                    android:layout_marginHorizontal="16dp"
+                    android:textColor="#5D5FEF"
+                    app:cornerRadius="25dp"
                     app:strokeColor="#5D5FEF"
-                    app:strokeWidth="2dp"
-                    android:textColor="#5D5FEF"/>
+                    app:strokeWidth="2dp" />
             </LinearLayout>
 
             <!-- 49 Collections Section -->
