@@ -12,7 +12,7 @@ import com.cmloopy.quizzi.models.DetailTopCollectionItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AuthorDetailsAboutActivity extends AppCompatActivity {
+public class AuthorDetailsCollections extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private DetailTopCollectionAdapter quizAdapter;
@@ -21,6 +21,6 @@ public class AuthorDetailsAboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.author_details_about);
+        setContentView(R.layout.author_details_collections);
     }
 }
