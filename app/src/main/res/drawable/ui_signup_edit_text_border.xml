@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Focused or Populated State -->
+    <item android:state_focused="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="@android:color/transparent"/> <!-- Transparent background -->
+                </shape>
+            </item>
+            <item android:left="0dp" android:right="0dp" android:top="40dp">
+                <shape>
+                    <size android:height="2dp"/> <!-- Border thickness -->
+                    <solid android:color="#800080"/> <!-- Purple border -->
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- Default State -->
+    <item>
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="@android:color/transparent"/>
+                </shape>
+            </item>
+            <item android:left="0dp" android:right="0dp" android:top="40dp">
+                <shape>
+                    <size android:height="1dp"/>
+                    <solid android:color="@color/gray"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>
