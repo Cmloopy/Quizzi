@@ -25,6 +25,7 @@ public class DetailTopCollections extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.detailCollectionRecyclerQuiz);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setNestedScrollingEnabled(false);
 
         quizList = new ArrayList<>();
         quizList.add(new DetailTopCollectionItem(R.drawable.img_02, "Re-Train Your Brain", "Thad Eddings", "2 weeks ago", "2.6K plays"));
