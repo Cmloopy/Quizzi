@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".views.QuizDetailsFullPage">
+
+    <!-- Thanh tiêu đề -->
+    <RelativeLayout
+        android:id="@+id/titleBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_27_cancel"
+            android:layout_alignParentStart="true" />
+
+        <ImageView
+            android:id="@+id/btnEdit"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_more_options"
+            android:layout_alignParentEnd="true" />
+
+        <ImageView
+            android:id="@+id/btnFavorite"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_37_star"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@id/btnEdit" />
+
+        <ImageView
+            android:id="@+id/btnShare"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_share"
+            android:layout_toLeftOf="@id/btnFavorite" />
+    </RelativeLayout>
+
+    <!-- Ảnh bìa -->
+    <ImageView
+        android:id="@+id/quizCoverImage"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/back_to_school"
+        android:background="@drawable/detail_top_collections_rounded_background"
+        android:clipToOutline="true"
+        app:layout_constraintWidth_percent="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleBar"/>
+
+    <!-- Tiêu đề -->
+    <TextView
+        android:id="@+id/quizTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back to School Quiz Game"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/quizCoverImage"
+        app:layout_constraintStart_toStartOf="@+id/quizCoverImage"
+        android:padding="12dp"/>
+
+    <!-- Thông tin Quiz -->
+    <LinearLayout
+        android:id="@+id/quizInfoContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/quizTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/quizQuestionsCountContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/quizQuestionsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Questions"
+                android:textStyle="bold"
+                android:textColor="@color/gray"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/quizPlayedCountContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/quizPlayedCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Played"
+                android:textStyle="bold"
+                android:textColor="@color/gray"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/quizFavoritedCountContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/quizFavoritedCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="81"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Favorited"
+                android:textStyle="bold"
+                android:textColor="@color/gray"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/quizSharedCountContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/quizSharedCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shared"
+                android:textStyle="bold"
+                android:textColor="@color/gray"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Thông tin người tạo -->
+    <LinearLayout
+        android:id="@+id/quizAccountContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/quizInfoContainer"
+        tools:layout_editor_absoluteX="0dp">
+
+        <!-- Ảnh đại diện -->
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/quizz_details_circle_background"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_15_top_authors_1" />
+
+        <!-- Thông tin người dùng -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Andrew Ainsley"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userHandle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="andrew_ainsley"
+                android:textColor="@color/gray"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Nút "You" -->
+        <Button
+            android:id="@+id/youBadge"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:background="@drawable/detail_top_collections_rounded_background"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="You"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- Mô tả -->
+    <LinearLayout
+        android:id="@+id/quizDescriptionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/quizAccountContainer">
+        <TextView
+            android:id="@+id/quizDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/quizCoverImage"
+            app:layout_constraintStart_toStartOf="@+id/quizCoverImage"
+            android:padding="12dp">
+        </TextView>
+        <TextView
+            android:id="@+id/quizDescriptionDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="asd as as a da aa a ad asd ad ad asd as as das as da asas  da"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/quizCoverImage"
+            app:layout_constraintStart_toStartOf="@+id/quizCoverImage"
+            android:padding="12dp">
+        </TextView>
+    </LinearLayout>
+
+    <!-- Danh sách câu hỏi -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/quizDetailsQuestionRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/quizDescriptionContainer"
+        app:layout_constraintBottom_toTopOf="@+id/QuizDeteailsButtonContainer"
+        android:scrollbars="none" />
+
+    <!-- Nút chơi -->
+    <LinearLayout
+        android:id="@+id/QuizDeteailsButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btnPlaySolo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:minHeight="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/quizz_details_button_solo_background"
+            android:text="Play Solo"
+            android:textSize="12dp"
+            android:textColor="#7A48E3"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/btnPlayWithFriends"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:minHeight="20dp"
+            android:layout_weight="1"
+            android:text="Play with Friends"
+            android:textSize="12dp"
+            android:background="@drawable/quizz_details_button_friends_background"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
