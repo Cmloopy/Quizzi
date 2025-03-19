@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.views;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -77,10 +78,9 @@ public class ResetPasswordSuccess extends AppCompatActivity {
     }
 
     // Ngăn người dùng sử dụng nút back để quay lại màn hình trước đó
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onBackPressed() {
-        // Chuyển hướng đến trang chủ thay vì cho phép quay lại màn hình trước đó
-        super.onBackPressed();
         navigateToHome();
     }
 }
