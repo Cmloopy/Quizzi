@@ -1,0 +1,9 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent"/> <!-- Nền trong suốt -->
+            <stroke android:width="2dp" android:color="#7A48E3"/> <!-- Viền màu tím -->
+            <corners android:radius="50dp"/> <!-- Bo tròn góc -->
+        </shape>
+    </item>
+</selector>
