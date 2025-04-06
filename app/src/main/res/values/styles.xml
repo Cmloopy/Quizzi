@@ -25,4 +25,10 @@
         <item name="android:navigationBarColor">@android:color/white</item>
     </style>
 
+    <style name="UIQCRoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+
 </resources>

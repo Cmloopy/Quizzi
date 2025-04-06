@@ -27,7 +27,7 @@ public class QCQuestionFragmentManager {
         this.containerId = containerId;
     }
 
-    public void showQuestionFragment(Question question, QCBaseResponseFragment.OnChangeListener listener) {
+    public void showQuestionFragment(Question question, QCBaseQuestionFragment.OnChangeListener listener) {
         Fragment fragment = null;
 
         // Create appropriate fragment based on question type

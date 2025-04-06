@@ -27,7 +27,7 @@ import java.util.List;
 
 public class QCQuestionBNVFragment extends Fragment
         implements QCQuestionBNVAdapter.OnQuestionClickListener,
-                    QCBaseResponseFragment.OnChangeListener {
+                    QCBaseQuestionFragment.OnChangeListener {
     private RecyclerView questionRecyclerView;
     private QCQuestionBNVAdapter questionBottomAdapter;
     private HorizontalScrollView questionScrollView;

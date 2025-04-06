@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuizCreate.QCMenuAdapter;
 import com.cmloopy.quizzi.adapter.QuizCreate.QCMenuItem;
-import com.cmloopy.quizzi.fragment.QuizCreate.after.QCBaseResponseFragment;
+import com.cmloopy.quizzi.fragment.QuizCreate.after.QCBaseQuestionFragment;
 import com.cmloopy.quizzi.fragment.QuizCreate.after.QCQuestionBNVFragment;
 import com.cmloopy.quizzi.fragment.QuizCreate.after.QCQuestionFragmentManager;
 import com.cmloopy.quizzi.models.QuizCreate.after.Question;
@@ -164,8 +164,8 @@ public class QuizCreateActivity extends AppCompatActivity implements QCQuestionB
     private void handleDelete() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.question_type_frame_container);
 
-        if (currentFragment instanceof QCBaseResponseFragment) {
-            QCBaseResponseFragment questionFragment = (QCBaseResponseFragment) currentFragment;
+        if (currentFragment instanceof QCBaseQuestionFragment) {
+            QCBaseQuestionFragment questionFragment = (QCBaseQuestionFragment) currentFragment;
             Question currentQuestion = questionFragment.getCurrentQuestion();
 
             if (bottomFragment != null) {

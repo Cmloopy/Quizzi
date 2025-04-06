@@ -100,7 +100,7 @@ public abstract class QCBaseQuestionFragment extends Fragment {
     }
 
     private void initializeViews(View view) {
-        coverImageContainer = view.findViewById(R.id.cover_image_container);
+        coverImageContainer = view.findViewById(R.id.cover_image_frame);
         timeLimitButton = view.findViewById(R.id.btn_time_limit);
         pointButton = view.findViewById(R.id.btn_points);
         questionTypeButton = view.findViewById(R.id.btn_question_type);

@@ -12,7 +12,7 @@ import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.QuizCreate.after.Question;
 import com.cmloopy.quizzi.models.QuizCreate.after.QuestionSayWord;
 
-public class QCQuestionSayWordFragment extends QCBaseResponseFragment {
+public class QCQuestionSayWordFragment extends QCBaseQuestionFragment {
 
     private static final String ARG_RESPONSE_SAY_WORD = "response_choice";
     private QuestionSayWord questionSayWord;

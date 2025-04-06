@@ -1,5 +1,7 @@
 package com.cmloopy.quizzi.models.QuizCreate.after;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +14,11 @@ public class Question implements Serializable {
     private QuestionType questionType;
     private String imageUrl;
     private String audioUrl;
+
+    private String imageUri;
+    private String audioUri;
+
+
     private String content;
     private int point;
     private int timeLimit;
@@ -191,6 +198,22 @@ public class Question implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public String getAudioUri() {
+        return audioUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
+    }
+
+    public void setAudioUri(String audioUri) {
+        this.audioUri = audioUri;
     }
 
     public Date getUpdatedAt() {

@@ -1,8 +1,12 @@
 package com.cmloopy.quizzi.fragment.QuizCreate.after;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.QuizCreate.after.Question;
 import com.cmloopy.quizzi.models.QuizCreate.after.Option.ChoiceOption;
@@ -23,13 +29,14 @@ import com.cmloopy.quizzi.adapter.QuizCreate.after.QCChoiceOptionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QCQuestionCheckboxFragment extends QCBaseResponseFragment implements QCChoiceOptionAdapter.OnAnswerClickListener {
+public class QCQuestionCheckboxFragment extends QCBaseQuestionFragment implements QCChoiceOptionAdapter.OnAnswerClickListener {
 
     private static final String ARG_RESPONSE_CHOICE = "response_choice";
     private QuestionChoice questionChoice;
     private RecyclerView answersRecyclerView;
     private QCChoiceOptionAdapter answerAdapter;
     private final List<ChoiceOption> tempAnswers = new ArrayList<>();
+    private View coverImagePlaceholder;
 
     public static QCQuestionCheckboxFragment newInstance(QuestionChoice questionChoice) {
         QCQuestionCheckboxFragment fragment = new QCQuestionCheckboxFragment();
@@ -65,6 +72,12 @@ public class QCQuestionCheckboxFragment extends QCBaseResponseFragment implement
         super.onCreateBaseView(view);
         super.setUpBaseView(getCurrentQuestion());
         setupRecyclerView(view);
+
+        // If we already have a cover image, hide the placeholder
+        if (questionChoice.getImageUri() != null && !questionChoice.getImageUri().isEmpty()) {
+            coverImagePlaceholder.setVisibility(View.GONE);
+        }
+
         return view;
     }
 
@@ -135,12 +148,21 @@ public class QCQuestionCheckboxFragment extends QCBaseResponseFragment implement
 
     @Override
     protected void onCoverImageClicked() {
-        // Implement as needed
+    }
+
+
+    @Override
+    protected void onMediaClicked() {
+
+    }
+
+    @Override
+    protected void playAudio() {
+
     }
 
     @Override
     public Question getCurrentQuestion() {
         return questionChoice;
     }
-
 }

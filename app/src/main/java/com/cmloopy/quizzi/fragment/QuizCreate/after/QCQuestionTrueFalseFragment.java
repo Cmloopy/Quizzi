@@ -17,7 +17,7 @@ import com.cmloopy.quizzi.models.QuizCreate.after.Question;
 import com.cmloopy.quizzi.models.QuizCreate.after.QuestionTrueFalse;
 import com.cmloopy.quizzi.utils.QuizCreate.dialogs.QCHelper;
 
-public class QCQuestionTrueFalseFragment extends QCBaseResponseFragment{
+public class QCQuestionTrueFalseFragment extends QCBaseQuestionFragment {
 
     private static final String ARG_RESPONSE_TRUE_FALSE = "response_true_false";
     private QuestionTrueFalse questionTrueFalse;

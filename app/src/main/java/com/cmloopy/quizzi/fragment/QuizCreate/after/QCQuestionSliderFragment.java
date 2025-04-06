@@ -23,7 +23,7 @@ import com.cmloopy.quizzi.utils.QuizCreate.slider.QCCustomSlider;
 import java.util.Arrays;
 import java.util.List;
 
-public class QCQuestionSliderFragment extends QCBaseResponseFragment  {
+public class QCQuestionSliderFragment extends QCBaseQuestionFragment {
     private static final String ARG_RESPONSE_CHOICE = "response_slider";
     private QuestionSlider questionSlider;
     private QCChoiceOptionAdapter answerAdapter;

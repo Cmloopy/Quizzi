@@ -23,7 +23,7 @@ import com.cmloopy.quizzi.utils.QuizCreate.dialogs.after.QCPuzzleOptionCreateDia
 import java.util.ArrayList;
 import java.util.List;
 
-public class QCQuestionPuzzleFragment extends QCBaseResponseFragment implements QCPuzzleOptionAdapter.OnPuzzlePieceClickListener {
+public class QCQuestionPuzzleFragment extends QCBaseQuestionFragment implements QCPuzzleOptionAdapter.OnPuzzlePieceClickListener {
 
     private static final String ARG_RESPONSE_PUZZLE = "response_puzzle";
     private QuestionPuzzle questionPuzzle;

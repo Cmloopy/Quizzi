@@ -18,7 +18,7 @@ import com.cmloopy.quizzi.models.QuizCreate.after.QuestionTypeText;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QCQuestionTypeTextFragment extends QCBaseResponseFragment
+public class QCQuestionTypeTextFragment extends QCBaseQuestionFragment
         implements QCQuestionTypeTextFieldFragment.OnAnswerAddedListener,
          QCQuestionTypeTextListFragment.OnAnotherAnswerAdded{
 

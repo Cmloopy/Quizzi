@@ -23,7 +23,7 @@ import com.cmloopy.quizzi.utils.QuizCreate.dialogs.QCHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QCQuestionQuizFragment extends QCBaseResponseFragment implements QCChoiceOptionAdapter.OnAnswerClickListener {
+public class QCQuestionQuizFragment extends QCBaseQuestionFragment implements QCChoiceOptionAdapter.OnAnswerClickListener {
 
     private static final String ARG_RESPONSE_CHOICE = "response_choice";
     private QuestionChoice questionChoice;

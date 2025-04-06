@@ -23,7 +23,7 @@ import com.cmloopy.quizzi.utils.QuizCreate.dialogs.QCHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QCQuestionQuizAudioFragment extends QCBaseResponseFragment implements QCChoiceOptionAdapter.OnAnswerClickListener {
+public class QCQuestionQuizAudioFragment extends QCBaseQuestionFragment implements QCChoiceOptionAdapter.OnAnswerClickListener {
 
     private static final String ARG_RESPONSE_CHOICE = "response_choice";
     private QuestionChoice questionChoice;
@@ -52,6 +52,7 @@ public class QCQuestionQuizAudioFragment extends QCBaseResponseFragment implemen
             questionChoice = new QuestionChoice();
             initializeTempAnswers();
         }
+        setAudioMode(true);
     }
 
     private void initializeTempAnswers() {
