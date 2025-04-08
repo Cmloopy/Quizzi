@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scanQrLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Camera Preview Hình vuông -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/previewViewContainer"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_marginBottom="100dp"
+            android:layout_gravity="center">
+
+            <androidx.camera.view.PreviewView
+                android:id="@+id/previewView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+
+
+    <!-- Nút điều khiển bên dưới -->
+    <LinearLayout
+        android:id="@+id/bottomButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        android:weightSum="3">
+
+        <!-- Nút gallery -->
+        <ImageButton
+            android:id="@+id/btnGallery"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/ui_65_bg_circle"
+            android:src="@drawable/ic_67_image"
+            android:scaleType="centerInside"
+            app:tint="#7D5CFF" />
+
+        <!-- Nút scan -->
+        <ImageButton
+            android:id="@+id/btnScan"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/ui_09_circle_background"
+            android:src="@drawable/ic_67_scan"
+            android:scaleType="centerInside"
+            app:tint="@android:color/white" />
+
+        <!-- Nút folder -->
+        <ImageButton
+            android:id="@+id/btnFolder"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/ui_65_bg_circle"
+            android:src="@drawable/ic_67_file"
+            android:scaleType="centerInside"
+            app:tint="#7D5CFF"/>
+    </LinearLayout>
+</RelativeLayout>
