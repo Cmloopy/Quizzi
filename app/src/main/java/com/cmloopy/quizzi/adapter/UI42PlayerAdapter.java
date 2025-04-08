@@ -35,7 +35,6 @@ public class UI42PlayerAdapter extends RecyclerView.Adapter<UI42PlayerAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         UI42Player player = players.get(position);
-        holder.txtName.setText(player.getName());
         holder.imgAvatar.setImageResource(player.getAvatar());
 
         // Áp dụng animation di chuyển từ trái sang phải
@@ -50,12 +49,10 @@ public class UI42PlayerAdapter extends RecyclerView.Adapter<UI42PlayerAdapter.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtName;
         ImageView imgAvatar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtName = itemView.findViewById(R.id.txtName);
             imgAvatar = itemView.findViewById(R.id.imgAvatar);
         }
     }

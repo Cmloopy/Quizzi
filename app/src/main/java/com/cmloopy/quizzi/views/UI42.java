@@ -33,7 +33,7 @@ public class UI42 extends AppCompatActivity {
         playerList = new ArrayList<>();
         playerList.add(new UI42Player("Andrew", R.drawable.ic_15_top_authors_1));
         playerList.add(new UI42Player("Clinton", R.drawable.ic_15_top_authors_2));
-        playerList.add(new UI42Player("Tyra", R.drawable.ic_15_top_authors_3));
+        playerList.add(new UI42Player("Tyra", R.drawable.img_1));
         playerList.add(new UI42Player("Pedro", R.drawable.ic_15_top_authors_4));
         playerList.add(new UI42Player("Leif", R.drawable.ic_15_top_authors_5));
         playerList.add(new UI42Player("Freida", R.drawable.ic_15_top_authors_6));
