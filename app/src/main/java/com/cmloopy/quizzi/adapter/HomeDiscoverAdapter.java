@@ -32,7 +32,7 @@ public class HomeDiscoverAdapter extends RecyclerView.Adapter<HomeDiscoverAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Quiz item = items.get(position);
         holder.podcastImage.setImageResource(item.getImageResource());
-        holder.questionsText.setText(item.getQuestions());
+        holder.questionsText.setText(item.getQuestions().size()+" Qs");
         holder.titleText.setText(item.getTitle());
         holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
         holder.authorName.setText(item.getAuthor());

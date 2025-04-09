@@ -38,7 +38,7 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
         holder.dateAndPlaysText.setText(item.getDate() + " • " + item.getPlays());
         holder.authorName.setText(item.getAuthor());
         holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
-        holder.questionsText.setText(item.getQuestions());
+        holder.questionsText.setText(item.getQuestions().size()+" Qs");
     }
 
     @Override

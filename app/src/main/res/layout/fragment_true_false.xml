@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:orientation="horizontal"
+    android:gravity="center">
+        <Button
+            android:id="@+id/true_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="True"
+            android:backgroundTint="@color/correctAnswerColor"
+            android:background="@drawable/correct_answer_button"/>
+
+        <Button
+            android:id="@+id/false_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="False"
+            android:background="@drawable/wrong_answer_button"/>
+</LinearLayout>
