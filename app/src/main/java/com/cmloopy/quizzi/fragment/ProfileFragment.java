@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -11,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioGroup;
 
 import com.cmloopy.quizzi.R;
@@ -18,6 +20,7 @@ import com.cmloopy.quizzi.adapter.QuizAdapter;
 import com.cmloopy.quizzi.adapter.TopCollectionsCategoryAdapter;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.TopCollectionsCategory;
+import com.cmloopy.quizzi.views.FollowActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -31,6 +34,8 @@ public class ProfileFragment extends Fragment {
     private GridLayoutManager gridLayoutManager;
 
     private MaterialTextView materialTextView;
+
+    private MaterialTextView btn;
 
     RecyclerView.Adapter<?> adapter = null;
     @Override
@@ -58,6 +63,12 @@ public class ProfileFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.rcl_view_profile);
         materialTextView = view.findViewById(R.id.txt_title_lib_my_quizzo_profile);
+        btn = view.findViewById(R.id.follower_btn);
+
+        btn.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), FollowActivity.class);
+            startActivity(intent);
+        });
         return view;
     }
 

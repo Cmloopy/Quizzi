@@ -103,6 +103,7 @@
                     android:orientation="vertical">
 
                     <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/follower_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Andrew Asilain"
