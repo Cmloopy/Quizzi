@@ -21,4 +21,9 @@
     <color name="defaultDividerColor">#BDBDBD</color>
     <color name="defaultIconColor">#9E9E9E</color>
 
+    <color name="chip_background">#F0EAFE</color>
+    <color name="chip_text">#6046CC</color>
+    <color name="chip_stroke">#6046CC</color>
+    <color name="chip_close_icon">#6046CC</color>
+
 </resources>
