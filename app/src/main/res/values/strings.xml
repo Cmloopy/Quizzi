@@ -6,4 +6,9 @@
     <string name="create">Create</string>
     <string name="profile">Profile</string>
     <string name="quizzi">Quizzi</string>
+    <string-array name="food_types">
+        <item>Bánh</item>
+        <item>Đồ uống</item>
+        <item>Café</item>
+    </string-array>
 </resources>
