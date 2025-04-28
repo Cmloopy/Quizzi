@@ -1,4 +1,4 @@
-package com.cmloopy.quizzi.adapters;
+package com.cmloopy.quizzi.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

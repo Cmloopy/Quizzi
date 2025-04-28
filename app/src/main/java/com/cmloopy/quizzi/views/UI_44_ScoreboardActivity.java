@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.adapters.UI_44_ScoreboardAdapter;
+import com.cmloopy.quizzi.adapter.UI_44_ScoreboardAdapter;
 import com.cmloopy.quizzi.models.UI_44_Player;
 
 import java.util.ArrayList;
