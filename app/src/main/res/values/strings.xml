@@ -50,4 +50,19 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+    <string name="back_button_description">Go back to previous screen</string>
+    <string name="otp_title">You\'ve got mail 📩</string>
+    <string name="otp_instruction">We have sent the OTP verification code to your email address. Check your email and enter the code below.</string>
+    <string name="otp_digit_1">First digit of OTP</string>
+    <string name="otp_digit_2">Second digit of OTP</string>
+    <string name="otp_digit_3">Third digit of OTP</string>
+    <string name="otp_digit_4">Fourth digit of OTP</string>
+    <string name="didnt_receive_email">Didn\'t receive email?</string>
+    <string name="resend_code_timer">You can resend code in %1$d s</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="resend_code_timer_seconds">You can resend code in %1$d s</string>
+    <string name="resend_code_now">Resend code now</string>
+
 </resources>
