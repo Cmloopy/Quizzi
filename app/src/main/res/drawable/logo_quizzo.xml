@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Vòng tròn ngoài -->
+    <path
+        android:fillColor="#8B6FF9"
+        android:pathData="M100,30C61.34,30 30,61.34 30,100C30,138.66 61.34,170 100,170C138.66,170 170,138.66 170,100C170,61.34 138.66,30 100,30Z"/>
+
+    <!-- Phần trắng bên trong để tạo chữ Q -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M100,50C72.39,50 50,72.39 50,100C50,127.61 72.39,150 100,150C115.15,150 128.77,143.18 138.14,132.28L120,115C115.04,120.33 107.91,123.75 100,123.75C86.9,123.75 76.25,113.1 76.25,100C76.25,86.9 86.9,76.25 100,76.25C113.1,76.25 123.75,86.9 123.75,100C123.75,101.2 123.66,102.38 123.48,103.53L143.6,121.92C145.79,115.16 147,107.74 147,100C147,72.39 127.61,50 100,50Z"/>
+
+    <!-- Phần góc dưới phải (đuôi của chữ Q) -->
+    <path
+        android:fillColor="#8B6FF9"
+        android:pathData="M138.14,132.28L150,144.14C159.76,131.85 165.67,116.55 166.77,100H143.6C142.57,111.47 139.02,121.63 133.39,130.23L138.14,132.28Z"/>
+</vector>
