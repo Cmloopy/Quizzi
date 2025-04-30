@@ -153,6 +153,7 @@
                 android:textSize="24sp" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/view_all_discover"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -193,6 +194,7 @@
                 android:fontFamily="@font/nunitobold"
                 android:textColor="@color/black"/>
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/view_all_top_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View all"
@@ -232,6 +234,7 @@
                 android:fontFamily="@font/nunitobold"
                 android:textColor="@color/black"/>
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/view_all_top_collection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View all"
@@ -271,6 +274,7 @@
                 android:fontFamily="@font/nunitobold"
                 android:textColor="@color/black"/>
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/view_all_trending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View all"
@@ -310,6 +314,7 @@
                 android:fontFamily="@font/nunitobold"
                 android:textColor="@color/black"/>
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/view_all_top_pick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="View all"

@@ -2,9 +2,11 @@ package com.cmloopy.quizzi.views;
 
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -265,6 +267,14 @@ public class CreateAccountStep2Activity extends AppCompatActivity {
         }
         successDialog.show();
         Toast.makeText(CreateAccountStep2Activity.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-        // Navigate to main app or verify email, etc.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(CreateAccountStep2Activity.this, MainActivity.class);
+                startActivity(intent);
+
+                finish();
+            }
+        }, 10000);
     }
 }

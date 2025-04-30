@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Quizzi"
         tools:targetApi="31">
         <activity
-            android:name=".views.MainActivity"
+            android:name=".views.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,14 +21,44 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.RecommendAuthorActivity"
+            android:name=".views.AuthorDetailsAboutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.AuthorDetailsCollections"
+            android:exported="false" />
+        <activity
+            android:name=".views.AuthorDetailsQuizzo"
+            android:exported="false" />
+        <activity
+            android:name=".views.CreateAccountStep1Activity"
+            android:exported="false" />
+        <activity
+            android:name=".views.CreateAccountStep2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".views.DetailTopCollections"
             android:exported="false" />
         <activity
             android:name=".views.DiscoveryActivity"
             android:exported="false" />
         <activity
+            android:name=".views.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.OnboardingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.RecommendAuthorActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.RecommendUserActivity"
-            android:exported="true" />
+            android:exported="false" />
+        <activity
+            android:name=".views.SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.TopCollections"
+            android:exported="false" />
     </application>
 
 </manifest>
