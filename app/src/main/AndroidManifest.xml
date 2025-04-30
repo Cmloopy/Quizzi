@@ -21,6 +21,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".views.MyStatisticActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.FollowActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.AuthorDetailsAboutActivity"
             android:exported="false" />
         <activity
