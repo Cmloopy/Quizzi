@@ -11,7 +11,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.cmloopy.quizzi.R;
 
 public class AboutQuizzoActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

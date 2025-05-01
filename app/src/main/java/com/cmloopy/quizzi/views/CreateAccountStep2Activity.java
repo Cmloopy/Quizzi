@@ -47,7 +47,6 @@ public class CreateAccountStep2Activity extends AppCompatActivity {
     private TextView usernameErrorText;
     private TextView emailErrorText;
     private TextView passwordErrorText;
-
     // Validation patterns
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{4,20}$");
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");

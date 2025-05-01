@@ -48,6 +48,7 @@
             android:src="@drawable/ic_95_messenger" />
 
         <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/btn_setting"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_gravity="center"

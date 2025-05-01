@@ -35,6 +35,7 @@
                 android:textColor="@color/black"/>
 
             <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/btn_find"
                 android:padding="2dp"
                 android:layout_width="25dp"
                 android:layout_height="25dp"

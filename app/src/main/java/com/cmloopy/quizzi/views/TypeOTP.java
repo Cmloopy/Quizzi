@@ -1,11 +1,13 @@
 package com.cmloopy.quizzi.views;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ public class TypeOTP extends AppCompatActivity {
     private EditText otpDigit1, otpDigit2, otpDigit3, otpDigit4;
     private TextView resendCodeText;
     private CountDownTimer resendTimer;
+    private Button btn;
     private static final long RESEND_TIMER_DURATION = 60000; // 60 giây
     private static final long RESEND_TIMER_INTERVAL = 1000; // 1 giây
 
@@ -36,6 +39,8 @@ public class TypeOTP extends AppCompatActivity {
         otpDigit2 = findViewById(R.id.otpDigit2);
         otpDigit3 = findViewById(R.id.otpDigit3);
         otpDigit4 = findViewById(R.id.otpDigit4);
+
+        btn = findViewById(R.id.confirmButton);
 
         // Khởi tạo TextView đếm ngược
         resendCodeText = findViewById(R.id.resendCodeText);
@@ -87,6 +92,11 @@ public class TypeOTP extends AppCompatActivity {
         otpDigit2.addTextChangedListener(new OtpTextWatcher(otpDigit2, otpDigit3));
         otpDigit3.addTextChangedListener(new OtpTextWatcher(otpDigit3, otpDigit4));
         otpDigit4.addTextChangedListener(new OtpTextWatcher(otpDigit4, null));
+
+        btn.setOnClickListener(v -> {
+            Intent intent = new Intent(TypeOTP.this, CreateNewPassword.class);
+            startActivity(intent);
+        });
     }
 
     private void startResendTimer() {

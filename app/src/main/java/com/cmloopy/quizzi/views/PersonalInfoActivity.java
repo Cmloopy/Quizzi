@@ -36,7 +36,6 @@ public class PersonalInfoActivity extends AppCompatActivity {
     private ImageView btnEditProfile, profileImage;
     private Calendar calendar;
     private static final int PICK_IMAGE = 100;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

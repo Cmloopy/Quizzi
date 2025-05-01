@@ -21,10 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.MyStatisticActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.FollowActivity"
+            android:name=".views.AboutQuizzoActivity"
             android:exported="false" />
         <activity
             android:name=".views.AuthorDetailsAboutActivity"
@@ -42,16 +39,37 @@
             android:name=".views.CreateAccountStep2Activity"
             android:exported="false" />
         <activity
+            android:name=".views.CreateNewPassword"
+            android:exported="false" />
+        <activity
             android:name=".views.DetailTopCollections"
             android:exported="false" />
         <activity
             android:name=".views.DiscoveryActivity"
             android:exported="false" />
         <activity
+            android:name=".views.FollowActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.ForgotPassWord"
+            android:exported="false" />
+        <activity
             android:name=".views.MainActivity"
             android:exported="false" />
         <activity
+            android:name=".views.MusicEffectsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.MyStatisticActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.OnboardingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.PersonalInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.QuizzDetails"
             android:exported="false" />
         <activity
             android:name=".views.RecommendAuthorActivity"
@@ -60,10 +78,28 @@
             android:name=".views.RecommendUserActivity"
             android:exported="false" />
         <activity
+            android:name=".views.ResetPasswordSuccess"
+            android:exported="false" />
+        <activity
             android:name=".views.SearchActivity"
             android:exported="false" />
         <activity
+            android:name=".views.SetiingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.SignInForm"
+            android:exported="false" />
+        <activity
             android:name=".views.TopCollections"
+            android:exported="false" />
+        <activity
+            android:name=".views.TypeOTP"
+            android:exported="false" />
+        <activity
+            android:name=".views.UI41"
+            android:exported="false" />
+        <activity
+            android:name=".views.UI_40_generate_qr"
             android:exported="false" />
     </application>
 

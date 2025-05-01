@@ -14,7 +14,6 @@ import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.views.MainActivity;
 
 public class ResetPasswordSuccess extends AppCompatActivity {
-
     private Button goToHomeButton;
     private TextView welcomeBackTitle;
     private TextView successMessage;

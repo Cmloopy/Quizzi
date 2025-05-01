@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UI41 extends AppCompatActivity {
-
     private RecyclerView recyclerFriends, recyclerSelectedFriends;
     private UI41AdapterFriends friendAdapter;
     private UI41SelectFriendsAdapter selectedFriendAdapter;

@@ -182,20 +182,13 @@ public class SignInForm extends AppCompatActivity {
         Toast.makeText(this, "Sign in successful", Toast.LENGTH_SHORT).show();
 
         // Proceed to the next screen (replace MainActivity.class with your target activity)
-        // Intent intent = new Intent(SignInForm.this, MainActivity.class);
-        // startActivity(intent);
-        // finish();
+         Intent intent = new Intent(SignInForm.this, MainActivity.class);
+         startActivity(intent);
+         finish();
     }
 
     private void handleForgotPassword() {
-        // TODO: Implement forgot password functionality
-        // This could open a dialog or navigate to a password reset screen
-
-        String email = emailEditText.getText().toString().trim();
-        if (email.isEmpty()) {
-            Toast.makeText(this, "Please enter your email first", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Password reset link sent to your email", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new Intent(SignInForm.this, ForgotPassWord.class);
+        startActivity(intent);
     }
 }

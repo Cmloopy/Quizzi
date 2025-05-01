@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -161,7 +162,8 @@ public class CreateNewPassword extends AppCompatActivity {
 
         // All validations passed, proceed to next screen
         // For example: startActivity(new Intent(CreateNewPassword.this, HomeActivity.class));
-        Toast.makeText(this, "Password created successfully!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(CreateNewPassword.this, MainActivity.class);
+        startActivity(intent);
         finish();
     }
 

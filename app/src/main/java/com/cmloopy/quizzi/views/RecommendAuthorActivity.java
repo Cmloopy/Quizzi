@@ -35,7 +35,6 @@ public class RecommendAuthorActivity extends AppCompatActivity {
         recommendedFriendsRecyclerView.setLayoutManager(linearLayoutManager);
         setupRecommendedFriends();
     }
-
     private void setupRecommendedFriends() {
         List<RecommendUser> friendsList = new ArrayList<>();
         friendsList.add(new RecommendUser("Darron Kulikowski", "darronk", R.drawable.ic_launcher_background));

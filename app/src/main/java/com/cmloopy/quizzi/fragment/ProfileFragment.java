@@ -21,6 +21,8 @@ import com.cmloopy.quizzi.adapter.TopCollectionsCategoryAdapter;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.TopCollectionsCategory;
 import com.cmloopy.quizzi.views.FollowActivity;
+import com.cmloopy.quizzi.views.SetiingActivity;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -36,6 +38,8 @@ public class ProfileFragment extends Fragment {
     private MaterialTextView materialTextView;
 
     private MaterialTextView btn;
+
+    private ShapeableImageView btnSetting;
 
     RecyclerView.Adapter<?> adapter = null;
     @Override
@@ -64,9 +68,15 @@ public class ProfileFragment extends Fragment {
         recyclerView = view.findViewById(R.id.rcl_view_profile);
         materialTextView = view.findViewById(R.id.txt_title_lib_my_quizzo_profile);
         btn = view.findViewById(R.id.follower_btn);
+        btnSetting = view.findViewById(R.id.btn_setting);
 
         btn.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FollowActivity.class);
+            startActivity(intent);
+        });
+
+        btnSetting.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), SetiingActivity.class);
             startActivity(intent);
         });
         return view;

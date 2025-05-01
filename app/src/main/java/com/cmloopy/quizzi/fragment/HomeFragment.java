@@ -20,8 +20,12 @@ import com.cmloopy.quizzi.adapter.HomeDiscoverAdapter;
 import com.cmloopy.quizzi.models.HomeCollection;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.RecommendUser;
+import com.cmloopy.quizzi.views.DetailTopCollections;
 import com.cmloopy.quizzi.views.DiscoveryActivity;
+import com.cmloopy.quizzi.views.RecommendAuthorActivity;
+import com.cmloopy.quizzi.views.SearchActivity;
 import com.cmloopy.quizzi.views.TopCollections;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
@@ -74,12 +78,17 @@ public class HomeFragment extends Fragment {
         MaterialTextView txt3 = view.findViewById(R.id.view_all_top_collection);
         MaterialTextView txt4 = view.findViewById(R.id.view_all_trending);
         MaterialTextView txt5 = view.findViewById(R.id.view_all_top_pick);
+        ShapeableImageView shape1 = view.findViewById(R.id.btn_find);
+        shape1.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), SearchActivity.class);
+            startActivity(intent);
+        });
         txt1.setOnClickListener(v ->{
             Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
             startActivity(intent);
         });
         txt2.setOnClickListener(v ->{
-            Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
+            Intent intent = new Intent(requireContext(), RecommendAuthorActivity.class);
             startActivity(intent);
         });
         txt3.setOnClickListener(v ->{

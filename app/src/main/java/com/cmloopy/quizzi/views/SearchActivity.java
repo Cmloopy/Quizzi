@@ -115,7 +115,6 @@ public class SearchActivity extends AppCompatActivity {
         QuizAdapter quizAdapter  = new QuizAdapter(items);
         return quizAdapter;
     }
-
     private TopCollectionsCategoryAdapter getCollectionAdapter() {
         List<TopCollectionsCategory> categoryList = new ArrayList<>();
         categoryList.add(new TopCollectionsCategory("Education", R.drawable.img_02));

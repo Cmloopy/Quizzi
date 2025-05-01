@@ -1,5 +1,7 @@
 package com.cmloopy.quizzi.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.RecommendUser;
+import com.cmloopy.quizzi.views.AuthorDetailsAboutActivity;
+import com.cmloopy.quizzi.views.QuizzDetails;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
@@ -28,6 +32,14 @@ public class HomeAuthorAdapter extends RecyclerView.Adapter<HomeAuthorAdapter.Vi
         RecommendUser user = items.get(position);
         holder.img_author.setImageResource(user.getProfileImageResource());
         holder.txt_name_author.setText(user.getName());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, AuthorDetailsAboutActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

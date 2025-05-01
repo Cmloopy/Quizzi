@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,6 +43,11 @@ public class ForgotPassWord extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 validateEmail();
             }
+
+        });
+        continueButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ForgotPassWord.this, TypeOTP.class);
+            startActivity(intent);
         });
     }
 

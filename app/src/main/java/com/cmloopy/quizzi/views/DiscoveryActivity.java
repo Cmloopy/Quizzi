@@ -20,7 +20,6 @@ public class DiscoveryActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private QuizAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
