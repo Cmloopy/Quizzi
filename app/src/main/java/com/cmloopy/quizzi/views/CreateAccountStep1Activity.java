@@ -52,7 +52,6 @@ public class CreateAccountStep1Activity extends AppCompatActivity {
     private TextView phoneError;
     private TextView ageError;
     private TextView countryError;
-
     // Validation patterns
     private static final Pattern VIETNAM_PHONE_PATTERN = Pattern.compile("^(\\+84|84|0)\\d{9,10}$");
     private static final Pattern NAME_PATTERN = Pattern.compile("^[\\p{L} .'-]+$");

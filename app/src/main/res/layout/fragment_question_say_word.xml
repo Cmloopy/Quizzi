@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Cover Image Section (remains the same) -->
+        <FrameLayout
+            android:id="@+id/cover_image_frame"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/ui_qc_rounded_primary_border"
+            android:layout_marginBottom="16dp">
+            <include layout="@layout/fragment_qc_media_audio"/>
+        </FrameLayout>
+
+        <!-- Quiz Configuration Buttons (remains the same) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_time_limit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="10 sec"
+                android:textSize="12dp"
+                app:cornerRadius="24dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_points"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#6200EE"
+                app:cornerRadius="24dp"
+                android:text="100 pt"
+                android:textColor="@color/white"
+                android:textSize="12dp"
+                android:textStyle="bold"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_question_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ui_qc_rounded_primary_border"
+                android:backgroundTint="@android:color/transparent"
+                android:drawableEnd="@drawable/ic_07_drodown_arround_outlined_rounded"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="0dp"
+                android:paddingVertical="7dp"
+                android:text="Say the Word"
+                android:textAllCaps="false"
+                android:textColor="@color/purple"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <!-- Question Input Section (remains the same) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:background="#F0F0F0"
+                app:boxStrokeColor="@color/purple"
+                app:boxStrokeWidth="2dp"
+                app:hintEnabled="false"
+                app:boxStrokeWidthFocused="3dp"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
+                app:boxBackgroundMode="outline">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/question_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:textColor="#767676"
+                    android:textSize="18sp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:inputType="text"
+                    android:cursorVisible="true"
+                    android:focusable="true"
+                    android:hint="Enter your question"
+                    android:focusableInTouchMode="true"/>
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- RecyclerView for Answer Options -->
+        <FrameLayout
+            android:id="@+id/cover_record_audio"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/ui_qc_rounded_primary_border"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_qc_add_or_record_audio_vector"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add or Record Audio"
+                    android:textStyle="bold"
+                    android:textColor="#6200EE"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+        </FrameLayout>
+
+    </LinearLayout>
+</ScrollView>

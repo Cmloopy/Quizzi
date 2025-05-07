@@ -18,7 +18,6 @@ public class RecommendUserActivity extends AppCompatActivity {
 
     private RecyclerView recommendedFriendsRecyclerView;
     private RecommendUserAdapter recommendedFriendsAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

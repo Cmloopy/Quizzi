@@ -3,16 +3,19 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="purple">#6949FF</color>
+    <color name="purple">#6749FF</color>
     <color name="grey">#808080</color>
     <color name="light_grey">#EEEEEE</color>
     <color name="gray">#D3D3D3</color>
     <color name="pp">#6949ff</color>
-<!--    <color name="purple">#5C3FFF</color>-->
     <color name="light_purple">#F0EDFF</color>
     <color name="light_blue">#AAC8E0</color>
     <color name="light_orange">#F5A26F</color>
     <color name="light_pink">#E0A1E0</color>
+
+    <color name="purple_500">#FF6200EE</color>
+    <color name="gray_400">#FFBDBDBD</color>
+
 <!--    <color name="gray">#888888</color>-->
     <color name="errorColor">#FF0000</color>
     <color name="validColor">#00C853</color>
@@ -26,4 +29,36 @@
     <color name="chip_stroke">#6046CC</color>
     <color name="chip_close_icon">#6046CC</color>
 
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <!-- Quiz option colors -->
+    <color name="option_blue">#4285F4</color>
+    <color name="option_red">#EA4335</color>
+    <color name="option_orange">#FBBC05</color>
+    <color name="option_green">#34A853</color>
+
+    <!-- Result screen colors -->
+    <color name="correct_green">#4CAF50</color>
+    <color name="correct_light_green">#81C784</color>
+    <color name="incorrect_red">#F44336</color>
+    <color name="incorrect_light_red">#E57373</color>
+
+    <!-- Scoreboard colors -->
+    <color name="scoreboard_purple">#6C4BF5</color>
+
+    <color name="score_green">#28A745</color>
+    <color name="score_red">#DC3545</color>
+
+    <!-- Button colors -->
+    <color name="button_purple">#6E41E2</color>
+
+    <color name="hint_color">#A0A0A0</color>
+    <color name="on_question_bnv_click">#6949FF</color>
+    <color name="on_question_bnv_unclick">#A0A0A0</color>
+    <color name="correctAnswerColor">#12D18E</color>
+    <color name="incorrectAnswerColor">#F75455</color>
 </resources>
