@@ -2,9 +2,11 @@ package com.cmloopy.quizzi.views;
 
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -45,7 +47,6 @@ public class CreateAccountStep2Activity extends AppCompatActivity {
     private TextView usernameErrorText;
     private TextView emailErrorText;
     private TextView passwordErrorText;
-
     // Validation patterns
     private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{4,20}$");
     private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$");
@@ -265,6 +266,14 @@ public class CreateAccountStep2Activity extends AppCompatActivity {
         }
         successDialog.show();
         Toast.makeText(CreateAccountStep2Activity.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-        // Navigate to main app or verify email, etc.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(CreateAccountStep2Activity.this, MainActivity.class);
+                startActivity(intent);
+
+                finish();
+            }
+        }, 10000);
     }
 }

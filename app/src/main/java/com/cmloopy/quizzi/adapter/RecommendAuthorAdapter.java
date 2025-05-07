@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cmloopy.quizzi.views.AuthorDetailsAboutActivity;
 import com.cmloopy.quizzi.views.DiscoveryActivity;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.RecommendUser;
@@ -65,7 +66,7 @@ public class RecommendAuthorAdapter extends RecyclerView.Adapter<RecommendAuthor
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, DiscoveryActivity.class);
+                Intent intent = new Intent(context, AuthorDetailsAboutActivity.class);
                 context.startActivity(intent);
             }
         });

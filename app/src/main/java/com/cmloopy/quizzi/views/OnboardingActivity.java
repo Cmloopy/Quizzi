@@ -64,7 +64,7 @@ public class OnboardingActivity extends AppCompatActivity {
         btnAlreadyAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(OnboardingActivity.this, CreateAccountStep1Activity.class));
+                startActivity(new Intent(OnboardingActivity.this, SignInForm.class));
             }
         });
     }

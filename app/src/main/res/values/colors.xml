@@ -3,16 +3,19 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="purple">#6949FF</color>
+    <color name="purple">#6749FF</color>
     <color name="grey">#808080</color>
     <color name="light_grey">#EEEEEE</color>
     <color name="gray">#D3D3D3</color>
     <color name="pp">#6949ff</color>
-<!--    <color name="purple">#5C3FFF</color>-->
     <color name="light_purple">#F0EDFF</color>
     <color name="light_blue">#AAC8E0</color>
     <color name="light_orange">#F5A26F</color>
     <color name="light_pink">#E0A1E0</color>
+
+    <color name="purple_500">#FF6200EE</color>
+    <color name="gray_400">#FFBDBDBD</color>
+
 <!--    <color name="gray">#888888</color>-->
     <color name="errorColor">#FF0000</color>
     <color name="validColor">#00C853</color>
@@ -20,10 +23,6 @@
     <color name="defaultTextColor">#757575</color>
     <color name="defaultDividerColor">#BDBDBD</color>
     <color name="defaultIconColor">#9E9E9E</color>
-
-        <color name="hint_color">#A0A0A0</color>
-        <color name="on_question_bnv_click">#6949FF</color>
-        <color name="on_question_bnv_unclick">#A0A0A0</color>
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
@@ -52,4 +51,9 @@
     <!-- Button colors -->
     <color name="button_purple">#6E41E2</color>
 
+    <color name="hint_color">#A0A0A0</color>
+    <color name="on_question_bnv_click">#6949FF</color>
+    <color name="on_question_bnv_unclick">#A0A0A0</color>
+    <color name="correctAnswerColor">#12D18E</color>
+    <color name="incorrectAnswerColor">#F75455</color>
 </resources>

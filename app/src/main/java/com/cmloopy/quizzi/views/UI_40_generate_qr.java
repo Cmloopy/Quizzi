@@ -11,5 +11,6 @@ public class UI_40_generate_qr extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_40_generate_qr);
+
     }
 }
