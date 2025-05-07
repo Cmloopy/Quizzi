@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="false" android:drawable="@drawable/quizz_details_button_friends_background"/>
+    <item android:drawable="@drawable/quizz_details_button_solo_background"/>
+</selector>

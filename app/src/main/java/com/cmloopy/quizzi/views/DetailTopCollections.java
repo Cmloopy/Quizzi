@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DetailTopCollections extends AppCompatActivity {
-
     private RecyclerView recyclerView;
     private DetailTopCollectionAdapter quizAdapter;
     private List<DetailTopCollectionItem> quizList;

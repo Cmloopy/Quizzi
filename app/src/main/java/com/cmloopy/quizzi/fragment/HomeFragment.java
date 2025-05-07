@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,13 @@ import com.cmloopy.quizzi.adapter.HomeDiscoverAdapter;
 import com.cmloopy.quizzi.models.HomeCollection;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.RecommendUser;
+import com.cmloopy.quizzi.views.DetailTopCollections;
+import com.cmloopy.quizzi.views.DiscoveryActivity;
+import com.cmloopy.quizzi.views.RecommendAuthorActivity;
+import com.cmloopy.quizzi.views.SearchActivity;
+import com.cmloopy.quizzi.views.TopCollections;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +71,39 @@ public class HomeFragment extends Fragment {
         Collectjon = view.findViewById(R.id.rcl_home_top_collection);
         Collectjon.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         Collectjon.setAdapter(new HomeCollectionAdapter(ListCls));
+
+        //Click
+        MaterialTextView txt1 = view.findViewById(R.id.view_all_discover);
+        MaterialTextView txt2 = view.findViewById(R.id.view_all_top_author);
+        MaterialTextView txt3 = view.findViewById(R.id.view_all_top_collection);
+        MaterialTextView txt4 = view.findViewById(R.id.view_all_trending);
+        MaterialTextView txt5 = view.findViewById(R.id.view_all_top_pick);
+        ShapeableImageView shape1 = view.findViewById(R.id.btn_find);
+        shape1.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), SearchActivity.class);
+            startActivity(intent);
+        });
+        txt1.setOnClickListener(v ->{
+            Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
+            startActivity(intent);
+        });
+        txt2.setOnClickListener(v ->{
+            Intent intent = new Intent(requireContext(), RecommendAuthorActivity.class);
+            startActivity(intent);
+        });
+        txt3.setOnClickListener(v ->{
+            Intent intent = new Intent(requireContext(), TopCollections.class);
+            startActivity(intent);
+        });
+        txt4.setOnClickListener(v ->{
+            Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
+            startActivity(intent);
+        });
+        txt5.setOnClickListener(v ->{
+            Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
+            startActivity(intent);
+        });
+
         return view;
     }
 

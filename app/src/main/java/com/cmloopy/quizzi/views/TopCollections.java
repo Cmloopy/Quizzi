@@ -39,6 +39,7 @@ public class TopCollections extends AppCompatActivity {
         categoryList.add(new TopCollectionsCategory("Health", R.drawable.img_02));
         categoryList.add(new TopCollectionsCategory("Kids", R.drawable.img_02));
 
+
         adapter = new TopCollectionsCategoryAdapter(this, categoryList);
         recyclerView.setAdapter(adapter);
     }

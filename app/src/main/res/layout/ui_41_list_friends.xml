@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- RecyclerView hiển thị danh sách đã chọn -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/UI41recyclerSelectedFriends"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:padding="8dp"
+        android:orientation="horizontal"
+        android:overScrollMode="never" />
+
+    <!-- RecyclerView hiển thị danh sách bạn bè -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/UI41recyclerFriends"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+
+</LinearLayout>
