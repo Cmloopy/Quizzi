@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        List<Quiz> ListDisCover = CreateSampleData();
+        List<Quiz> ListDisCover = Quiz.CreateSampleData();
         List<RecommendUser> ListUser = CreateSampleData2();
         List<HomeCollection> ListCls = CreateSampleData3();
 
@@ -125,29 +125,5 @@ public class HomeFragment extends Fragment {
         friendsList.add(new RecommendUser("Alfonzo Schuessler", R.drawable.ic_launcher_background));
         friendsList.add(new RecommendUser("Alfonzo Scales", R.drawable.ic_launcher_background));
         return friendsList;
-    }
-
-    private List<Quiz> CreateSampleData() {
-        List<Quiz> items = new ArrayList<>();
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Get Smarter with Prod...",
-                "2 months ago", "5.5K plays", "Titus Kitamura", R.drawable.ic_launcher_background, "16 Qs"));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Great Ideas Come from...",
-                "6 months ago", "10.3K plays", "Alfonzo Schuessler", R.drawable.ic_launcher_background, "10 Qs"));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Having Fun & Always S...",
-                "2 years ago", "18.5K plays", "Daryl Nehls", R.drawable.ic_launcher_background, "12 Qs"));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Can You Imagine, Worl...",
-                "3 months ago", "4.9K plays", "Edgar Torrey", R.drawable.ic_launcher_background, "20 Qs"));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Back to School, Get Sm...",
-                "1 year ago", "12.4K plays", "Darcel Ballentine", R.drawable.ic_launcher_background, "10 Qs"));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "What is Your Favorite ...",
-                "5 months ago", "6.2K plays", "Elmer Laverty", R.drawable.ic_launcher_background, "16 Qs"));
-
-        return items;
     }
 }
