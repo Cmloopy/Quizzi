@@ -1,0 +1,10 @@
+<!-- res/drawable/custom_cursor.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="2dp"
+    android:height="24dp"
+    android:viewportWidth="2"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/black"
+        android:pathData="M1,0 L1,24" />
+</vector>

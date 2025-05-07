@@ -23,6 +23,10 @@
     <color name="defaultTextColor">#757575</color>
     <color name="defaultDividerColor">#BDBDBD</color>
     <color name="defaultIconColor">#9E9E9E</color>
+
+    <color name="hint_color">#A0A0A0</color>
+    <color name="on_question_bnv_click">#6949FF</color>
+    <color name="on_question_bnv_unclick">#A0A0A0</color>
     <color name="correctAnswerColor">#12D18E</color>
     <color name="incorrectAnswerColor">#F75455</color>
 </resources>

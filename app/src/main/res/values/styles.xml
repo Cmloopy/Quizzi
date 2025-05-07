@@ -6,4 +6,29 @@
         <item name="android:textColor">#000000</item>
     </style>
 
+    <style name="UI70BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="U71CustomEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textCursorDrawable">@drawable/ui_qc_cursor_color</item>
+    </style>
+
+    <style name="UI71FABRoundedCorners" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+    </style>
+
+    <style name="UIQCRoundedImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
+
 </resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:id="@+id/card_container"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_columnWeight="1"
+    android:background="@drawable/ui_qc_bg_elevation_orange">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/text_answer"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Add answer"
+            android:maxLines="2"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/check_icon_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true">
+            <ImageView
+                android:id="@+id/drag_icon_btn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_qc_check"
+
+                />
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

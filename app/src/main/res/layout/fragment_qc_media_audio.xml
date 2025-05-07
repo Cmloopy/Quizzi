@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/media_container"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/ui_qc_rounded_primary_border"
+        >
+
+        <ImageView
+            android:id="@+id/placeholder_image"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_qc_add_or_record_audio_vector"/>
+
+        <TextView
+            android:id="@+id/placeholder_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add or Record Audio"
+            android:textStyle="bold"
+            android:textColor="#6200EE"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+
+    <!-- Audio View (Shown when audio is selected) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+<!--        <ImageView-->
+<!--            android:id="@+id/audio_icon_view"-->
+<!--            android:layout_width="64dp"-->
+<!--            android:layout_height="64dp"-->
+<!--            android:src="@drawable/ic_qc_audio_file"-->
+<!--            android:visibility="gone"/>-->
+
+        <ImageView
+            android:id="@+id/play_audio_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ui_09_circle_background"
+            android:padding="12dp"
+            android:src="@drawable/ic_qc_add_or_record_audio_vector"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <!-- Remove Button -->
+    <ImageView
+        android:id="@+id/remove_media_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:background="@drawable/ui_09_circle_background"
+        android:padding="6dp"
+        android:src="@drawable/ic_27_cancel"
+        android:visibility="gone"/>
+</androidx.cardview.widget.CardView>
