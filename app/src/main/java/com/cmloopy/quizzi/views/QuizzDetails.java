@@ -1,8 +1,10 @@
 package com.cmloopy.quizzi.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -25,6 +27,7 @@ public class QuizzDetails extends AppCompatActivity {
     private List<QuizzDetailsQuestion> questionList;
     private ImageView btnEdit;
     private PopupWindow popupWindow;
+    private Button btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,11 @@ public class QuizzDetails extends AppCompatActivity {
             public void onClick(View v) {
                 showPopupMenu(v);
             }
+        });
+        btn = findViewById(R.id.btnPlayWithFriends);
+        btn.setOnClickListener(v -> {
+            Intent intent = new Intent(QuizzDetails.this, UI41.class);
+            startActivity(intent);
         });
     }
 
@@ -89,6 +97,8 @@ public class QuizzDetails extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(QuizzDetails.this, "Generating QR Code...", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(QuizzDetails.this, UI_40_generate_qr.class);
+                startActivity(intent);
                 popupWindow.dismiss();
             }
         });

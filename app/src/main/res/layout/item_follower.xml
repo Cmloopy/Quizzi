@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_launcher_background"
+            app:shapeAppearanceOverlay="@style/RoundImage" />
+
+        <LinearLayout
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Andrew Asilain"
+                android:textColor="@color/black"
+                android:textSize="17sp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/user_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="a@andrew_asilain_123"
+                android:textColor="@color/defaultTextColor"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="30dp"
+            android:text="Follow"
+            android:textAllCaps="false"
+            app:cornerRadius="20dp" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

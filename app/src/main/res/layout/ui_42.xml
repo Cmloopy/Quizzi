@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/ui_42_bg_gradient">
+
+    <!-- Thanh chứa tiêu đề và nút Cancel -->
+    <LinearLayout
+        android:id="@+id/UI42headerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_marginBottom="10dp">
+
+        <!-- Nút Cancel -->
+        <ImageView
+            android:id="@+id/UI42btnCancel"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_27_cancel"
+            android:layout_marginStart="10dp"
+            android:padding="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="@android:color/white" />
+
+        <!-- Tiêu đề căn giữa -->
+        <TextView
+            android:id="@+id/UI42txtTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Waiting for Players..."
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:gravity="center"/>
+
+        <!-- Chừa một khoảng trống bên phải để giữ cân đối -->
+        <View
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"/>
+    </LinearLayout>
+
+    <!-- Thẻ chứa thông tin quiz -->
+    <LinearLayout
+        android:id="@+id/UI42quizCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ui_42_bg_card"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_below="@id/UI42headerContainer"
+        android:layout_margin="10dp">
+
+        <ImageView
+            android:id="@+id/UI42imgQuiz"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/ui_42_rounded_image"
+            android:src="@drawable/img"
+            android:clipToOutline="true"/>
+
+        <TextView
+            android:id="@+id/UI42txtQuizTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back to School Quiz Game"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/UI42txtPlayerCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12 players have joined"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="10dp"/>
+    </LinearLayout>
+
+    <!-- Danh sách người chơi -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/UI42recyclerPlayers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/UI42quizCard"
+        android:layout_above="@+id/UI42loading_spinner"
+        android:layout_margin="10dp"
+        android:clipToPadding="false"/>
+
+    <ProgressBar
+        android:id="@+id/UI42loading_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"/>
+
+
+</RelativeLayout>
