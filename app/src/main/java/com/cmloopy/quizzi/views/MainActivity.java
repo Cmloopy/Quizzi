@@ -21,23 +21,27 @@ public class MainActivity extends AppCompatActivity {
 
         int idUser = getIntent().getIntExtra("idUser", -1);
 
-        HomeFragment HomeFragment = new HomeFragment();
-        replaceFragment(HomeFragment);
+        HomeFragment homeFragment = new HomeFragment();
+        replaceFragment(homeFragment);
 
         binding.bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
             if (itemId == R.id.ic_home) {
-                replaceFragment(new HomeFragment());
+                replaceFragment(HomeFragment.newInstance(idUser));
             } else if (itemId == R.id.ic_library) {
-                replaceFragment(new LibraryFragment());
+                replaceFragment(LibraryFragment.newInstance(idUser));
             } else if (itemId == R.id.ic_profile) {
                 replaceFragment(ProfileFragment.newInstance(idUser));
             } else if (itemId == R.id.ic_create) {
                 Intent intent = new Intent(this, CreateQuizActivity.class);
                 intent.putExtra("idUser", idUser);
                 startActivity(intent);
-            }else {
+            } else if (itemId == R.id.ic_join) {
+                Intent intent = new Intent(this, UI65.class);
+                intent.putExtra("idUser", idUser);
+                startActivity(intent);
+            } else {
                 return false;
             }
             return true;
