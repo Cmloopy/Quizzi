@@ -1,12 +1,16 @@
 package com.cmloopy.quizzi.views;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -18,7 +22,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -32,6 +35,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.cmloopy.quizzi.R;
+import com.cmloopy.quizzi.data.RetrofitClient;
+import com.cmloopy.quizzi.data.api.UserApi;
+import com.cmloopy.quizzi.models.quiz.QuizResponse;
+import com.cmloopy.quizzi.views.QuizCreate.after.QuizCreateActivity;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
@@ -40,8 +47,20 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CreateQuizActivity extends AppCompatActivity {
 
@@ -51,7 +70,7 @@ public class CreateQuizActivity extends AppCompatActivity {
     private ImageView ivCoverIcon, ivSelectedCover;
     private EditText etTitle, etDescription, etKeyword;
     private Spinner spinnerCollection, spinnerTheme, spinnerVisibility, spinnerQuestionVisibility;
-    private Button btnSave, btnAddQuestion;
+    private Button btnAddQuestion;
     private ImageButton btnClose, btnMore;
     private FlexboxLayout chipContainer;
 
@@ -67,6 +86,8 @@ public class CreateQuizActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_quiz);
 
+        int idUser = getIntent().getIntExtra("idUser",-1);
+
         // Setup Edge-to-Edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.btn_close), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -78,7 +99,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         initializeViews();
 
         // Setup click listeners
-        setupClickListeners();
+        setupClickListeners(idUser);
 
         // Setup spinners
         setupSpinners();
@@ -104,20 +125,20 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerVisibility = findViewById(R.id.spinner_visibility);
         spinnerQuestionVisibility = findViewById(R.id.spinner_question_visibility);
 
-        btnSave = findViewById(R.id.btn_save);
         btnAddQuestion = findViewById(R.id.btn_add_question);
         btnClose = findViewById(R.id.btn_close);
         btnMore = findViewById(R.id.btn_more);
     }
 
-    private void setupClickListeners() {
+    private void setupClickListeners(int idUser) {
         // Card cover image click
         cardCoverImage.setOnClickListener(v -> {
-            if (checkPermission()) {
+            /*if (checkPermission()) {
                 openImagePicker();
             } else {
                 requestPermission();
-            }
+            }*/
+            openImagePicker();
         });
 
         // Close button
@@ -130,16 +151,12 @@ public class CreateQuizActivity extends AppCompatActivity {
             showMoreOptionsMenu();
         });
 
-        // Save button
-        btnSave.setOnClickListener(v -> {
-            saveQuiz();
-        });
-
         // Add question button
         btnAddQuestion.setOnClickListener(v -> {
-            if (validateForm()) {
+            /*if (validateForm()) {
                 saveQuizAndAddQuestion();
-            }
+            }*/
+            saveQuizAndAddQuestion(idUser);
         });
 
         // Keyword input handling
@@ -171,8 +188,7 @@ public class CreateQuizActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
-                    Toast.makeText(CreateQuizActivity.this,
-                            "Selected: " + collections[position], Toast.LENGTH_SHORT).show();
+
                 }
             }
 
@@ -191,8 +207,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerTheme.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(CreateQuizActivity.this,
-                        "Theme: " + themes[position], Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -210,8 +225,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(CreateQuizActivity.this,
-                        "Visibility: " + visibilities[position], Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -229,8 +243,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerQuestionVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(CreateQuizActivity.this,
-                        "Question Visibility: " + questionVisibilities[position], Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -262,7 +275,7 @@ public class CreateQuizActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openImagePicker();
             } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
+
             }
         }
     }
@@ -370,17 +383,57 @@ public class CreateQuizActivity extends AppCompatActivity {
         }
     }
 
-    private void saveQuizAndAddQuestion() {
-        // Save quiz and redirect to add question screen
-        Toast.makeText(this, "Quiz saved, redirecting to add question", Toast.LENGTH_SHORT).show();
-
-        // Save keywords
+    private void saveQuizAndAddQuestion(int idUser) {
         saveKeywordsToPrefs();
+        UserApi userApi = RetrofitClient.getUserApi();
+        String titles = etTitle.getText().toString().trim();
+        String des = etDescription.getText().toString().trim();
+        String key = etKeyword.getText().toString().trim();
+        String visiblee = "true";
+        String visibleQues = "true";
+        String shuffer = "false";
+        File file = getFileFromUri(selectedImageUri);
+        if (file == null) {
+            Log.e("Upload", "File is null");
+            return;
+        }
 
-        // In a real app, you'd save the quiz first, then open the question editor
-        // Intent intent = new Intent(this, AddQuestionActivity.class);
-        // intent.putExtra("QUIZ_ID", quizId);
-        // startActivity(intent);
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("coverPhotoFile", file.getName(), requestFile);
+        RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), idUser + "");
+        RequestBody quizCollectionId = RequestBody.create(MediaType.parse("text/plain"), "1");
+        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), titles);
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"),  des);
+        RequestBody keyword = RequestBody.create(MediaType.parse("text/plain"), key);
+        RequestBody visible = RequestBody.create(MediaType.parse("text/plain"), visiblee);
+        RequestBody visibleQuizQuestion = RequestBody.create(MediaType.parse("text/plain"), visibleQues);
+        RequestBody shuffle = RequestBody.create(MediaType.parse("text/plain"), shuffer);
+
+        Call<QuizResponse> call = userApi.uploadQuiz(
+                userId, quizCollectionId, title, description, keyword,
+                visible, visibleQuizQuestion, shuffle, filePart
+        );
+
+        call.enqueue(new Callback<QuizResponse>() {
+            @Override
+            public void onResponse(Call<QuizResponse> call, Response<QuizResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(CreateQuizActivity.this, "Create Quizz Successfully!", Toast.LENGTH_SHORT).show();
+                    Log.d("Create Quiz", "Success");
+                    Intent intent;
+                    intent = new Intent(CreateQuizActivity.this, QuizCreateActivity.class);
+                    intent.putExtra("quizId", response.body().getId());
+                    startActivity(intent);
+                } else {
+                    Log.e("Upload", "Failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<QuizResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     // Phương thức để thêm chip
@@ -445,5 +498,42 @@ public class CreateQuizActivity extends AppCompatActivity {
         // Không gọi super.onBackPressed() ở đây để ngăn activity đóng ngay lập tức
         super.onBackPressed();
         showExitConfirmationDialog();
+    }
+    private File getFileFromUri(Uri uri) {
+        File file = null;
+        try {
+            String fileName = getFileName(uri);
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            if (inputStream != null) {
+                File tempFile = new File(getCacheDir(), fileName);
+                try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, len);
+                    }
+                }
+                file = tempFile;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
+
+    @SuppressLint("Range")
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getLastPathSegment();
+        }
+        return result;
     }
 }

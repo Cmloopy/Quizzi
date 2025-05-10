@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        int idUser = getIntent().getIntExtra("idUser", -1);
+
         HomeFragment HomeFragment = new HomeFragment();
         replaceFragment(HomeFragment);
 
@@ -29,8 +32,12 @@ public class MainActivity extends AppCompatActivity {
             } else if (itemId == R.id.ic_library) {
                 replaceFragment(new LibraryFragment());
             } else if (itemId == R.id.ic_profile) {
-                replaceFragment(new ProfileFragment());
-            } else {
+                replaceFragment(ProfileFragment.newInstance(idUser));
+            } else if (itemId == R.id.ic_create) {
+                Intent intent = new Intent(this, CreateQuizActivity.class);
+                intent.putExtra("idUser", idUser);
+                startActivity(intent);
+            }else {
                 return false;
             }
             return true;

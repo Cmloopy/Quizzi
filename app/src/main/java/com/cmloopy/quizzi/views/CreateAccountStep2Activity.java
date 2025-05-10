@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
@@ -27,8 +28,16 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.cmloopy.quizzi.R;
+import com.cmloopy.quizzi.data.RetrofitClient;
+import com.cmloopy.quizzi.data.api.UserApi;
+import com.cmloopy.quizzi.models.user.LoginResponse;
+import com.cmloopy.quizzi.models.user.RegisterUser;
 
 import java.util.regex.Pattern;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CreateAccountStep2Activity extends AppCompatActivity {
     private EditText usernameInput;
@@ -78,14 +87,15 @@ public class CreateAccountStep2Activity extends AppCompatActivity {
         // Setup focus and text change listeners
         // Setup sign up button
         signUpButton.setOnClickListener(v -> {
-            isFirstSignUpClick = true;
+            /*isFirstSignUpClick = true;
             if(isFirstSignUpClick) {
                 setupValidationListeners();
             }
 
             if (validateAllFields()) {
                 showSuccessDialog();
-            }
+            }*/
+            signUpAccount();
         });
 
         // Setup Google sign in
@@ -103,6 +113,39 @@ public class CreateAccountStep2Activity extends AppCompatActivity {
 
         // Setup back button
         backButton.setOnClickListener(v -> finish());
+    }
+
+    private void signUpAccount() {
+        String username = usernameInput.getText().toString().trim();
+        String password = passwordInput.getText().toString().trim();
+        String email = emailInput.getText().toString().trim();
+
+        RegisterUser registerUser = new RegisterUser(username, password, email);
+        UserApi userApi = RetrofitClient.getUserApi();
+        Call<LoginResponse> call = userApi.register(registerUser);
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse loginResponse = response.body();
+                    Log.d("LOGIN", "Register success!");
+                    Log.d("LOGIN", loginResponse.getUserId() + "");
+                    Intent intent = new Intent(CreateAccountStep2Activity.this, SignInForm.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.e("LOGIN", "Register failed: " + response.code());
+                    Log.e("LOGIN", "Register failed: " + response.body());
+                    Toast.makeText(CreateAccountStep2Activity.this, "Username is existed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Log.e("LOGIN", "Error: " + t.getMessage());
+                t.printStackTrace();
+            }
+        });
     }
 
     private void setupValidationListeners() {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +22,16 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.cmloopy.quizzi.R;
+import com.cmloopy.quizzi.data.RetrofitClient;
+import com.cmloopy.quizzi.data.api.UserApi;
+import com.cmloopy.quizzi.models.user.CheckLoginUser;
+import com.cmloopy.quizzi.models.user.LoginResponse;
+
 import android.content.SharedPreferences;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignInForm extends AppCompatActivity {
 
@@ -126,8 +136,6 @@ public class SignInForm extends AppCompatActivity {
             editor.apply();
         }
 
-        // TODO: Implement actual authentication with your backend service
-        // For now, just simulate successful login
         performSignIn(email, password);
     }
 
@@ -143,7 +151,7 @@ public class SignInForm extends AppCompatActivity {
         if (email.isEmpty()) {
             emailEditText.setError("Email cannot be empty");
             isValid = false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        } /*else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             emailEditText.setError("Please enter a valid email address");
             isValid = false;
         } else if (!isValidGmail(email)) {
@@ -151,13 +159,14 @@ public class SignInForm extends AppCompatActivity {
             isValid = false;
         } else {
             emailEditText.setError(null);
-        }
+        }*/
 
         // Check if password is valid
         if (password.isEmpty()) {
             passwordEditText.setError("Password cannot be empty");
             isValid = false;
-        } else if (password.length() < 8) {
+        }
+        /*} else if (password.length() < 8) {
             passwordEditText.setError("Password must be at least 8 characters");
             isValid = false;
         } else if (!isPasswordStrong(password)) {
@@ -165,7 +174,7 @@ public class SignInForm extends AppCompatActivity {
             isValid = false;
         } else {
             passwordEditText.setError(null);
-        }
+        }*/
 
         return isValid;
     }
@@ -176,15 +185,32 @@ public class SignInForm extends AppCompatActivity {
     }
 
     private void performSignIn(String email, String password) {
-        // TODO: Replace with actual authentication logic
+        CheckLoginUser loginRequest = new CheckLoginUser(email, password);
+        UserApi userApi = RetrofitClient.getUserApi();
+        Call<LoginResponse> call = userApi.loginUser(loginRequest);
 
-        // For demo purposes, show a success message
-        Toast.makeText(this, "Sign in successful", Toast.LENGTH_SHORT).show();
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    LoginResponse loginResponse = response.body();
+                    Log.d("LOGIN", "Login success!");
+                    Log.d("LOGIN", loginResponse.getUserId() + "");
+                    Intent intent = new Intent(SignInForm.this, MainActivity.class);
+                    intent.putExtra("idUser",loginResponse.getUserId());
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.e("LOGIN", "Login failed: " + response.code());
+                }
+            }
 
-        // Proceed to the next screen (replace MainActivity.class with your target activity)
-         Intent intent = new Intent(SignInForm.this, MainActivity.class);
-         startActivity(intent);
-         finish();
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+                Log.e("LOGIN", "Error: " + t.getMessage());
+                t.printStackTrace();
+            }
+        });
     }
 
     private void handleForgotPassword() {

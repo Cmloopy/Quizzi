@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuizAdapter;
@@ -42,6 +43,13 @@ public class ProfileFragment extends Fragment {
     private ShapeableImageView btnSetting;
 
     RecyclerView.Adapter<?> adapter = null;
+    public static ProfileFragment newInstance(int idUser) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putInt("userId", idUser);
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +61,8 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         RadioGroup radioGroup = view.findViewById(R.id.tabGroup1);
-
+        int idUser = getArguments().getInt("idUser",-1);
+        Toast.makeText(requireContext(), idUser+ "", Toast.LENGTH_SHORT).show();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkId) {
