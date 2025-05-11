@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/empty_question_placeholder"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/ic_add_question"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_qc_note_add"
+            android:contentDescription="Add Question"
+             />
+
+
+        <TextView
+            android:id="@+id/tv_instruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Click '+' button to add question"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+</FrameLayout>

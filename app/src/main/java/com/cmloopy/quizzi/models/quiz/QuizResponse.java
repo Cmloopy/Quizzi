@@ -3,12 +3,12 @@ package com.cmloopy.quizzi.models.quiz;
 import java.util.List;
 
 public class QuizResponse {
-    private int id;
+    private Long id;
     private int userId;
     private String title;
     private String description;
     private String keyword;
-    private Integer score; // có thể null
+    private Integer score;
     private String coverPhoto;
     private String createdAt;
     private String updatedAt;
@@ -18,11 +18,11 @@ public class QuizResponse {
     private List<Object> quizGames; // tùy vào kiểu dữ liệu thật, có thể tạo class riêng
 
     // Getters and Setters
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
