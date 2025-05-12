@@ -10,8 +10,8 @@ public class Question implements Serializable {
     private int position;
     private int quizId;
     private QuestionType questionType;
-    private String imageUrl;
-    private String audioUrl;
+    private String image;
+    private String audio;
 
     private String imageUri;
     private String audioUri;
@@ -51,8 +51,8 @@ public class Question implements Serializable {
     // Constructors
     public Question() {
         this.content = "";
-        this.imageUrl = "";
-        this.audioUrl = "";
+        this.image = "";
+        this.audio = "";
         this.point = 200;
         this.timeLimit = 10;
         this.description = "";
@@ -64,17 +64,17 @@ public class Question implements Serializable {
             int position,
             Long id,
 //                    Quiz quiz,
-                    QuestionType questionType,
-                    String content,
-                    String imageUrl, String audioUrl, int point, int timeLimit,
-                    String description) {
+            QuestionType questionType,
+            String content,
+            String image, String audio, int point, int timeLimit,
+            String description) {
         this.position = position;
         this.id = id;
 //        this.quiz = quiz;
         this.questionType = questionType;
         this.content = content;
-        this.imageUrl = imageUrl;
-        this.audioUrl = audioUrl;
+        this.image = image;
+        this.audio = audio;
         this.point = point;
         this.timeLimit = timeLimit;
         this.description = description;
@@ -86,13 +86,13 @@ public class Question implements Serializable {
             int position,
 //                    Quiz quiz,
             String content,
-            String imageUrl, String audioUrl, int point, int timeLimit,
+            String image, String audio, int point, int timeLimit,
             String description) {
         this.position = position;
 //        this.quiz = quiz;
         this.content = content;
-        this.imageUrl = imageUrl;
-        this.audioUrl = audioUrl;
+        this.image = image;
+        this.audio = audio;
         this.point = point;
         this.timeLimit = timeLimit;
         this.description = description;
@@ -105,14 +105,14 @@ public class Question implements Serializable {
 //                    Quiz quiz,
             QuestionType questionType,
             String content,
-            String imageUrl, String audioUrl, int point, int timeLimit,
+            String image, String audio, int point, int timeLimit,
             String description) {
         this.position = position;
 //        this.quiz = quiz;
         this.questionType = questionType;
         this.content = content;
-        this.imageUrl = imageUrl;
-        this.audioUrl = audioUrl;
+        this.image = image;
+        this.audio = audio;
         this.point = point;
         this.timeLimit = timeLimit;
         this.description = description;
@@ -127,15 +127,15 @@ public class Question implements Serializable {
 //                    Quiz quiz,
 //            QuestionType questionType,
             String content,
-            String imageUrl, String audioUrl, int point, int timeLimit,
+            String image, String audio, int point, int timeLimit,
             String description) {
         this.position = position;
         this.id = id;
 //        this.quiz = quiz;
 //        this.questionType = questionType;
         this.content = content;
-        this.imageUrl = imageUrl;
-        this.audioUrl = audioUrl;
+        this.image = image;
+        this.audio = audio;
         this.point = point;
         this.timeLimit = timeLimit;
         this.description = description;
@@ -180,20 +180,20 @@ public class Question implements Serializable {
         this.questionType = questionType;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImage() {
+        return image;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public String getAudioUrl() {
-        return audioUrl;
+    public String getAudio() {
+        return audio;
     }
 
-    public void setAudioUrl(String audioUrl) {
-        this.audioUrl = audioUrl;
+    public void setAudio(String audio) {
+        this.audio = audio;
     }
 
     public String getContent() {
@@ -268,8 +268,8 @@ public class Question implements Serializable {
         this.position = question.getPosition();
         this.questionType = question.getQuestionType();
         this.content = question.getContent();
-        this.imageUrl = question.getImageUrl();
-        this.audioUrl = question.getAudioUrl();
+        this.image = question.getImage();
+        this.audio = question.getAudio();
         this.point = question.getPoint();
         this.timeLimit = question.getTimeLimit();
         this.description = question.getDescription();

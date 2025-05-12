@@ -41,7 +41,7 @@ import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
-import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCHelper;
+import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 import com.cmloopy.quizzi.utils.QuestionCreate.manager.QCQuestionSaveManager;
 import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
 

@@ -25,7 +25,6 @@ import com.cmloopy.quizzi.models.QuestionCreate.Question;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
-import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCHelper;
 import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCQuestionDataGenerator;
 import com.cmloopy.quizzi.utils.QuestionCreate.manager.QCQuestionSaveManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

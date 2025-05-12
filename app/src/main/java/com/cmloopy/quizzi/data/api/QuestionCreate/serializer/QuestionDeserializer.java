@@ -177,8 +177,8 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
                 result.setPosition(position);
                 result.setQuestionType(questionType);
                 result.setContent(content);
-                result.setImageUrl(imageUrl);
-                result.setAudioUrl(audioUrl);
+                result.setImage(imageUrl);
+                result.setAudio(audioUrl);
                 result.setPoint(point);
                 result.setTimeLimit(timeLimit);
                 result.setDescription(description);

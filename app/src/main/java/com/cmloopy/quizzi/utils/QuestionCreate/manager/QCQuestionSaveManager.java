@@ -159,15 +159,13 @@ public class QCQuestionSaveManager {
         builder.setPositiveButton("Save", (dialog, which) -> {
             dialog.dismiss();
 
-            // Show a progress dialog while saving
             ProgressDialog progressDialog = new ProgressDialog(context);
             progressDialog.setTitle("Saving");
             progressDialog.setMessage("Replacing all questions...");
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            // Use the new full reset method
-            saveService.saveAllQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
+            saveService.saveBatchQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
                 progressDialog.dismiss();
 
                 if (isSuccessful) {

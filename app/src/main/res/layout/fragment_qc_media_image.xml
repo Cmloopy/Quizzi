@@ -14,11 +14,13 @@
         android:background="@drawable/ui_qc_rounded_primary_border"
         android:visibility="gone">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/cover_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/UIQCRoundedImageView"
+            />
     </RelativeLayout>
 
     <!-- Enhanced Audio Content Container -->

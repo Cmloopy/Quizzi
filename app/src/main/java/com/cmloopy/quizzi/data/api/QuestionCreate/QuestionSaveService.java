@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.cmloopy.quizzi.data.RetrofitClient;
+import com.cmloopy.quizzi.models.QuestionCreate.BatchQuestionDTO;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.PuzzleOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.TypeTextOption;
@@ -14,9 +15,12 @@ import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
 import com.cmloopy.quizzi.utils.QuestionCreate.tracker.QCQuestionChangeTracker;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,6 +43,13 @@ public class QuestionSaveService {
     private final QCQuestionChangeTracker changeTracker;
 
     public interface QuestionApiService {
+        @Multipart
+        @POST("questions/batch")
+        Call<List<Question>> createQuestionsBatch(
+                @Part("quizId") RequestBody quizId,
+                @Part("questionsJson") RequestBody questionsJson,
+                @Part List<MultipartBody.Part> files
+        );
         @Multipart
         @POST("questions")
         Call<Question> createQuestion(
@@ -1076,15 +1087,199 @@ public class QuestionSaveService {
         return result;
     }
 
+    public void saveBatchQuestionsWithFullReset(List<Question> questions, Long quizId, final SaveOperationListener listener) {
+        if (questions == null || questions.isEmpty()) {
+            listener.onSaveComplete(true, "No questions to save");
+            return;
+        }
+
+        // First, delete all existing questions if needed
+        boolean needDelete = false;
+        for (Question question : questions) {
+            if (question.getId() != null && question.getId() >= 1) {
+                needDelete = true;
+                break;
+            }
+        }
+
+        if (needDelete) {
+            deleteAllQuizQuestions(quizId, true, new OperationCallback() {
+                @Override
+                public void onComplete(boolean isDeleteSuccessful, String deleteMessage) {
+                    if (!isDeleteSuccessful && !deleteMessage.contains("404")) {
+                        listener.onSaveComplete(false, "Failed to delete existing questions: " + deleteMessage);
+                        return;
+                    }
+                    // After deletion, create all questions in batch
+                    createQuestionsBatch(questions, quizId, listener);
+                }
+            });
+        } else {
+            createQuestionsBatch(questions, quizId, listener);
+        }
+    }
+
+    private void createQuestionsBatch(List<Question> questions, Long quizId, final SaveOperationListener listener) {
+        try {
+            RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
+
+            List<BatchQuestionDTO> batchDTOs = new ArrayList<>();
+            Map<String, MultipartBody.Part> fileParts = new HashMap<>();
+
+            for (Question question : questions) {
+                BatchQuestionDTO batchDTO = convertToBatchDTO(question, fileParts);
+                batchDTOs.add(batchDTO);
+            }
+
+            String questionsJson = new Gson().toJson(batchDTOs);
+            RequestBody questionsJsonBody = RequestBody.create(
+                    MediaType.parse("application/json"), questionsJson);
+
+            // Create the list of file parts
+            List<MultipartBody.Part> filePartsList = new ArrayList<>(fileParts.values());
+
+            // Make the API call
+            apiService.createQuestionsBatch(quizIdBody, questionsJsonBody, filePartsList)
+                    .enqueue(new Callback<List<Question>>() {
+                        @Override
+                        public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                // Update the local questions with server-assigned IDs
+                                List<Question> createdQuestions = response.body();
+                                for (int i = 0; i < Math.min(questions.size(), createdQuestions.size()); i++) {
+                                    questions.get(i).setId(createdQuestions.get(i).getId());
+                                }
+                                changeTracker.resetAfterSave(questions);
+                                listener.onSaveComplete(true, "All questions saved successfully");
+                            } else {
+                                listener.onSaveComplete(false, "Failed to save questions: " +
+                                        (response.errorBody() != null ? response.errorBody().toString() : response.code()));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Question>> call, Throwable t) {
+                            listener.onSaveComplete(false, "Network error: " + t.getMessage());
+                        }
+                    });
+
+        } catch (Exception e) {
+            listener.onSaveComplete(false, "Error preparing batch request: " + e.getMessage());
+        }
+    }
+
+    private BatchQuestionDTO convertToBatchDTO(Question question, Map<String, MultipartBody.Part> fileParts) {
+        BatchQuestionDTO dto = new BatchQuestionDTO();
+
+        dto.setContent(question.getContent());
+        dto.setDescription(question.getDescription());
+        dto.setTimeLimit(question.getTimeLimit());
+        dto.setPoint(question.getPoint());
+        dto.setPosition(question.getPosition());
+
+        if (question.getQuestionType() != null) {
+            dto.setQuestionType(question.getQuestionType().getName());
+        }
+
+        if (question.getImageUri() != null && !question.getImageUri().isEmpty()) {
+            String fileName = "image_" + System.currentTimeMillis() + "_" + question.getPosition() + ".jpg";
+            dto.setImageFileName(fileName);
+
+            MultipartBody.Part imagePart = createFilePart("files", question.getImageUri());
+            if (imagePart != null) {
+                fileParts.put(fileName, imagePart);
+            }
+        }
+
+        if (question.getAudioUri() != null && !question.getAudioUri().isEmpty()) {
+            String fileName = "audio_" + System.currentTimeMillis() + "_" + question.getPosition() + ".mp3";
+            dto.setAudioFileName(fileName);
+
+            MultipartBody.Part audioPart = createFilePart("files", question.getAudioUri());
+            if (audioPart != null) {
+                fileParts.put(fileName, audioPart);
+            }
+        }
+
+        Map<String, Object> data = new HashMap<>();
+
+        if (question instanceof QuestionTrueFalse) {
+            QuestionTrueFalse tf = (QuestionTrueFalse) question;
+            data.put("correctAnswer", tf.isCorrectAnswer());
+        } else if (question instanceof QuestionChoice) {
+            QuestionChoice choice = (QuestionChoice) question;
+            data.put("choiceOptions", choice.getChoiceOptions());
+        } else if (question instanceof QuestionSlider) {
+            QuestionSlider slider = (QuestionSlider) question;
+            data.put("minValue", slider.getMinValue());
+            data.put("maxValue", slider.getMaxValue());
+            data.put("defaultValue", slider.getDefaultValue());
+            data.put("correctAnswer", slider.getCorrectAnswer());
+            data.put("color", slider.getColor());
+        } else if (question instanceof QuestionPuzzle) {
+            QuestionPuzzle puzzle = (QuestionPuzzle) question;
+            data.put("puzzlePieces", puzzle.getPuzzlePieces());
+        } else if (question instanceof QuestionTypeText) {
+            QuestionTypeText text = (QuestionTypeText) question;
+            data.put("caseSensitive", text.isCaseSensitive());
+            data.put("acceptedAnswers", text.getAcceptedAnswers());
+        }
+//        else {
+//        }
+        data.put("questionTypeId", question.getQuestionType().getId());
+
+        dto.setData(data);
+        return dto;
+    }
+
     public void saveAllQuestionsWithFullReset(List<Question> questions, Long quizId, final SaveOperationListener listener) {
+        if (questions == null || questions.isEmpty()) {
+            listener.onSaveComplete(true, "No questions to save");
+            return;
+        }
+
         final AtomicBoolean success = new AtomicBoolean(true);
         final List<String> errors = new ArrayList<>();
         final AtomicInteger remainingOperations = new AtomicInteger(0);
 
-        deleteAllQuizQuestions(quizId, new OperationCallback() {
+        boolean needDelete = false;
+        for(Question question : questions) {
+            if (question.getId() != null && question.getId() >= 1)
+                needDelete = true;
+        }
+
+        if (!needDelete) {
+            remainingOperations.set(questions.size());
+            for (Question question : questions) {
+                createQuestion(question, quizId, new OperationCallback() {
+                    @Override
+                    public void onComplete(boolean isSuccessful, String message) {
+                        if (!isSuccessful) {
+                            success.set(false);
+                            errors.add("Failed to create question: " + message);
+                        }
+
+                        if (remainingOperations.decrementAndGet() == 0) {
+                            if (success.get()) {
+                                listener.onSaveComplete(true, "All questions created successfully");
+                            } else {
+                                StringBuilder errorMessage = new StringBuilder("Some questions failed to create: ");
+                                for (String error : errors) {
+                                    errorMessage.append(error).append("; ");
+                                }
+                                listener.onSaveComplete(false, errorMessage.toString());
+                            }
+                        }
+                    }
+                });
+            }
+            return;
+        }
+
+        deleteAllQuizQuestions(quizId, true, new OperationCallback() {
             @Override
             public void onComplete(boolean isDeleteSuccessful, String deleteMessage) {
-                if (!isDeleteSuccessful) {
+                if (!isDeleteSuccessful && !deleteMessage.contains("404")) {
                     listener.onSaveComplete(false, "Failed to delete existing questions: " + deleteMessage);
                     return;
                 }
@@ -1123,14 +1318,23 @@ public class QuestionSaveService {
         });
     }
 
-    private void deleteAllQuizQuestions(Long quizId, final OperationCallback callback) {
+    private void deleteAllQuizQuestions(Long quizId, boolean needDelete, final OperationCallback callback) {
+        if (!needDelete) {
+            callback.onComplete(true, "No questions to delete");
+            return;
+        }
+
         apiService.deleteAllQuizQuestions(quizId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     callback.onComplete(true, "All questions deleted successfully");
                 } else {
-                    callback.onComplete(false, "Failed to delete questions: " + response.code());
+                    if (response.code() == 404) {
+                        callback.onComplete(true, "No existing questions found");
+                    } else {
+                        callback.onComplete(false, "Failed to delete questions: " + response.code());
+                    }
                 }
             }
 

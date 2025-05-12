@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
-import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCHelper;
+import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;

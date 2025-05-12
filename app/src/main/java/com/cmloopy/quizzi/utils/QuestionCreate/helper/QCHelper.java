@@ -1,7 +1,15 @@
-package com.cmloopy.quizzi.utils.QuestionCreate.dialogs;
+package com.cmloopy.quizzi.utils.QuestionCreate.helper;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -33,6 +41,7 @@ import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
 import com.cmloopy.quizzi.utils.QuestionCreate.sheet.QCQuestionTypeBottomSheetFragment;
+import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -216,6 +225,35 @@ public class QCHelper {
             if (position > 0) {
                 outRect.top = spacing;
             }
+        }
+    }
+    public static class RoundedTransformation implements Transformation {
+
+        private final float radius;
+        private final int margin;
+
+        public RoundedTransformation(float radius, int margin) {
+            this.radius = radius;
+            this.margin = margin;
+        }
+
+        @Override
+        public Bitmap transform(Bitmap source) {
+            final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            Bitmap output = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(output);
+
+            RectF rect = new RectF(margin, margin, source.getWidth() - margin, source.getHeight() - margin);
+            paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+            canvas.drawRoundRect(rect, radius, radius, paint);
+
+            source.recycle();
+            return output;
+        }
+
+        @Override
+        public String key() {
+            return "smooth_rounded(radius=" + radius + ", margin=" + margin + ")";
         }
     }
 
