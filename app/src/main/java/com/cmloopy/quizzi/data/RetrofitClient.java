@@ -3,6 +3,7 @@ package com.cmloopy.quizzi.data;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import com.cmloopy.quizzi.data.api.CollectionApi;
 import com.cmloopy.quizzi.data.api.QuestionCreate.QuestionAPI;
 import com.cmloopy.quizzi.data.api.QuestionCreate.serializer.QuestionDeserializer;
 import com.cmloopy.quizzi.data.api.UserApi;
@@ -38,6 +39,16 @@ public class RetrofitClient {
                     .build();
         }
         return retrofit.create(QuestionAPI.class);
+    }
+
+    public static CollectionApi getCollectionApi() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(GITHUB_CODESPACE_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit.create(CollectionApi.class);
     }
 
     public static Retrofit getRetrofit() {
