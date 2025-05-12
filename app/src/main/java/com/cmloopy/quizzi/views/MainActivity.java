@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        int idUser = getIntent().getIntExtra("idUser", -1);
+        int idUser = getIntent().getIntExtra("userId", -1);
 
         HomeFragment homeFragment = new HomeFragment();
         replaceFragment(homeFragment);

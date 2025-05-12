@@ -197,7 +197,7 @@ public class SignInForm extends AppCompatActivity {
                     Log.d("LOGIN", "Login success!");
                     Log.d("LOGIN", loginResponse.getUserId() + "");
                     Intent intent = new Intent(SignInForm.this, MainActivity.class);
-                    intent.putExtra("idUser",loginResponse.getUserId());
+                    intent.putExtra("userId",loginResponse.getUserId());
 
                     storeLoginSuccess(loginResponse);
 

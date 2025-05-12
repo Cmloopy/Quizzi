@@ -48,7 +48,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        int idUser = getArguments().getInt("userId",-1);
+        if (getActivity().getIntent() != null) {
+            int idUser = getActivity().getIntent().getIntExtra("userId", -1);
+            if (idUser != -1) {
+                // Use the idUser as needed
+            }
+        }
+//        int idUser = getArguments().getInt("userId",-1);
 
         List<Quiz> ListDisCover = Quiz.CreateSampleData();
         List<RecommendUser> ListUser = CreateSampleData2();
