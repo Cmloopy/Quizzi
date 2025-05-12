@@ -3,6 +3,7 @@ package com.cmloopy.quizzi.views.QuestionCreate;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,7 +42,7 @@ import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
-import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCHelper;
+import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 import com.cmloopy.quizzi.utils.QuestionCreate.manager.QCQuestionSaveManager;
 import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
 
@@ -74,21 +75,28 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     private List<Question> questionListResponse;
     private ProgressBar loadingIndicator;
     private QCQuestionSaveManager saveManager;
-    private boolean updatingQuestion = false; // Flag to prevent recursive calls
+    private boolean updatingQuestion = false;
+    private Long quizId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_create);
+        initializeQuizId();
+
+
         questionAPI = RetrofitClient.getQuestionApi();
-        saveManager = new QCQuestionSaveManager(this, 1L);
+        saveManager = new QCQuestionSaveManager(this, quizId);
         Log.d(TAG, "LOADING question");
 
         Map<String, Object> _user = QCLocalStorageUtils.getLoggedInUser(this);
-        Map<String, Object> _quiz = QCLocalStorageUtils.getLatestQuizCreatedByUser(this);
+//        Map<String, Object> _quiz = QCLocalStorageUtils.getLatestQuizCreatedByUser(this);
+
 
         Log.d("USER INFO", _user != null ? _user.toString() : "No user");
-        Log.d("QUIZ INFO", _quiz != null ? _quiz.toString() : "No quiz");
+//        Log.d("QUIZ INFO", _quiz != null ? _quiz.toString() : "No quiz");
+
+
 
         questions = new ArrayList<>();
         loadQuizQuestions();
@@ -107,6 +115,18 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
         });
 
         menuButton.setOnClickListener(this::showPopupMenu);
+    }
+
+    void initializeQuizId() {
+        Intent intent = getIntent();
+        quizId = intent.getLongExtra("quizId", -1);
+        if (quizId == -1) {
+            Log.e(TAG, "Quiz ID not provided!");
+            finish();
+        }
+        else {
+            Log.e(TAG, "Provide Quiz ID successfully with quizId = " + quizId);
+        }
     }
 
     @Override
@@ -211,7 +231,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                     if (retryCount.getAndIncrement() < MAX_RETRIES) {
                         Log.d(TAG, "Retrying... Attempt " + retryCount.get() + " of " + MAX_RETRIES);
                         new Handler().postDelayed(() -> {
-                            questionAPI.getQuizQuestions(1).enqueue(this);
+                            questionAPI.getQuizQuestions(quizId).enqueue(this);
                         }, 1000);
                         return;
                     }
@@ -237,7 +257,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                 if (retryCount.getAndIncrement() < MAX_RETRIES) {
                     Log.d(TAG, "Retrying... Attempt " + retryCount.get() + " of " + MAX_RETRIES);
                     new Handler().postDelayed(() -> {
-                        questionAPI.getQuizQuestions(1).enqueue(this);
+                        questionAPI.getQuizQuestions(quizId).enqueue(this);
                     }, 1000);
                     return;
                 }
@@ -258,7 +278,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
             }
         };
 
-        call[0] = questionAPI.getQuizQuestions(1);
+        call[0] = questionAPI.getQuizQuestions(quizId);
         call[0].enqueue(callback);
     }
 

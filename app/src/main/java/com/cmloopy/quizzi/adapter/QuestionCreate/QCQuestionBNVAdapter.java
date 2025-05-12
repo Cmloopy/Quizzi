@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.QuestionCreate.Question;
 import com.google.android.material.card.MaterialCardView;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -82,10 +83,19 @@ public class QCQuestionBNVAdapter extends RecyclerView.Adapter<QCQuestionBNVAdap
             questionImage = itemView.findViewById(R.id.question_image);
             questionNumber = itemView.findViewById(R.id.question_number);
             cardContainer = itemView.findViewById(R.id.card_container);
+
         }
 
         public void bind(final Question question, final int position, boolean isSelected) {
-            questionImage.setImageResource(R.drawable.back_to_school);
+            if(question.getImage() != null && !question.getImage().isEmpty()) {
+                Picasso.get()
+                        .load(question.getImage())
+                        .resize(1080, 720)
+                        .centerCrop()
+                        .into(questionImage);
+            } else {
+                questionImage.setImageResource(R.drawable.back_to_school);
+            }
 
             questionNumber.setText(String.valueOf(position + 1));
 

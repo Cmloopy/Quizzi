@@ -28,15 +28,21 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.MultiTransformation;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.QuestionCreate.Question;
 import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCGenericSelectionDialog;
-import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCHelper;
-import com.cmloopy.quizzi.views.QuestionCreate.QuestionCreateActivity;
+import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,12 +121,11 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         setupMediaMode(isAudioMode);
 
         if (isAudioMode) {
-            if (question.getAudioUri() != null && !question.getAudioUri().isEmpty()) {
+            if (question.getAudio() != null && !question.getAudio().isEmpty()) {
                 setQuestionMedia(question);
             }
         } else {
-            // Setup for image
-            if (question.getImageUri() != null && !question.getImageUri().isEmpty()) {
+            if (question.getImage() != null && !question.getImage().isEmpty()) {
                 setQuestionMedia(question);
             }
         }
@@ -211,12 +216,12 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         releaseMediaPlayer();
 
         if (isAudioMode) {
-            getCurrentQuestion().setAudioUri(null);
+            getCurrentQuestion().setAudio(null);
 
             if (audioPlaceholder != null) audioPlaceholder.setVisibility(View.VISIBLE);
             if (audioContentContainer != null) audioContentContainer.setVisibility(View.GONE);
         } else {
-            getCurrentQuestion().setImageUri(null);
+            getCurrentQuestion().setImage(null);
 
             if (imagePlaceholder != null) imagePlaceholder.setVisibility(View.VISIBLE);
             if (coverImageContainer != null) coverImageContainer.setVisibility(View.GONE);
@@ -339,22 +344,19 @@ public abstract class QCBaseQuestionFragment extends Fragment {
     }
 
     protected void onMediaClicked() {
-        // Release media player if it exists
         releaseMediaPlayer();
     }
 
     private void setupAudioControls() {
-        // Play/Pause button listener
         if (playAudioButton != null) {
             playAudioButton.setOnClickListener(v -> playAudio());
         }
 
-        // Rewind button listener (go back 10 seconds)
         if (rewindButton != null) {
             rewindButton.setOnClickListener(v -> {
                 if (mediaPlayer != null && isPlaybackInitialized) {
                     int currentPosition = mediaPlayer.getCurrentPosition();
-                    int newPosition = Math.max(0, currentPosition - 10000); // Go back 10 seconds
+                    int newPosition = Math.max(0, currentPosition - 10000);
                     mediaPlayer.seekTo(newPosition);
                     updateSeekBarProgress();
                 }
@@ -373,14 +375,12 @@ public abstract class QCBaseQuestionFragment extends Fragment {
             });
         }
 
-        // Playback speed button listener
         if (playbackSpeedButton != null) {
             playbackSpeedButton.setOnClickListener(v -> {
                 changePlaybackSpeed();
             });
         }
 
-        // Seek bar listener
         if (audioSeekBar != null) {
             audioSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
@@ -393,14 +393,12 @@ public abstract class QCBaseQuestionFragment extends Fragment {
 
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
-                    // Pause updates while user is dragging
                     handler.removeCallbacks(updateSeekBar);
                 }
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     if (mediaPlayer != null && isPlaybackInitialized && isPlaying) {
-                        // Resume updates after user finishes dragging
                         handler.postDelayed(updateSeekBar, 100);
                     }
                 }
@@ -408,27 +406,20 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         }
     }
 
-    // Method to change playback speed
     private void changePlaybackSpeed() {
         if (mediaPlayer != null && isPlaybackInitialized) {
-            // Cycle through available speeds
             currentSpeedIndex = (currentSpeedIndex + 1) % playbackSpeeds.length;
             currentPlaybackSpeed = playbackSpeeds[currentSpeedIndex];
 
-            // Update speed button text
             playbackSpeedButton.setText(String.format("%.1fx", currentPlaybackSpeed));
 
-            // Apply new playback speed
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // Use the Android M+ PlaybackParams API
                 android.media.PlaybackParams params = mediaPlayer.getPlaybackParams();
                 params.setSpeed(currentPlaybackSpeed);
                 try {
                     boolean wasPlaying = isPlaying;
                     mediaPlayer.setPlaybackParams(params);
 
-                    // Setting playback params can automatically start playback
-                    // If we weren't playing, we should pause
                     if (!wasPlaying && mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
                     }
@@ -445,7 +436,6 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         }
     }
 
-    // Format time in milliseconds to mm:ss format
     private String formatTime(int milliseconds) {
         int seconds = milliseconds / 1000;
         int minutes = seconds / 60;
@@ -453,7 +443,6 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         return String.format(java.util.Locale.getDefault(), "%d:%02d", minutes, seconds);
     }
 
-    // Update time text displays
     private void updateTimeText(int currentMs, int totalMs) {
         if (currentTimeText != null && totalTimeText != null) {
             currentTimeText.setText(formatTime(currentMs));
@@ -655,7 +644,6 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         onMediaClicked();
     }
 
-    // Handle activity result for media selection
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -685,37 +673,28 @@ public abstract class QCBaseQuestionFragment extends Fragment {
     }
 
     private void displayMedia(Uri mediaUri) {
-        // Hide placeholders
         if (isAudioMode) {
-            // Show audio content, hide image content and placeholders
             if (audioPlaceholder != null) audioPlaceholder.setVisibility(View.GONE);
             if (imagePlaceholder != null) imagePlaceholder.setVisibility(View.GONE);
             if (audioContentContainer != null) audioContentContainer.setVisibility(View.VISIBLE);
             if (coverImageContainer != null) coverImageContainer.setVisibility(View.GONE);
 
-            // Set audio filename
             if (audioFileName != null) {
                 String filename = getMediaFileName(mediaUri);
                 audioFileName.setText(filename);
             }
         } else {
-            // Show image content, hide audio content and placeholders
             if (imagePlaceholder != null) imagePlaceholder.setVisibility(View.GONE);
             if (audioPlaceholder != null) audioPlaceholder.setVisibility(View.GONE);
             if (coverImageContainer != null) coverImageContainer.setVisibility(View.VISIBLE);
             if (audioContentContainer != null) audioContentContainer.setVisibility(View.GONE);
 
-            // Load the image
-            if (coverImageView != null) {
-                MultiTransformation<Bitmap> multiTransformation = new MultiTransformation<>(
-                        new CenterCrop(),
-                        new RoundedCorners(36)
-                );
+            if (mediaUri != null) {
 
-                Glide.with(this)
+                Picasso.get()
                         .load(mediaUri)
-                        .transform(multiTransformation)
-                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .resize(1080, 720)
+                        .centerCrop()
                         .into(coverImageView);
             }
         }
@@ -765,16 +744,16 @@ public abstract class QCBaseQuestionFragment extends Fragment {
                     Toast.makeText(getContext(), "Cannot access audio file", Toast.LENGTH_SHORT).show();
                 }
 
-                getCurrentQuestion().setAudioUri(mediaUri.toString());
+                getCurrentQuestion().setAudio(mediaUri.toString());
             } else {
-                getCurrentQuestion().setImageUri(mediaUri.toString());
+                getCurrentQuestion().setImage(mediaUri.toString());
             }
             notifyQuestionUpdated();
         }
     }
 
     protected void setQuestionMedia(Question question) {
-        String mediaPath = isAudioMode ? question.getAudioUri() : question.getImageUri();
+        String mediaPath = isAudioMode ? question.getAudio() : question.getImage();
         if (mediaPath != null && !mediaPath.isEmpty()) {
             try {
                 Uri uri = Uri.parse(mediaPath);

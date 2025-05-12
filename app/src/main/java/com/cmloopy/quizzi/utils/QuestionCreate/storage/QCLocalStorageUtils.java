@@ -67,22 +67,22 @@ public class QCLocalStorageUtils {
         }
     }
 
-    public static Map<String, Object> getLatestQuizCreatedByUser(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        int quizId = prefs.getInt("latest_quiz_id", -1);
-
-        if (quizId == -1L) {
-            return null;
-        }
-
-        Map<String, Object> quiz = new HashMap<>();
-        quiz.put("quiz_id", quizId);
-        quiz.put("title", prefs.getString("quiz_" + quizId + "_title", "Untitled Quiz"));
-        quiz.put("data", prefs.getString("quiz_" + quizId + "_data", ""));
-        quiz.put("created_at", prefs.getLong("quiz_" + quizId + "_created_at", 0));
-
-        return quiz;
-    }
+//    public static Map<String, Object> getLatestQuizCreatedByUser(Context context) {
+//        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+//        int quizId = prefs.getInt("latest_quiz_id", -1);
+//
+//        if (quizId == -1L) {
+//            return null;
+//        }
+//
+//        Map<String, Object> quiz = new HashMap<>();
+//        quiz.put("quiz_id", quizId);
+//        quiz.put("title", prefs.getString("quiz_" + quizId + "_title", "Untitled Quiz"));
+//        quiz.put("data", prefs.getString("quiz_" + quizId + "_data", ""));
+//        quiz.put("created_at", prefs.getLong("quiz_" + quizId + "_created_at", 0));
+//
+//        return quiz;
+//    }
 
     public static int getLoggedInUserId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

@@ -68,7 +68,7 @@ public class QCQuestionCheckboxFragment extends QCBaseQuestionFragment implement
         setupRecyclerView(view);
 
         // If we already have a cover image, hide the placeholder
-        if (questionChoice.getImageUri() != null && !questionChoice.getImageUri().isEmpty()) {
+        if (questionChoice.getImage() != null && !questionChoice.getImage().isEmpty()) {
             coverImagePlaceholder.setVisibility(View.GONE);
         }
 

@@ -15,7 +15,7 @@ import androidx.cardview.widget.CardView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.QuestionCreate.Question;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
-import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCHelper;
+import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 
 public class QCQuestionTrueFalseFragment extends QCBaseQuestionFragment {
 

@@ -38,7 +38,8 @@ import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.UserApi;
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
-import com.cmloopy.quizzi.views.QuizCreate.after.QuizCreateActivity;
+import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
+import com.cmloopy.quizzi.views.QuestionCreate.QuestionCreateActivity;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
@@ -355,13 +356,11 @@ public class CreateQuizActivity extends AppCompatActivity {
     private boolean validateForm() {
         boolean isValid = true;
 
-        // Check title
         if (etTitle.getText().toString().trim().isEmpty()) {
             etTitle.setError("Please enter a title");
             isValid = false;
         }
 
-        // Check if a collection is selected (not the first item)
         if (spinnerCollection.getSelectedItemPosition() == 0) {
             Toast.makeText(this, "Please select a collection", Toast.LENGTH_SHORT).show();
             isValid = false;
@@ -372,10 +371,6 @@ public class CreateQuizActivity extends AppCompatActivity {
 
     private void saveQuiz() {
         if (validateForm()) {
-            // Save quiz logic would go here
-            // This would typically involve creating a Quiz object and saving it to a database
-
-            // Save keywords
             saveKeywordsToPrefs();
 
             Toast.makeText(this, "Quiz saved", Toast.LENGTH_SHORT).show();
@@ -392,14 +387,16 @@ public class CreateQuizActivity extends AppCompatActivity {
         String visiblee = "true";
         String visibleQues = "true";
         String shuffer = "false";
-        File file = getFileFromUri(selectedImageUri);
+        File file = null;
+        if(selectedImageUri != null) {
+             file = getFileFromUri(selectedImageUri);
+        }
         if (file == null) {
             Log.e("Upload", "File is null");
-            return;
         }
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("coverPhotoFile", file.getName(), requestFile);
+        RequestBody requestFile = file != null ? RequestBody.create(MediaType.parse("image/*"), file) : null;
+        MultipartBody.Part filePart = file != null ? MultipartBody.Part.createFormData("coverPhotoFile", file.getName(), requestFile) : null;
         RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), idUser + "");
         RequestBody quizCollectionId = RequestBody.create(MediaType.parse("text/plain"), "1");
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), titles);
@@ -421,8 +418,11 @@ public class CreateQuizActivity extends AppCompatActivity {
                     Toast.makeText(CreateQuizActivity.this, "Create Quizz Successfully!", Toast.LENGTH_SHORT).show();
                     Log.d("Create Quiz", "Success");
                     Intent intent;
-                    intent = new Intent(CreateQuizActivity.this, QuizCreateActivity.class);
+                    intent = new Intent(CreateQuizActivity.this, QuestionCreateActivity.class);
                     intent.putExtra("quizId", response.body().getId());
+
+//                    storeQuizSuccess(response.body().getId(), response.body().getTitle());
+
                     startActivity(intent);
                 } else {
                     Log.e("Upload", "Failed: " + response.code());
@@ -434,6 +434,25 @@ public class CreateQuizActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void storeQuizSuccess(Long quizId, String quizTitle) {
+//        boolean stored = QCLocalStorageUtils
+//                .storeQuizCreationSuccess(
+//                CreateQuizActivity.this,
+//                quizId,
+//                quizTitle,
+//                null
+//        );
+//
+//        if (stored) {
+//            Log.d("Create Quiz", "Quiz data stored successfully");
+//        } else {
+//            Log.w("Create Quiz", "Failed to store quiz data");
+//        }
+
+        Toast.makeText(CreateQuizActivity.this, "Create Quizz Successfully!", Toast.LENGTH_SHORT).show();
+        Log.d("Create Quiz", "Success");
     }
 
     // Phương thức để thêm chip

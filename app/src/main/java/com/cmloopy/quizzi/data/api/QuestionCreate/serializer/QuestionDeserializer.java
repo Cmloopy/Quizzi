@@ -19,19 +19,21 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class QuestionDeserializer implements JsonDeserializer<Question> {
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.US);
-
+    private static final DateTimeFormatter dateTimeFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
     @Override
     public Question deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
-        // Parse common question properties
         Long id = jsonObject.get("id").getAsLong();
         int position = jsonObject.has("position") ? jsonObject.get("position").getAsInt() : 0;
         String content = jsonObject.get("content").getAsString();
@@ -46,15 +48,24 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
 
         Date createdAt = new Date();
         Date updatedAt = new Date();
-        try {
-            if (jsonObject.has("createdAt") && !jsonObject.get("createdAt").isJsonNull()) {
-                createdAt = dateFormat.parse(jsonObject.get("createdAt").getAsString());
+        if (jsonObject.has("createdAt") && !jsonObject.get("createdAt").isJsonNull()) {
+            try {
+                String dateStr = jsonObject.get("createdAt").getAsString();
+                LocalDateTime localDateTime = LocalDateTime.parse(dateStr, dateTimeFormatter);
+                createdAt = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            } catch (Exception e) {
+                System.err.println("Error parsing createdAt date: " + e.getMessage());
             }
-            if (jsonObject.has("updatedAt") && !jsonObject.get("updatedAt").isJsonNull()) {
-                updatedAt = dateFormat.parse(jsonObject.get("updatedAt").getAsString());
+        }
+
+        if (jsonObject.has("updatedAt") && !jsonObject.get("updatedAt").isJsonNull()) {
+            try {
+                String dateStr = jsonObject.get("updatedAt").getAsString();
+                LocalDateTime localDateTime = LocalDateTime.parse(dateStr, dateTimeFormatter);
+                updatedAt = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+            } catch (Exception e) {
+                System.err.println("Error parsing updatedAt date: " + e.getMessage());
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
 
         JsonObject questionTypeObj = jsonObject.getAsJsonObject("questionType");
@@ -177,8 +188,8 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
                 result.setPosition(position);
                 result.setQuestionType(questionType);
                 result.setContent(content);
-                result.setImageUrl(imageUrl);
-                result.setAudioUrl(audioUrl);
+                result.setImage(imageUrl);
+                result.setAudio(audioUrl);
                 result.setPoint(point);
                 result.setTimeLimit(timeLimit);
                 result.setDescription(description);

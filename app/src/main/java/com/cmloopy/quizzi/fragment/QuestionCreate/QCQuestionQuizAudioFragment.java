@@ -18,7 +18,7 @@ import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Question;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
 import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCChoiceOptionCreateDialog;
-import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCHelper;
+import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 
 import java.util.ArrayList;
 import java.util.List;
