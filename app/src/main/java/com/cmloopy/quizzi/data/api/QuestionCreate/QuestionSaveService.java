@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,6 +57,7 @@ public class QuestionSaveService {
                 @Part("quizId") RequestBody quizId,
                 @Part("questionTypeId") RequestBody questionTypeId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -73,6 +75,7 @@ public class QuestionSaveService {
                 @Part("quizId") RequestBody quizId,
                 @Part("questionTypeId") RequestBody questionTypeId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -88,6 +91,7 @@ public class QuestionSaveService {
         Call<QuestionTrueFalse> createTrueFalseQuestion(
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -102,6 +106,7 @@ public class QuestionSaveService {
                 @Path("id") Long id,
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -115,6 +120,7 @@ public class QuestionSaveService {
         Call<QuestionChoice> createChoiceQuestion(
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -129,6 +135,7 @@ public class QuestionSaveService {
                 @Path("id") Long id,
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -142,6 +149,7 @@ public class QuestionSaveService {
         Call<QuestionSlider> createSliderQuestion(
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -160,6 +168,7 @@ public class QuestionSaveService {
                 @Path("id") Long id,
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -177,6 +186,7 @@ public class QuestionSaveService {
         Call<QuestionPuzzle> createPuzzleQuestion(
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -191,6 +201,7 @@ public class QuestionSaveService {
                 @Path("id") Long id,
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -204,6 +215,7 @@ public class QuestionSaveService {
         Call<QuestionTypeText> createTextQuestion(
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -219,6 +231,7 @@ public class QuestionSaveService {
                 @Path("id") Long id,
                 @Part("quizId") RequestBody quizId,
                 @Part("content") RequestBody content,
+                @Part("position") RequestBody position,
                 @Part("point") RequestBody point,
                 @Part("timeLimit") RequestBody timeLimit,
                 @Part("description") RequestBody description,
@@ -426,6 +439,7 @@ public class QuestionSaveService {
                 question.getQuestionType().getId().toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -433,11 +447,11 @@ public class QuestionSaveService {
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getDescription() != null ? question.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         apiService.createQuestion(
-                quizIdBody, questionTypeIdBody, contentBody, pointBody,
+                quizIdBody, questionTypeIdBody, contentBody, positionBody, pointBody,
                 timeLimitBody, descriptionBody, imageFilePart, audioFilePart
         ).enqueue(new Callback<Question>() {
             @Override
@@ -463,6 +477,8 @@ public class QuestionSaveService {
                 question.getQuestionType().getId().toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
+
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -470,11 +486,11 @@ public class QuestionSaveService {
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getDescription() != null ? question.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         apiService.updateQuestion(
-                question.getId(), quizIdBody, questionTypeIdBody, contentBody, pointBody,
+                question.getId(), quizIdBody, questionTypeIdBody, contentBody, positionBody, pointBody,
                 timeLimitBody, descriptionBody, imageFilePart, audioFilePart
         ).enqueue(new Callback<Question>() {
             @Override
@@ -497,6 +513,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -506,11 +523,11 @@ public class QuestionSaveService {
         RequestBody correctAnswerBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.isCorrectAnswer()));
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         apiService.createTrueFalseQuestion(
-                quizIdBody, contentBody, pointBody, timeLimitBody,
+                quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, correctAnswerBody, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionTrueFalse>() {
             @Override
@@ -535,6 +552,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -544,11 +562,11 @@ public class QuestionSaveService {
         RequestBody correctAnswerBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.isCorrectAnswer()));
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         apiService.updateTrueFalseQuestion(
-                question.getId(), quizIdBody, contentBody, pointBody, timeLimitBody,
+                question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, correctAnswerBody, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionTrueFalse>() {
             @Override
@@ -571,6 +589,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -578,8 +597,8 @@ public class QuestionSaveService {
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getDescription() != null ? question.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         List<MultipartBody.Part> choiceOptionsParts = new ArrayList<>();
         if (question.getChoiceOptions() != null) {
@@ -628,7 +647,7 @@ public class QuestionSaveService {
         }
 
         apiService.createChoiceQuestion(
-                quizIdBody, contentBody, pointBody, timeLimitBody,
+                quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, choiceOptionsParts, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionChoice>() {
             @Override
@@ -652,6 +671,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -659,8 +679,8 @@ public class QuestionSaveService {
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getDescription() != null ? question.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         List<MultipartBody.Part> choiceOptionsParts = new ArrayList<>();
         if (question.getChoiceOptions() != null) {
@@ -702,7 +722,7 @@ public class QuestionSaveService {
         }
 
         apiService.updateChoiceQuestion(
-                question.getId(), quizIdBody, contentBody, pointBody, timeLimitBody,
+                question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, choiceOptionsParts, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionChoice>() {
             @Override
@@ -725,6 +745,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -742,11 +763,11 @@ public class QuestionSaveService {
         RequestBody colorBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getColor() != null ? question.getColor() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         apiService.createSliderQuestion(
-                quizIdBody, contentBody, pointBody, timeLimitBody,
+                quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, minValueBody, maxValueBody, defaultValueBody,
                 correctAnswerBody, colorBody, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionSlider>() {
@@ -771,6 +792,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -788,11 +810,11 @@ public class QuestionSaveService {
         RequestBody colorBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getColor() != null ? question.getColor() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         apiService.updateSliderQuestion(
-                question.getId(), quizIdBody, contentBody, pointBody, timeLimitBody,
+                question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, minValueBody, maxValueBody, defaultValueBody,
                 correctAnswerBody, colorBody, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionSlider>() {
@@ -816,6 +838,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -823,8 +846,8 @@ public class QuestionSaveService {
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getDescription() != null ? question.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         List<MultipartBody.Part> puzzlePiecesParts = new ArrayList<>();
         if (question.getPuzzlePieces() != null) {
@@ -848,7 +871,7 @@ public class QuestionSaveService {
         }
 
         apiService.createPuzzleQuestion(
-                quizIdBody, contentBody, pointBody, timeLimitBody,
+                quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, puzzlePiecesParts, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionPuzzle>() {
             @Override
@@ -872,6 +895,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -879,8 +903,8 @@ public class QuestionSaveService {
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getDescription() != null ? question.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         List<MultipartBody.Part> puzzlePiecesParts = new ArrayList<>();
         if (question.getPuzzlePieces() != null) {
@@ -904,7 +928,7 @@ public class QuestionSaveService {
         }
 
         apiService.updatePuzzleQuestion(
-                question.getId(), quizIdBody, contentBody, pointBody, timeLimitBody,
+                question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, puzzlePiecesParts, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionPuzzle>() {
             @Override
@@ -927,6 +951,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -936,8 +961,8 @@ public class QuestionSaveService {
         RequestBody caseSensitiveBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.isCaseSensitive()));
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         // Create parts for each accepted answer
         List<MultipartBody.Part> acceptedAnswersParts = new ArrayList<>();
@@ -956,7 +981,7 @@ public class QuestionSaveService {
         }
 
         apiService.createTextQuestion(
-                quizIdBody, contentBody, pointBody, timeLimitBody,
+                quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, caseSensitiveBody, acceptedAnswersParts, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionTypeText>() {
             @Override
@@ -980,6 +1005,7 @@ public class QuestionSaveService {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -989,8 +1015,8 @@ public class QuestionSaveService {
         RequestBody caseSensitiveBody = RequestBody.create(MediaType.parse("text/plain"),
                 String.valueOf(question.isCaseSensitive()));
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImageUri());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudioUri());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
 
         List<MultipartBody.Part> acceptedAnswersParts = new ArrayList<>();
         if (question.getAcceptedAnswers() != null) {
@@ -1007,7 +1033,7 @@ public class QuestionSaveService {
         }
 
         apiService.updateTextQuestion(
-                question.getId(), quizIdBody, contentBody, pointBody, timeLimitBody,
+                question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, caseSensitiveBody, acceptedAnswersParts, imageFilePart, audioFilePart
         ).enqueue(new Callback<QuestionTypeText>() {
             @Override
@@ -1181,21 +1207,21 @@ public class QuestionSaveService {
             dto.setQuestionType(question.getQuestionType().getName());
         }
 
-        if (question.getImageUri() != null && !question.getImageUri().isEmpty()) {
+        if (question.getImage() != null && !question.getImage().isEmpty()) {
             String fileName = "image_" + System.currentTimeMillis() + "_" + question.getPosition() + ".jpg";
             dto.setImageFileName(fileName);
 
-            MultipartBody.Part imagePart = createFilePart("files", question.getImageUri());
+            MultipartBody.Part imagePart = createFilePart("files", question.getImage());
             if (imagePart != null) {
                 fileParts.put(fileName, imagePart);
             }
         }
 
-        if (question.getAudioUri() != null && !question.getAudioUri().isEmpty()) {
+        if (question.getAudio() != null && !question.getAudio().isEmpty()) {
             String fileName = "audio_" + System.currentTimeMillis() + "_" + question.getPosition() + ".mp3";
             dto.setAudioFileName(fileName);
 
-            MultipartBody.Part audioPart = createFilePart("files", question.getAudioUri());
+            MultipartBody.Part audioPart = createFilePart("files", question.getAudio());
             if (audioPart != null) {
                 fileParts.put(fileName, audioPart);
             }

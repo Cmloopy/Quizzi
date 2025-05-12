@@ -356,13 +356,11 @@ public class CreateQuizActivity extends AppCompatActivity {
     private boolean validateForm() {
         boolean isValid = true;
 
-        // Check title
         if (etTitle.getText().toString().trim().isEmpty()) {
             etTitle.setError("Please enter a title");
             isValid = false;
         }
 
-        // Check if a collection is selected (not the first item)
         if (spinnerCollection.getSelectedItemPosition() == 0) {
             Toast.makeText(this, "Please select a collection", Toast.LENGTH_SHORT).show();
             isValid = false;
@@ -423,7 +421,7 @@ public class CreateQuizActivity extends AppCompatActivity {
                     intent = new Intent(CreateQuizActivity.this, QuestionCreateActivity.class);
                     intent.putExtra("quizId", response.body().getId());
 
-                    storeQuizSuccess(response.body().getId(), response.body().getTitle());
+//                    storeQuizSuccess(response.body().getId(), response.body().getTitle());
 
                     startActivity(intent);
                 } else {
@@ -439,19 +437,19 @@ public class CreateQuizActivity extends AppCompatActivity {
     }
 
     public void storeQuizSuccess(Long quizId, String quizTitle) {
-        boolean stored = QCLocalStorageUtils
-                .storeQuizCreationSuccess(
-                CreateQuizActivity.this,
-                quizId,
-                quizTitle,
-                null
-        );
-
-        if (stored) {
-            Log.d("Create Quiz", "Quiz data stored successfully");
-        } else {
-            Log.w("Create Quiz", "Failed to store quiz data");
-        }
+//        boolean stored = QCLocalStorageUtils
+//                .storeQuizCreationSuccess(
+//                CreateQuizActivity.this,
+//                quizId,
+//                quizTitle,
+//                null
+//        );
+//
+//        if (stored) {
+//            Log.d("Create Quiz", "Quiz data stored successfully");
+//        } else {
+//            Log.w("Create Quiz", "Failed to store quiz data");
+//        }
 
         Toast.makeText(CreateQuizActivity.this, "Create Quizz Successfully!", Toast.LENGTH_SHORT).show();
         Log.d("Create Quiz", "Success");

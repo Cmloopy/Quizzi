@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit2.http.Multipart;
+
 public class Question implements Serializable {
     private Long id;
     private int position;
@@ -12,10 +14,6 @@ public class Question implements Serializable {
     private QuestionType questionType;
     private String image;
     private String audio;
-
-    private String imageUri;
-    private String audioUri;
-
 
     private String content;
     private int point;
@@ -234,22 +232,6 @@ public class Question implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public String getImageUri() {
-        return imageUri;
-    }
-
-    public String getAudioUri() {
-        return audioUri;
-    }
-
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
-    }
-
-    public void setAudioUri(String audioUri) {
-        this.audioUri = audioUri;
     }
 
     public Date getUpdatedAt() {

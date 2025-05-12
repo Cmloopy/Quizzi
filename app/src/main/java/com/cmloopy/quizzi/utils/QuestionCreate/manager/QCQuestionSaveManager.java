@@ -165,7 +165,7 @@ public class QCQuestionSaveManager {
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            saveService.saveBatchQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
+            saveService.saveAllQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
                 progressDialog.dismiss();
 
                 if (isSuccessful) {

@@ -121,7 +121,7 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         setupMediaMode(isAudioMode);
 
         if (isAudioMode) {
-            if (question.getAudio() != null && !question.getAudioUri().isEmpty()) {
+            if (question.getAudio() != null && !question.getAudio().isEmpty()) {
                 setQuestionMedia(question);
             }
         } else {
@@ -216,12 +216,12 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         releaseMediaPlayer();
 
         if (isAudioMode) {
-            getCurrentQuestion().setAudioUri(null);
+            getCurrentQuestion().setAudio(null);
 
             if (audioPlaceholder != null) audioPlaceholder.setVisibility(View.VISIBLE);
             if (audioContentContainer != null) audioContentContainer.setVisibility(View.GONE);
         } else {
-            getCurrentQuestion().setImageUri(null);
+            getCurrentQuestion().setImage(null);
 
             if (imagePlaceholder != null) imagePlaceholder.setVisibility(View.VISIBLE);
             if (coverImageContainer != null) coverImageContainer.setVisibility(View.GONE);
@@ -744,9 +744,9 @@ public abstract class QCBaseQuestionFragment extends Fragment {
                     Toast.makeText(getContext(), "Cannot access audio file", Toast.LENGTH_SHORT).show();
                 }
 
-                getCurrentQuestion().setAudioUri(mediaUri.toString());
+                getCurrentQuestion().setAudio(mediaUri.toString());
             } else {
-                getCurrentQuestion().setImageUri(mediaUri.toString());
+                getCurrentQuestion().setImage(mediaUri.toString());
             }
             notifyQuestionUpdated();
         }
