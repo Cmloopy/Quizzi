@@ -3,6 +3,7 @@ package com.cmloopy.quizzi.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,19 +21,35 @@ public class AuthorDetailsActivity extends AppCompatActivity {
 
     private MaterialButton btnQuizzo, btnCollections, btnAbout;
     private ImageView btnBack, btnSend, btnMore;
-    // Thêm khai báo biến authorAvatarUrl
-    private String authorAvatarUrl;
-    // Thêm biến để lưu trữ thông tin tác giả
+
+    // Biến lưu trữ thông tin tác giả
     private String authorId;
     private String authorName;
     private String authorUsername;
     private int authorAvatar;
+    private String authorAvatarUrl;
 
-    // Thêm các view để hiển thị thông tin tác giả
+    // Biến lưu trữ các thống kê
+    private int totalQuizs;
+    private int totalCollections;
+    private String totalPlays;
+    private String totalPlayers;
+    private String totalFollowers;
+    private int totalFollowing;
+
+    // Các view hiển thị thông tin
     private TextView tvAuthorName;
     private TextView tvAuthorUsername;
     private ImageView ivAuthorAvatar;
     private Button btnFollow;
+
+    // Các view hiển thị thống kê
+    private TextView tvQuizzoCount;
+    private TextView tvPlaysCount;
+    private TextView tvPlayersCount;
+    private TextView tvCollectionsCount;
+    private TextView tvFollowersCount;
+    private TextView tvFollowingCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +76,33 @@ public class AuthorDetailsActivity extends AppCompatActivity {
     private void getAuthorDataFromIntent() {
         Intent intent = getIntent();
         if (intent != null) {
+            // Log để kiểm tra dữ liệu
+            Log.d("AuthorDetails", "Intent extras: " + intent.getExtras());
+
+            // Thông tin cơ bản
             authorId = intent.getStringExtra("AUTHOR_ID");
             authorName = intent.getStringExtra("AUTHOR_NAME");
             authorUsername = intent.getStringExtra("AUTHOR_USERNAME");
             authorAvatar = intent.getIntExtra("AUTHOR_AVATAR", R.drawable.ic_launcher_background);
+
+            Log.d("AuthorDetails", "Received author: " + authorName + ", username: " + authorUsername);
+
+            if (intent.hasExtra("AUTHOR_AVATAR_URL")) {
+                authorAvatarUrl = intent.getStringExtra("AUTHOR_AVATAR_URL");
+            }
+
+            // Thống kê
+            totalQuizs = intent.getIntExtra("AUTHOR_TOTAL_QUIZS", 265);
+            totalCollections = intent.getIntExtra("AUTHOR_TOTAL_COLLECTIONS", 49);
+            totalPlays = intent.getStringExtra("AUTHOR_TOTAL_PLAYS") != null ?
+                    intent.getStringExtra("AUTHOR_TOTAL_PLAYS") : "32M";
+            totalPlayers = intent.getStringExtra("AUTHOR_TOTAL_PLAYERS") != null ?
+                    intent.getStringExtra("AUTHOR_TOTAL_PLAYERS") : "274M";
+            totalFollowers = intent.getStringExtra("AUTHOR_TOTAL_FOLLOWERS") != null ?
+                    intent.getStringExtra("AUTHOR_TOTAL_FOLLOWERS") : "927.3K";
+            totalFollowing = intent.getIntExtra("AUTHOR_TOTAL_FOLLOWING", 128);
+
+            Log.d("AuthorDetails", "Stats - Quizs: " + totalQuizs + ", Collections: " + totalCollections);
         }
     }
 
@@ -78,28 +118,81 @@ public class AuthorDetailsActivity extends AppCompatActivity {
         btnCollections = findViewById(R.id.btn_collections);
         btnAbout = findViewById(R.id.btn_about);
 
-        // Khởi tạo các view để hiển thị thông tin tác giả theo ID trong layout
+        // Khởi tạo các view để hiển thị thông tin tác giả
         tvAuthorName = findViewById(R.id.profile_name);
         tvAuthorUsername = findViewById(R.id.profile_username);
         ivAuthorAvatar = findViewById(R.id.profile_image);
         btnFollow = findViewById(R.id.btn_follow);
+
+        // Khởi tạo các view để hiển thị thống kê
+        tvQuizzoCount = findViewById(R.id.quizzo_count);
+        tvPlaysCount = findViewById(R.id.plays_count);
+        tvPlayersCount = findViewById(R.id.players_count);
+        tvCollectionsCount = findViewById(R.id.collections_count);
+        tvFollowersCount = findViewById(R.id.followers_count);
+        tvFollowingCount = findViewById(R.id.following_count);
     }
 
     private void displayAuthorInfo() {
-        // Hiển thị thông tin tác giả nếu có
-        if (authorName != null && tvAuthorName != null) {
+        Log.d("AuthorDetails", "Displaying author info: " + authorName);
+
+        // Hiển thị thông tin tác giả cơ bản
+        if (tvAuthorName != null && authorName != null) {
             tvAuthorName.setText(authorName);
+            Log.d("AuthorDetails", "Set author name: " + authorName);
+        } else {
+            Log.e("AuthorDetails", "Failed to set author name. TVAuthorName: " + (tvAuthorName != null) + ", authorName: " + authorName);
         }
 
-        if (authorUsername != null && tvAuthorUsername != null) {
+        if (tvAuthorUsername != null && authorUsername != null) {
             tvAuthorUsername.setText("@" + authorUsername);
+            Log.d("AuthorDetails", "Set author username: @" + authorUsername);
         }
 
         if (ivAuthorAvatar != null) {
             ivAuthorAvatar.setImageResource(authorAvatar);
+            Log.d("AuthorDetails", "Set author avatar resource: " + authorAvatar);
+        }
+
+        // Hiển thị các thống kê
+        if (tvQuizzoCount != null) {
+            tvQuizzoCount.setText(String.valueOf(totalQuizs));
+            Log.d("AuthorDetails", "Set quizzo count: " + totalQuizs);
+        } else {
+            Log.e("AuthorDetails", "tvQuizzoCount is null");
+        }
+
+        if (tvCollectionsCount != null) {
+            tvCollectionsCount.setText(String.valueOf(totalCollections));
+            Log.d("AuthorDetails", "Set collections count: " + totalCollections);
+        } else {
+            Log.e("AuthorDetails", "tvCollectionsCount is null");
+        }
+
+        if (tvPlaysCount != null && totalPlays != null) {
+            tvPlaysCount.setText(totalPlays);
+            Log.d("AuthorDetails", "Set plays count: " + totalPlays);
+        } else {
+            Log.e("AuthorDetails", "tvPlaysCount issue - null?: " + (tvPlaysCount == null) + ", totalPlays null?: " + (totalPlays == null));
+        }
+
+        if (tvPlayersCount != null && totalPlayers != null) {
+            tvPlayersCount.setText(totalPlayers);
+            Log.d("AuthorDetails", "Set players count: " + totalPlayers);
+        }
+
+        if (tvFollowersCount != null && totalFollowers != null) {
+            tvFollowersCount.setText(totalFollowers);
+            Log.d("AuthorDetails", "Set followers count: " + totalFollowers);
+        }
+
+        if (tvFollowingCount != null) {
+            tvFollowingCount.setText(String.valueOf(totalFollowing));
+            Log.d("AuthorDetails", "Set following count: " + totalFollowing);
         }
     }
 
+    // Thêm phương thức setupClickListeners
     private void setupClickListeners() {
         // Các nút trên thanh công cụ
         btnBack.setOnClickListener(v -> finish());
@@ -141,27 +234,7 @@ public class AuthorDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void loadFragment(Fragment fragment) {
-        // Truyền dữ liệu tác giả cho fragment
-        Bundle args = new Bundle();
-        args.putString("AUTHOR_ID", authorId);
-        args.putString("AUTHOR_NAME", authorName);
-        args.putString("AUTHOR_USERNAME", authorUsername);
-        args.putInt("AUTHOR_AVATAR", authorAvatar);
-
-        // Truyền avatarUrl nếu có
-        if (authorAvatarUrl != null && !authorAvatarUrl.isEmpty()) {
-            args.putString("AUTHOR_AVATAR_URL", authorAvatarUrl);
-        }
-
-        fragment.setArguments(args);
-
-        // Tải fragment
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.commit();
-    }
-
+    // Thêm phương thức updateButtonStates
     private void updateButtonStates(Button activeButton) {
         // Reset tất cả các nút về trạng thái không hoạt động
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -193,5 +266,34 @@ public class AuthorDetailsActivity extends AppCompatActivity {
             activeButton.setBackgroundTintList(getResources().getColorStateList(R.color.purple));
             activeButton.setTextColor(getResources().getColor(R.color.white));
         }
+    }
+
+    private void loadFragment(Fragment fragment) {
+        // Truyền dữ liệu tác giả cho fragment
+        Bundle args = new Bundle();
+        args.putString("AUTHOR_ID", authorId);
+        args.putString("AUTHOR_NAME", authorName);
+        args.putString("AUTHOR_USERNAME", authorUsername);
+        args.putInt("AUTHOR_AVATAR", authorAvatar);
+
+        // Truyền thống kê cho fragment
+        args.putInt("AUTHOR_TOTAL_QUIZS", totalQuizs);
+        args.putInt("AUTHOR_TOTAL_COLLECTIONS", totalCollections);
+        args.putString("AUTHOR_TOTAL_PLAYS", totalPlays);
+        args.putString("AUTHOR_TOTAL_PLAYERS", totalPlayers);
+        args.putString("AUTHOR_TOTAL_FOLLOWERS", totalFollowers);
+        args.putInt("AUTHOR_TOTAL_FOLLOWING", totalFollowing);
+
+        // Truyền avatarUrl nếu có
+        if (authorAvatarUrl != null && !authorAvatarUrl.isEmpty()) {
+            args.putString("AUTHOR_AVATAR_URL", authorAvatarUrl);
+        }
+
+        fragment.setArguments(args);
+
+        // Tải fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.commit();
     }
 }

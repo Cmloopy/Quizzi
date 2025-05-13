@@ -48,7 +48,6 @@ public class AuthorCollectionsFragment extends Fragment {
     }
 
     @Nullable
-    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_author_collections, container, false);
@@ -61,8 +60,12 @@ public class AuthorCollectionsFragment extends Fragment {
         collectionList = new ArrayList<>();
         loadCollectionData();
 
-        // Cập nhật số lượng bộ sưu tập
-        collectionsCountText.setText("49 Collections");
+        // Cập nhật số lượng bộ sưu tập từ dữ liệu truyền vào
+        int totalCollections = 0;
+        if (getArguments() != null) {
+            totalCollections = getArguments().getInt("AUTHOR_TOTAL_COLLECTIONS", 0);
+        }
+        collectionsCountText.setText(totalCollections + " Collections");
 
         // Thiết lập adapter
         adapter = new DetailTopCollectionAdapter(collectionList);

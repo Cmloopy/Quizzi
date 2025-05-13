@@ -62,18 +62,16 @@ public class AuthorQuizzoFragment extends Fragment {
         quizList = new ArrayList<>();
         loadQuizData();
 
-        // Cập nhật số lượng Quizzo
-        quizzoCountText.setText("265 Quizzo");
+        // Cập nhật số lượng Quizzo từ dữ liệu truyền vào
+        int totalQuizs = 0;
+        if (getArguments() != null) {
+            totalQuizs = getArguments().getInt("AUTHOR_TOTAL_QUIZS", 0);
+        }
+        quizzoCountText.setText(totalQuizs + " Quizzo");
 
         // Thiết lập adapter
         adapter = new QuizAdapter(quizList);
         recyclerView.setAdapter(adapter);
-
-        // Nếu authorId có giá trị, bạn có thể sử dụng nó để tải dữ liệu quizzes của tác giả cụ thể
-        if (authorId != null) {
-            // Tải dữ liệu quizzes dựa trên authorId
-            // Ví dụ: loadQuizzesByAuthorId(authorId);
-        }
 
         return view;
     }
