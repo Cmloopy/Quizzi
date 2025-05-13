@@ -61,11 +61,20 @@ public class RecommendAuthorAdapter extends RecyclerView.Adapter<RecommendAuthor
                 setFollowingState(holder);
             }
         });
+
+        // Sửa đổi phần onClick để truyền dữ liệu tác giả
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, AuthorDetailsActivity.class);
+
+                // Thêm dữ liệu tác giả vào intent
+                intent.putExtra("AUTHOR_ID", friend.getId()); // Đảm bảo có phương thức getUserId()
+                intent.putExtra("AUTHOR_NAME", friend.getName());
+                intent.putExtra("AUTHOR_USERNAME", friend.getUsername());
+                intent.putExtra("AUTHOR_AVATAR", friend.getProfileImageResource());
+
                 context.startActivity(intent);
             }
         });

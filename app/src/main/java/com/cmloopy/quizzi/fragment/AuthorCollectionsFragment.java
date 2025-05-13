@@ -25,6 +25,28 @@ public class AuthorCollectionsFragment extends Fragment {
     private List<DetailTopCollectionItem> collectionList;
     private TextView collectionsCountText;
 
+    private String authorId;
+    private String authorName;
+    private String authorUsername;
+    private int authorAvatar;
+    private String authorAvatarUrl;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Lấy dữ liệu tác giả từ arguments
+        if (getArguments() != null) {
+            authorId = getArguments().getString("AUTHOR_ID");
+            authorName = getArguments().getString("AUTHOR_NAME");
+            authorUsername = getArguments().getString("AUTHOR_USERNAME");
+            authorAvatar = getArguments().getInt("AUTHOR_AVATAR");
+            if (getArguments().containsKey("AUTHOR_AVATAR_URL")) {
+                authorAvatarUrl = getArguments().getString("AUTHOR_AVATAR_URL");
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -53,11 +75,14 @@ public class AuthorCollectionsFragment extends Fragment {
         // Sử dụng drawable mặc định từ Android thay vì các drawable tùy chỉnh
         int defaultDrawable = android.R.drawable.ic_menu_gallery; // Hoặc bất kỳ drawable mặc định nào
 
+        // Sử dụng tên tác giả thực tế nếu có
+        String creatorName = (authorName != null) ? authorName : "Rayford Eddings";
+
         // Thêm các mục bộ sưu tập sử dụng drawable mặc định
         collectionList.add(new DetailTopCollectionItem(
                 defaultDrawable,
                 "Education",
-                "Rayford Eddings",
+                creatorName,
                 "Updated 2 days ago",
                 "1.2M plays"
         ));
@@ -65,7 +90,7 @@ public class AuthorCollectionsFragment extends Fragment {
         collectionList.add(new DetailTopCollectionItem(
                 defaultDrawable,
                 "Technology",
-                "Rayford Eddings",
+                creatorName,
                 "Updated 3 days ago",
                 "890K plays"
         ));
@@ -73,7 +98,7 @@ public class AuthorCollectionsFragment extends Fragment {
         collectionList.add(new DetailTopCollectionItem(
                 defaultDrawable,
                 "Business",
-                "Rayford Eddings",
+                creatorName,
                 "Updated 5 days ago",
                 "720K plays"
         ));
@@ -81,7 +106,7 @@ public class AuthorCollectionsFragment extends Fragment {
         collectionList.add(new DetailTopCollectionItem(
                 defaultDrawable,
                 "Fashion",
-                "Rayford Eddings",
+                creatorName,
                 "Updated 1 week ago",
                 "540K plays"
         ));

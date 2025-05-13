@@ -26,6 +26,28 @@ public class AuthorQuizzoFragment extends Fragment {
     private List<Quiz> quizList;
     private TextView quizzoCountText;
 
+    private String authorId;
+    private String authorName;
+    private String authorUsername;
+    private int authorAvatar;
+    private String authorAvatarUrl;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Lấy dữ liệu tác giả từ arguments
+        if (getArguments() != null) {
+            authorId = getArguments().getString("AUTHOR_ID");
+            authorName = getArguments().getString("AUTHOR_NAME");
+            authorUsername = getArguments().getString("AUTHOR_USERNAME");
+            authorAvatar = getArguments().getInt("AUTHOR_AVATAR");
+            if (getArguments().containsKey("AUTHOR_AVATAR_URL")) {
+                authorAvatarUrl = getArguments().getString("AUTHOR_AVATAR_URL");
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -47,11 +69,16 @@ public class AuthorQuizzoFragment extends Fragment {
         adapter = new QuizAdapter(quizList);
         recyclerView.setAdapter(adapter);
 
+        // Nếu authorId có giá trị, bạn có thể sử dụng nó để tải dữ liệu quizzes của tác giả cụ thể
+        if (authorId != null) {
+            // Tải dữ liệu quizzes dựa trên authorId
+            // Ví dụ: loadQuizzesByAuthorId(authorId);
+        }
+
         return view;
     }
 
     private void loadQuizData() {
-        // Tạo danh sách các câu hỏi mẫu
         // Tạo danh sách các câu hỏi mẫu
         List<Question> questions1 = new ArrayList<>();
         questions1.add(new Question("Sample question 1", 0, 1, new ArrayList<>()));
@@ -62,9 +89,14 @@ public class AuthorQuizzoFragment extends Fragment {
         questions2.add(new Question("Sample question 2", 1, 1, new ArrayList<>()));
         questions2.add(new Question("Sample question 3", 2, 1, new ArrayList<>()));
 
-        // Thêm các mục quizzo mẫu như trong ảnh chụp màn hình
+        // Thêm các mục quizzo mẫu
+        // Ví dụ (bạn cần điều chỉnh theo cấu trúc Quiz của mình):
+        // quizList.add(new Quiz("Sample Quiz 1", authorName, questions1, "10K plays"));
+        // quizList.add(new Quiz("Sample Quiz 2", authorName, questions2, "5K plays"));
+    }
 
-
-        // Thêm thêm quizzes nếu cần
+    // Phương thức để tải dữ liệu quizzes của một tác giả cụ thể
+    private void loadQuizzesByAuthorId(String authorId) {
+        // Tải dữ liệu quizzes từ API hoặc cơ sở dữ liệu dựa trên authorId
     }
 }
