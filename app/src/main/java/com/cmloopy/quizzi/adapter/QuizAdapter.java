@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.Quiz;
-import com.cmloopy.quizzi.views.AuthorDetailsAboutActivity;
+import com.cmloopy.quizzi.views.AuthorDetailsActivity;
 import com.cmloopy.quizzi.views.QuizzDetails;
 
 import java.util.List;
@@ -35,25 +35,26 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Quiz item = items.get(position);
+        // ... Các phần khác giữ nguyên ...
 
-        holder.podcastImage.setImageResource(item.getImageResource());
-        holder.titleText.setText(item.getTitle());
-        holder.dateAndPlaysText.setText(item.getDate() + " • " + item.getPlays());
-        holder.authorName.setText(item.getAuthor());
-        holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
-
-        holder.questionsText.setText(item.getQuestions().size()+" Qs");
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        // Thêm click listener cho tác giả
+        holder.authorAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, QuizzDetails.class);
+                Intent intent = new Intent(context, AuthorDetailsActivity.class);
                 context.startActivity(intent);
             }
         });
 
+        holder.authorName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, AuthorDetailsActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

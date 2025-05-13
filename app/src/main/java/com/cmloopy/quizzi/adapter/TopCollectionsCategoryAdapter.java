@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.TopCollectionsCategory;
-import com.cmloopy.quizzi.views.AuthorDetailsAboutActivity;
 import com.cmloopy.quizzi.views.DetailTopCollections;
 
 import java.util.List;

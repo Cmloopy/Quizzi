@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.RecommendUser;
-import com.cmloopy.quizzi.views.AuthorDetailsAboutActivity;
+import com.cmloopy.quizzi.views.AuthorDetailsActivity;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.squareup.picasso.Picasso;
@@ -54,7 +54,7 @@ public class HomeAuthorAdapter extends RecyclerView.Adapter<HomeAuthorAdapter.Vi
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, AuthorDetailsAboutActivity.class);
+                Intent intent = new Intent(context, AuthorDetailsActivity.class);
                 // Truyền thông tin tác giả sang màn hình chi tiết
                 intent.putExtra("authorId", user.getId());
                 intent.putExtra("authorName", user.getName());

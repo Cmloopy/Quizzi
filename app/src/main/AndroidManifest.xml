@@ -35,7 +35,7 @@
             android:name=".views.AboutQuizzoActivity"
             android:exported="false" />
         <activity
-            android:name=".views.AuthorDetailsAboutActivity"
+            android:name=".views.AuthorDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".views.AuthorDetailsCollections"
