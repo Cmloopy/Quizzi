@@ -64,6 +64,11 @@ public class HomeFragment extends Fragment {
     private List<HomeCollection> collectionList = new ArrayList<>();
     private List<Quiz> discoverQuizzes = new ArrayList<>(); // Thêm danh sách quiz cho DISCOVER
 
+    private List<Quiz> trendingQuizzes = new ArrayList<>();
+    private List<Quiz> topPickQuizzes = new ArrayList<>();
+    private HomeDiscoverAdapter trendingAdapter;
+    private HomeDiscoverAdapter topPickAdapter;
+
     public static HomeFragment newInstance(int idUser) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -80,7 +85,7 @@ public class HomeFragment extends Fragment {
         // Khởi tạo API client
         userApi = RetrofitClient.getUserApi();
         collectionApi = RetrofitClient.getCollectionApi();
-        quizApi = RetrofitClient.getQuizAPI(); // Thêm dòng này
+        quizApi = RetrofitClient.getQuizAPI();
 
         if (getActivity().getIntent() != null) {
             int idUser = getActivity().getIntent().getIntExtra("userId", -1);
@@ -89,34 +94,40 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        // Khởi tạo với danh sách trống, sẽ được cập nhật từ API
-        //Discover
+        // DISCOVER
         DiscoverRcl = view.findViewById(R.id.rcl_home_discover);
         DiscoverRcl.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         discoverAdapter = new HomeDiscoverAdapter(discoverQuizzes);
         DiscoverRcl.setAdapter(discoverAdapter);
 
-        // Gọi API để lấy dữ liệu quiz cho DISCOVER
-        fetchDiscoverQuizzes();
-
-        //Trending Quiz - Tạm thời sử dụng dữ liệu mẫu
+        // TRENDING QUIZ
         TrendingQuiz = view.findViewById(R.id.rcl_home_trending_quiz);
         TrendingQuiz.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        TrendingQuiz.setAdapter(new HomeDiscoverAdapter(Quiz.CreateSampleData()));
+        trendingAdapter = new HomeDiscoverAdapter(trendingQuizzes);
+        TrendingQuiz.setAdapter(trendingAdapter);
 
-        //Top Pick - Tạm thời sử dụng dữ liệu mẫu
+        // TOP PICK
         TopPick = view.findViewById(R.id.rcl_home_top_pick);
         TopPick.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        TopPick.setAdapter(new HomeDiscoverAdapter(Quiz.CreateSampleData()));
+        topPickAdapter = new HomeDiscoverAdapter(topPickQuizzes);
+        TopPick.setAdapter(topPickAdapter);
 
-        //Top Author - Khởi tạo với danh sách trống, sẽ được cập nhật từ API
+        // Gọi API để lấy dữ liệu quiz cho tất cả sections
+        fetchQuizzes();
+
+        // Top Author
         TopAuthor = view.findViewById(R.id.rcl_home_top_author);
         TopAuthor.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         topAuthorAdapter = new HomeAuthorAdapter(topAuthorsList);
         TopAuthor.setAdapter(topAuthorAdapter);
-
-        // Lấy danh sách top authors từ API
         fetchTopAuthors();
+
+        // Collection
+        Collectjon = view.findViewById(R.id.rcl_home_top_collection);
+        Collectjon.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        collectionAdapter = new HomeCollectionAdapter(collectionList);
+        Collectjon.setAdapter(collectionAdapter);
+        fetchTopCollections();
 
         //Collection - Khởi tạo với danh sách trống, sẽ được cập nhật từ API
         Collectjon = view.findViewById(R.id.rcl_home_top_collection);
@@ -164,13 +175,13 @@ public class HomeFragment extends Fragment {
     }
 
     // Thêm phương thức mới để gọi API quizzes cho phần DISCOVER
-    private void fetchDiscoverQuizzes() {
+    private void fetchQuizzes() {
         if (quizApi == null) {
             Log.e("API_DEBUG", "quizApi is null!");
             return;
         }
 
-        Log.d("API_DEBUG", "Fetching quizzes...");
+        Log.d("API_DEBUG", "Fetching quizzes for all sections...");
         Call<List<QuizResponse>> call = quizApi.getAllQuizzes();
 
         call.enqueue(new Callback<List<QuizResponse>>() {
@@ -191,48 +202,112 @@ public class HomeFragment extends Fragment {
                     }
                     Log.d("API_DEBUG", "Filtered " + visibleQuizzes.size() + " visible quizzes");
 
-                    // Sắp xếp theo score giảm dần
-                    Collections.sort(visibleQuizzes, new Comparator<QuizResponse>() {
-                        @Override
-                        public int compare(QuizResponse q1, QuizResponse q2) {
-                            // Xử lý trường hợp score có thể null
-                            Integer score1 = q1.getScore() != null ? q1.getScore() : 0;
-                            Integer score2 = q2.getScore() != null ? q2.getScore() : 0;
-                            return Integer.compare(score2, score1);
-                        }
-                    });
-
-                    // Giới hạn số lượng hiển thị
-                    int limit = Math.min(10, visibleQuizzes.size());
                     if (visibleQuizzes.size() > 0) {
-                        List<QuizResponse> limitedQuizzes = visibleQuizzes.subList(0, limit);
+                        // Phân loại quizzes cho các sections khác nhau
 
-                        // Chuyển đổi từ QuizResponse sang Quiz
-                        Log.d("API_DEBUG", "Converting to Quiz models...");
-                        List<Quiz> mappedQuizzes = QuizMapper.fromResponseList(limitedQuizzes);
+                        // 1. DISCOVER - Lấy tất cả quiz và sắp xếp theo score giảm dần
+                        List<QuizResponse> discoverList = new ArrayList<>(visibleQuizzes);
+                        Collections.sort(discoverList, new Comparator<QuizResponse>() {
+                            @Override
+                            public int compare(QuizResponse q1, QuizResponse q2) {
+                                Integer score1 = q1.getScore() != null ? q1.getScore() : 0;
+                                Integer score2 = q2.getScore() != null ? q2.getScore() : 0;
+                                return Integer.compare(score2, score1);
+                            }
+                        });
+                        int discoverLimit = Math.min(10, discoverList.size());
+                        List<QuizResponse> limitedDiscoverList = discoverList.subList(0, discoverLimit);
 
-                        // Cập nhật danh sách và thông báo cho adapter
-                        Log.d("API_DEBUG", "Updating adapter with " + mappedQuizzes.size() + " quizzes");
+                        // 2. TRENDING - Lấy top quizzes mới nhất (theo createdAt)
+                        List<QuizResponse> trendingList = new ArrayList<>(visibleQuizzes);
+                        Collections.sort(trendingList, new Comparator<QuizResponse>() {
+                            @Override
+                            public int compare(QuizResponse q1, QuizResponse q2) {
+                                return q2.getCreatedAt().compareTo(q1.getCreatedAt());
+                            }
+                        });
+                        int trendingLimit = Math.min(10, trendingList.size());
+                        List<QuizResponse> limitedTrendingList = trendingList.subList(0, trendingLimit);
+
+                        // 3. TOP PICKS - Lấy các quizzes có keyword đặc biệt hoặc score cao nhất
+                        List<QuizResponse> topPicksList = new ArrayList<>(visibleQuizzes);
+                        // Sắp xếp theo điểm cao nhất cho top picks
+                        Collections.sort(topPicksList, new Comparator<QuizResponse>() {
+                            @Override
+                            public int compare(QuizResponse q1, QuizResponse q2) {
+                                Integer score1 = q1.getScore() != null ? q1.getScore() : 0;
+                                Integer score2 = q2.getScore() != null ? q2.getScore() : 0;
+                                return Integer.compare(score2, score1);
+                            }
+                        });
+                        int topPicksLimit = Math.min(10, topPicksList.size());
+                        List<QuizResponse> limitedTopPicksList = topPicksList.subList(0, topPicksLimit);
+
+                        // Chuyển đổi và cập nhật tất cả adapters
+
+                        // Cập nhật DISCOVER
+                        Log.d("API_DEBUG", "Updating DISCOVER with " + limitedDiscoverList.size() + " quizzes");
                         discoverQuizzes.clear();
-                        discoverQuizzes.addAll(mappedQuizzes);
+                        discoverQuizzes.addAll(QuizMapper.fromResponseList(limitedDiscoverList));
                         discoverAdapter.notifyDataSetChanged();
+
+                        // Cập nhật TRENDING
+                        Log.d("API_DEBUG", "Updating TRENDING with " + limitedTrendingList.size() + " quizzes");
+                        trendingQuizzes.clear();
+                        trendingQuizzes.addAll(QuizMapper.fromResponseList(limitedTrendingList));
+                        trendingAdapter.notifyDataSetChanged();
+
+                        // Cập nhật TOP PICKS
+                        Log.d("API_DEBUG", "Updating TOP PICKS with " + limitedTopPicksList.size() + " quizzes");
+                        topPickQuizzes.clear();
+                        topPickQuizzes.addAll(QuizMapper.fromResponseList(limitedTopPicksList));
+                        topPickAdapter.notifyDataSetChanged();
+
                     } else {
                         Log.d("API_DEBUG", "No visible quizzes found");
                         Toast.makeText(getContext(), "Không có quiz nào hiển thị", Toast.LENGTH_SHORT).show();
 
-                        // Sử dụng dữ liệu mẫu
+                        // Sử dụng dữ liệu mẫu cho tất cả sections
+                        List<Quiz> sampleData = Quiz.CreateSampleData();
+
                         discoverQuizzes.clear();
-                        discoverQuizzes.addAll(Quiz.CreateSampleData());
+                        discoverQuizzes.addAll(sampleData);
                         discoverAdapter.notifyDataSetChanged();
+
+                        trendingQuizzes.clear();
+                        trendingQuizzes.addAll(sampleData);
+                        trendingAdapter.notifyDataSetChanged();
+
+                        topPickQuizzes.clear();
+                        topPickQuizzes.addAll(sampleData);
+                        topPickAdapter.notifyDataSetChanged();
                     }
                 } else {
                     Log.e("API_DEBUG", "API error: " + response.message());
+                    if (response.errorBody() != null) {
+                        try {
+                            Log.e("API_DEBUG", "Error body: " + response.errorBody().string());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     Toast.makeText(getContext(), "Không thể tải dữ liệu quizzes", Toast.LENGTH_SHORT).show();
 
                     // Sử dụng dữ liệu mẫu
+                    List<Quiz> sampleData = Quiz.CreateSampleData();
+
                     discoverQuizzes.clear();
-                    discoverQuizzes.addAll(Quiz.CreateSampleData());
+                    discoverQuizzes.addAll(sampleData);
                     discoverAdapter.notifyDataSetChanged();
+
+                    trendingQuizzes.clear();
+                    trendingQuizzes.addAll(sampleData);
+                    trendingAdapter.notifyDataSetChanged();
+
+                    topPickQuizzes.clear();
+                    topPickQuizzes.addAll(sampleData);
+                    topPickAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -241,10 +316,20 @@ public class HomeFragment extends Fragment {
                 Log.e("API_DEBUG", "Network error: " + t.getMessage(), t);
                 Toast.makeText(getContext(), "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
 
-                // Sử dụng dữ liệu mẫu
+                // Sử dụng dữ liệu mẫu khi có lỗi mạng
+                List<Quiz> sampleData = Quiz.CreateSampleData();
+
                 discoverQuizzes.clear();
-                discoverQuizzes.addAll(Quiz.CreateSampleData());
+                discoverQuizzes.addAll(sampleData);
                 discoverAdapter.notifyDataSetChanged();
+
+                trendingQuizzes.clear();
+                trendingQuizzes.addAll(sampleData);
+                trendingAdapter.notifyDataSetChanged();
+
+                topPickQuizzes.clear();
+                topPickQuizzes.addAll(sampleData);
+                topPickAdapter.notifyDataSetChanged();
             }
         });
     }
