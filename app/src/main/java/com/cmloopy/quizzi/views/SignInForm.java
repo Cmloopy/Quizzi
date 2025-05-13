@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.views;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
@@ -198,7 +199,7 @@ public class SignInForm extends AppCompatActivity {
                     Log.d("LOGIN", loginResponse.getUserId() + "");
                     Intent intent = new Intent(SignInForm.this, MainActivity.class);
                     intent.putExtra("idUser",loginResponse.getUserId());
-
+                    QCLocalStorageUtils.clearAllData(SignInForm.this);
                     storeLoginSuccess(loginResponse);
 
                     startActivity(intent);
@@ -215,6 +216,7 @@ public class SignInForm extends AppCompatActivity {
             }
         });
     }
+
 
     private void storeLoginSuccess(LoginResponse loginResponse) {
         String email = emailEditText.getText().toString().trim();

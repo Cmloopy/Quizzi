@@ -1,5 +1,7 @@
 package com.cmloopy.quizzi.data.api.QuestionCreate.serializer;
 
+import android.util.Log;
+
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.PuzzleOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.TypeTextOption;
@@ -15,6 +17,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.internal.bind.util.ISO8601Utils;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -26,10 +29,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class QuestionDeserializer implements JsonDeserializer<Question> {
-    private static final DateTimeFormatter dateTimeFormatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+
     @Override
     public Question deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
@@ -46,33 +50,18 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
         String description = jsonObject.has("description") ? jsonObject.get("description").getAsString() : "";
         int quizId = jsonObject.get("quizId").getAsInt();
 
-        Date createdAt = new Date();
-        Date updatedAt = new Date();
-        if (jsonObject.has("createdAt") && !jsonObject.get("createdAt").isJsonNull()) {
-            try {
-                String dateStr = jsonObject.get("createdAt").getAsString();
-                LocalDateTime localDateTime = LocalDateTime.parse(dateStr, dateTimeFormatter);
-                createdAt = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-            } catch (Exception e) {
-                System.err.println("Error parsing createdAt date: " + e.getMessage());
-            }
-        }
+//        Date createdAt = new Date();
+//        Date updatedAt = new Date();
+        Date createdAt = parseDateSafely(jsonObject.get("createdAt"));
+        Date updatedAt = parseDateSafely(jsonObject.get("updatedAt"));
 
-        if (jsonObject.has("updatedAt") && !jsonObject.get("updatedAt").isJsonNull()) {
-            try {
-                String dateStr = jsonObject.get("updatedAt").getAsString();
-                LocalDateTime localDateTime = LocalDateTime.parse(dateStr, dateTimeFormatter);
-                updatedAt = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-            } catch (Exception e) {
-                System.err.println("Error parsing updatedAt date: " + e.getMessage());
-            }
-        }
 
         JsonObject questionTypeObj = jsonObject.getAsJsonObject("questionType");
         QuestionType questionType = context.deserialize(questionTypeObj, QuestionType.class);
 
         Question result;
 
+        Log.d("Current Question Deserializer: ", questionType.getName());
         switch (questionType.getName()) {
             case "SINGLE_CHOICE":
             case "MULTI_CHOICE":
@@ -196,11 +185,39 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
                 break;
         }
 
-        // Set created and updated dates
         result.setCreatedAt(createdAt);
         result.setUpdatedAt(updatedAt);
         result.setQuestionType(questionType);
 
         return result;
+    }
+
+    private Date parseDateSafely(JsonElement dateElem) {
+        if (dateElem == null || dateElem.isJsonNull()) return new Date();
+
+        String dateString = dateElem.getAsString();
+
+        try {
+            if (dateString.contains(".")) {
+                int dotIndex = dateString.indexOf(".");
+                int endIndex = dotIndex + 1;
+                while (endIndex < dateString.length() && Character.isDigit(dateString.charAt(endIndex)) && endIndex < dotIndex + 10) {
+                    endIndex++;
+                }
+                String nanos = dateString.substring(dotIndex + 1, endIndex);
+                String millis = nanos.length() >= 3 ? nanos.substring(0, 3) : (nanos + "000").substring(0, 3);
+
+                String after = (endIndex < dateString.length()) ? dateString.substring(endIndex) : "";
+                dateString = dateString.substring(0, dotIndex + 1) + millis + after;
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return sdf.parse(dateString);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return new Date();
+        }
     }
 }

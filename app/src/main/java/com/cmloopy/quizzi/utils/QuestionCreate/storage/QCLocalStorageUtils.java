@@ -27,7 +27,7 @@ public class QCLocalStorageUtils {
 
             editor.putInt("user_id", userId);
             editor.putString("user_email", email);
-
+            editor.putString("auth_token", token);
             if (token != null && !token.isEmpty()) {
                 editor.putString(KEY_AUTH_TOKEN, token);
             }
@@ -146,4 +146,12 @@ public class QCLocalStorageUtils {
             return false;
         }
     }
+
+    public static void clearAllData(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear(); // This removes all stored data
+        editor.commit();
+    }
+
 }
