@@ -1,8 +1,9 @@
 package com.cmloopy.quizzi.models;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CollectionModel {
+public class CollectionModel implements Serializable {
     private int id;
     private int authorId;
     private String description;

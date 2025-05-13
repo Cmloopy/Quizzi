@@ -79,4 +79,5 @@ public class RecommendUser {
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
+
 }

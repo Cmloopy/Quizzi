@@ -30,7 +30,7 @@ import com.cmloopy.quizzi.views.SearchActivity;
 import com.cmloopy.quizzi.views.TopCollections;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
-
+import com.cmloopy.quizzi.data.manager.AuthorDataManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -127,8 +127,9 @@ public class HomeFragment extends Fragment {
             Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
             startActivity(intent);
         });
-        txt2.setOnClickListener(v ->{
+        txt2.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), RecommendAuthorActivity.class);
+            // KHÔNG cần truyền dữ liệu qua intent vì chúng ta đã lưu trong AuthorDataManager
             startActivity(intent);
         });
         txt3.setOnClickListener(v ->{
@@ -144,8 +145,14 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
+
+
         return view;
     }
+
+    // Cập nhật phương thức fetchTopAuthors() trong HomeFragment.java
+
+    // Sửa trong HomeFragment.java, phương thức fetchTopAuthors()
 
     private void fetchTopAuthors() {
         Call<List<User>> call = userApi.getAllUsers();
@@ -186,6 +193,9 @@ public class HomeFragment extends Fragment {
 
                         topAuthorsList.add(author);
                     }
+
+                    // Cập nhật cache trong AuthorDataManager sử dụng phương thức mới
+                    AuthorDataManager.getInstance().setTopAuthorsDirectly(topAuthorsList);
 
                     // Thông báo cho adapter về sự thay đổi dữ liệu
                     topAuthorAdapter.notifyDataSetChanged();
