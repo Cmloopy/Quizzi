@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#6A4CFF"
-    tools:context=".views.UI_44_FinalScoreboardActivity">
+    tools:context=".views.playquiz.FinalScoreboardActivity">
 
     <!-- Back Button -->
     <ImageView
@@ -195,8 +195,7 @@
         app:layout_constraintBottom_toTopOf="@+id/containerButtons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topPlayersContainer"
-        tools:listitem="@layout/ui_44_item_leaderboard_row" />
+        app:layout_constraintTop_toBottomOf="@+id/topPlayersContainer"/>
 
     <!-- Buttons Container -->
     <LinearLayout
