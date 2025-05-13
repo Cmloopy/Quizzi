@@ -5,15 +5,12 @@ import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,6 +23,7 @@ import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.UserApi;
 import com.cmloopy.quizzi.models.user.CheckLoginUser;
 import com.cmloopy.quizzi.models.user.LoginResponse;
+import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
 
 import android.content.SharedPreferences;
 
@@ -190,6 +188,8 @@ public class SignInForm extends AppCompatActivity {
         UserApi userApi = RetrofitClient.getUserApi();
 
         Call<LoginResponse> call = userApi.loginUser(loginRequest);
+        Log.e("LOGIN", " Login data: " + loginRequest.toString());
+
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override
@@ -199,11 +199,14 @@ public class SignInForm extends AppCompatActivity {
                     Log.d("LOGIN", "Login success!");
                     Log.d("LOGIN", loginResponse.getUserId() + "");
                     Intent intent = new Intent(SignInForm.this, MainActivity.class);
-                    intent.putExtra("idUser",loginResponse.getUserId());
+                    intent.putExtra("userId",loginResponse.getUserId());
+
+                    storeLoginSuccess(loginResponse);
+
                     startActivity(intent);
                     finish();
                 } else {
-                    Log.e("LOGIN", "Login failed: " + response.code());
+                    Log.e("LOGIN", "Login failed: "  + "" + response.code());
                 }
             }
 
@@ -213,6 +216,22 @@ public class SignInForm extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+    private void storeLoginSuccess(LoginResponse loginResponse) {
+        String email = emailEditText.getText().toString().trim();
+        boolean stored = QCLocalStorageUtils.storeUserLoginSuccess(
+                SignInForm.this,
+                loginResponse.getUserId(),
+                email,
+                loginResponse.getAccessToken()
+        );
+
+        if (stored) {
+            Log.d("LOGIN", "Login data stored successfully");
+        } else {
+            Log.w("LOGIN", "Failed to store login data");
+        }
     }
 
     private void handleForgotPassword() {

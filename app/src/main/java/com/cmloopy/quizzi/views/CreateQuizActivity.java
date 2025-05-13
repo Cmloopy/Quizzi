@@ -2,6 +2,7 @@ package com.cmloopy.quizzi.views;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -38,8 +39,10 @@ import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.QuizzApi;
 import com.cmloopy.quizzi.data.api.UserApi;
+import com.cmloopy.quizzi.data.api.QuestionCreate.QuizAPI;
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
-import com.cmloopy.quizzi.views.QuizCreate.after.QuizCreateActivity;
+import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
+import com.cmloopy.quizzi.views.QuestionCreate.QuestionCreateActivity;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.chip.Chip;
@@ -55,6 +58,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -71,46 +75,73 @@ public class CreateQuizActivity extends AppCompatActivity {
     private ImageView ivCoverIcon, ivSelectedCover;
     private EditText etTitle, etDescription, etKeyword;
     private Spinner spinnerCollection, spinnerTheme, spinnerVisibility, spinnerQuestionVisibility;
-    private Button btnAddQuestion;
+    private Button btnAddQuestion, btnSaveQuiz;
     private ImageButton btnClose, btnMore;
     private FlexboxLayout chipContainer;
+    private boolean quizCreatedSuccessfully = false;
+    private Long currentQuizId = null;
+    private static final String TAG = "CreateQuizActivity";
+    private ProgressDialog progressDialog; // Added progress dialog
 
-    // Variables
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int IMAGE_PICK_CODE = 1000;
+    private static final int QUESTION_CREATE_REQUEST_CODE = 2000;
     private Uri selectedImageUri = null;
     private List<String> keywordsList = new ArrayList<>();
+    private Map<String, Object> user;
+    int idUser = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_create_quiz);
+        user = QCLocalStorageUtils.getLoggedInUser(this);
+        clearQuizCreationState();
+        Log.d(TAG, "CURRENT user: " + user.get("user_id"));
 
-        int idUser = getIntent().getIntExtra("idUser",-1);
+        SharedPreferences prefs = getSharedPreferences("QuizzoPrefs", MODE_PRIVATE);
+        currentQuizId = prefs.getLong("current_quiz_id", -1);
+        if (currentQuizId != -1) {
+            quizCreatedSuccessfully = true;
+            Log.d(TAG, "Resuming quiz with ID: " + currentQuizId);
+        }
 
-        // Setup Edge-to-Edge display
+        idUser = getIntent().getIntExtra("userId", -1);
+        Log.d(TAG, "CURRENT id user: " + idUser);
+
+//        int idUser;
+//        Object idUserObj = user.getOrDefault("user_id", -1);
+//        try {
+//            if (idUserObj instanceof Number) {
+//                idUser = ((Number) idUserObj).intValue();
+//            } else if (idUserObj instanceof String) {
+//                idUser = Integer.parseInt((String) idUserObj);
+//            } else {
+//                idUser = -1;
+//            }
+//        } catch (Exception e) {
+//            idUser = -1;
+//        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.btn_close), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Initialize UI components
         initializeViews();
-
-        // Setup click listeners
         setupClickListeners(idUser);
-
-        // Setup spinners
         setupSpinners();
-
-        // Load saved keywords
         loadKeywordsFromPrefs();
+
+        // Initialize Progress Dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Creating quiz...");
+        progressDialog.setCancelable(false);
     }
 
     private void initializeViews() {
-        // Find views by ID
         cardCoverImage = findViewById(R.id.card_cover_image);
         layoutCoverPlaceholder = findViewById(R.id.layout_cover_placeholder);
         ivCoverIcon = findViewById(R.id.iv_cover_icon);
@@ -127,12 +158,12 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerQuestionVisibility = findViewById(R.id.spinner_question_visibility);
 
         btnAddQuestion = findViewById(R.id.btn_add_question);
+        btnSaveQuiz = findViewById(R.id.btn_save_quiz);
         btnClose = findViewById(R.id.btn_close);
         btnMore = findViewById(R.id.btn_more);
     }
 
     private void setupClickListeners(int idUser) {
-        // Card cover image click
         cardCoverImage.setOnClickListener(v -> {
             /*if (checkPermission()) {
                 openImagePicker();
@@ -142,25 +173,24 @@ public class CreateQuizActivity extends AppCompatActivity {
             openImagePicker();
         });
 
-        // Close button
         btnClose.setOnClickListener(v -> {
             showExitConfirmationDialog();
         });
 
-        // More options button
         btnMore.setOnClickListener(v -> {
             showMoreOptionsMenu();
         });
 
-        // Add question button
+        // Add Question button - create quiz if needed and navigate to question creation
         btnAddQuestion.setOnClickListener(v -> {
-            /*if (validateForm()) {
-                saveQuizAndAddQuestion();
-            }*/
             saveQuizAndAddQuestion(idUser);
         });
 
-        // Keyword input handling
+        // Save Quiz button - only save the quiz without navigating to question creation
+        btnSaveQuiz.setOnClickListener(v -> {
+            saveQuizOnly(idUser);
+        });
+
         etKeyword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE ||
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
@@ -179,7 +209,6 @@ public class CreateQuizActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        // Collection Spinner
         String[] collections = {"Select Collection", "My Collection", "Public Collection", "Work", "School"};
         ArrayAdapter<String> collectionAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, collections);
@@ -189,17 +218,15 @@ public class CreateQuizActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
-
+                    // Handle collection selection
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
             }
         });
 
-        // Theme Spinner
         String[] themes = {"Quizzo Default", "Colorful", "Minimal", "Dark", "Light"};
         ArrayAdapter<String> themeAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, themes);
@@ -208,12 +235,11 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerTheme.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                // Handle theme selection
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
             }
         });
 
@@ -226,7 +252,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                // Handle visibility selection
             }
 
             @Override
@@ -235,7 +261,6 @@ public class CreateQuizActivity extends AppCompatActivity {
             }
         });
 
-        // Question Visibility Spinner
         String[] questionVisibilities = {"Only Me", "Friends", "Public"};
         ArrayAdapter<String> questionVisibilityAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, questionVisibilities);
@@ -244,17 +269,46 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerQuestionVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                // Handle question visibility selection
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
             }
         });
     }
 
-    // Permission handling methods
+    public void storeQuizSuccess(Long quizId, String quizTitle) {
+        SharedPreferences prefs = getSharedPreferences("QuizzoPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("current_quiz_id", quizId);
+        editor.putString("current_quiz_title", quizTitle);
+        editor.apply();
+
+        quizCreatedSuccessfully = true;
+        currentQuizId = quizId;
+
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+
+        Toast.makeText(CreateQuizActivity.this, "Quiz saved successfully!", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Quiz saved with ID: " + quizId);
+    }
+
+    public void clearQuizCreationState() {
+        quizCreatedSuccessfully = false;
+        currentQuizId = null;
+
+        SharedPreferences prefs = getSharedPreferences("QuizzoPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove("current_quiz_id");
+        editor.remove("current_quiz_title");
+        editor.apply();
+
+        Log.d(TAG, "Quiz creation state cleared");
+    }
+
     private boolean checkPermission() {
         return ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
@@ -276,7 +330,7 @@ public class CreateQuizActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openImagePicker();
             } else {
-
+                Toast.makeText(this, "Permission denied. Cannot select image.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -298,14 +352,13 @@ public class CreateQuizActivity extends AppCompatActivity {
             layoutCoverPlaceholder.setVisibility(View.GONE);
             ivSelectedCover.setVisibility(View.VISIBLE);
 
-            // Load the image using an image loading library
-            // For example with Glide:
-            // Glide.with(this).load(selectedImageUri).centerCrop().into(ivSelectedCover);
-
-            // Alternatively, for simple cases, you can use:
+            // Load the image
             ivSelectedCover.setImageURI(selectedImageUri);
-
             Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == QUESTION_CREATE_REQUEST_CODE) {
+            // Check if returning from QuestionCreateActivity
+            Log.d(TAG, "Returned from QuestionCreateActivity");
+            // No specific action needed here as we're keeping the quiz state
         }
     }
 
@@ -313,9 +366,13 @@ public class CreateQuizActivity extends AppCompatActivity {
     private void showExitConfirmationDialog() {
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Leave without saving?")
-                .setMessage("Your quiz draft will be discarded.")
+                .setMessage("Your quiz progress will be lost if you leave without saving.")
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .setPositiveButton("Leave", (dialog, which) -> finish())
+                .setPositiveButton("Leave", (dialog, which) -> {
+                    saveQuizOnly(idUser);
+                    clearQuizCreationState();
+                    finish();
+                })
                 .show();
     }
 
@@ -347,6 +404,8 @@ public class CreateQuizActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .setPositiveButton("Delete", (dialog, which) -> {
                     // Delete quiz logic would go here
+                    // Clear quiz creation state
+                    clearQuizCreationState();
                     Toast.makeText(this, "Quiz deleted", Toast.LENGTH_SHORT).show();
                     finish();
                 })
@@ -356,13 +415,11 @@ public class CreateQuizActivity extends AppCompatActivity {
     private boolean validateForm() {
         boolean isValid = true;
 
-        // Check title
         if (etTitle.getText().toString().trim().isEmpty()) {
             etTitle.setError("Please enter a title");
             isValid = false;
         }
 
-        // Check if a collection is selected (not the first item)
         if (spinnerCollection.getSelectedItemPosition() == 0) {
             Toast.makeText(this, "Please select a collection", Toast.LENGTH_SHORT).show();
             isValid = false;
@@ -371,46 +428,80 @@ public class CreateQuizActivity extends AppCompatActivity {
         return isValid;
     }
 
-    private void saveQuiz() {
-        if (validateForm()) {
-            // Save quiz logic would go here
-            // This would typically involve creating a Quiz object and saving it to a database
+    private void navigateToQuestionCreate(Long quizId) {
+        Intent intent = new Intent(CreateQuizActivity.this, QuestionCreateActivity.class);
+        intent.putExtra("quizId", quizId);
+        startActivity(intent);
+    }
 
-            // Save keywords
-            saveKeywordsToPrefs();
-
-            Toast.makeText(this, "Quiz saved", Toast.LENGTH_SHORT).show();
-            finish();
+    private void saveQuizOnly(int idUser) {
+        if (!validateForm()) {
+            return;
         }
+
+        if (quizCreatedSuccessfully && currentQuizId != null && currentQuizId > 0) {
+            progressDialog.show();
+            updateExistingQuiz(idUser);
+            return;
+        }
+
+//        saveKeywordsToPrefs();
+        progressDialog.show();
+        createNewQuiz(idUser, false);
     }
 
     private void saveQuizAndAddQuestion(int idUser) {
         saveKeywordsToPrefs();
         QuizzApi quizzApi = RetrofitClient.getQuizzApi();
+        if (!validateForm()) {
+            return;
+        }
+
+        if (quizCreatedSuccessfully && currentQuizId != null && currentQuizId > 0) {
+            Log.d(TAG, "Using existing quiz: " + currentQuizId);
+            updateExistingQuiz(idUser);
+            navigateToQuestionCreate(currentQuizId);
+            return;
+        }
+
+//        saveKeywordsToPrefs();
+        progressDialog.show();
+        createNewQuiz(idUser, true);
+    }
+
+    // Create a new quiz
+    private void createNewQuiz(int idUser, boolean navigateToQuestions) {
+        QuizAPI quizApi = RetrofitClient.getQuizApi();
+
         String titles = etTitle.getText().toString().trim();
         String des = etDescription.getText().toString().trim();
         String key = etKeyword.getText().toString().trim();
         String visiblee = "true";
         String visibleQues = "true";
         String shuffer = "false";
-        File file = getFileFromUri(selectedImageUri);
-        if (file == null) {
-            Log.e("Upload", "File is null");
-            return;
+
+        File file = null;
+        if (selectedImageUri != null) {
+            file = getFileFromUri(selectedImageUri);
+        }
+        if (file == null && selectedImageUri != null) {
+            Log.e(TAG, "Failed to convert URI to File");
         }
 
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("coverPhotoFile", file.getName(), requestFile);
+        // Create request parts
+        RequestBody requestFile = file != null ? RequestBody.create(MediaType.parse("image/*"), file) : null;
+        MultipartBody.Part filePart = file != null ? MultipartBody.Part.createFormData("coverPhotoFile", file.getName(), requestFile) : null;
         RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), idUser + "");
-        RequestBody quizCollectionId = RequestBody.create(MediaType.parse("text/plain"), "1");
+        RequestBody quizCollectionId = RequestBody.create(MediaType.parse("text/plain"), "1");  // Default collection ID
         RequestBody title = RequestBody.create(MediaType.parse("text/plain"), titles);
-        RequestBody description = RequestBody.create(MediaType.parse("text/plain"),  des);
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"), des);
         RequestBody keyword = RequestBody.create(MediaType.parse("text/plain"), key);
         RequestBody visible = RequestBody.create(MediaType.parse("text/plain"), visiblee);
         RequestBody visibleQuizQuestion = RequestBody.create(MediaType.parse("text/plain"), visibleQues);
         RequestBody shuffle = RequestBody.create(MediaType.parse("text/plain"), shuffer);
 
-        Call<QuizResponse> call = quizzApi.uploadQuiz(
+
+        Call<QuizResponse> call = quizApi.uploadQuiz(
                 userId, quizCollectionId, title, description, keyword,
                 visible, visibleQuizQuestion, shuffle, filePart
         );
@@ -419,25 +510,107 @@ public class CreateQuizActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<QuizResponse> call, Response<QuizResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(CreateQuizActivity.this, "Create Quizz Successfully!", Toast.LENGTH_SHORT).show();
-                    Log.d("Create Quiz", "Success");
-                    Intent intent;
-                    intent = new Intent(CreateQuizActivity.this, QuizCreateActivity.class);
-                    intent.putExtra("quizId", response.body().getId());
-                    startActivity(intent);
+                    storeQuizSuccess(response.body().getId(), response.body().getTitle());
+
+                    if (navigateToQuestions) {
+                        navigateToQuestionCreate(response.body().getId());
+                    }
                 } else {
-                    Log.e("Upload", "Failed: " + response.code());
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    Toast.makeText(CreateQuizActivity.this, "Failed to create quiz: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Failed to create quiz: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<QuizResponse> call, Throwable t) {
-
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                Toast.makeText(CreateQuizActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Network error: " + t.getMessage());
             }
         });
     }
 
-    // Phương thức để thêm chip
+    // Update an existing quiz
+    private void updateExistingQuiz(int idUser) {
+        QuizAPI quizApi = RetrofitClient.getQuizApi();
+
+        String titles = etTitle.getText().toString().trim();
+        String des = etDescription.getText().toString().trim();
+        String key = etKeyword.getText().toString().trim();
+        String visiblee = "true";  // Default visibility
+        String visibleQues = "true";  // Default question visibility
+        String shuffer = "false";  // Default shuffle setting
+
+        // Handle the image file if selected
+        File file = null;
+        if (selectedImageUri != null) {
+            file = getFileFromUri(selectedImageUri);
+        }
+        if (file == null && selectedImageUri != null) {
+            Log.e(TAG, "Failed to convert URI to File");
+        }
+
+        // Create request parts
+        RequestBody requestFile = file != null ? RequestBody.create(MediaType.parse("image/*"), file) : null;
+        MultipartBody.Part filePart = file != null ? MultipartBody.Part.createFormData("coverPhotoFile", file.getName(), requestFile) : null;
+        RequestBody userId = RequestBody.create(MediaType.parse("text/plain"), idUser + "");
+        RequestBody quizCollectionId = RequestBody.create(MediaType.parse("text/plain"), "1");  // Default collection ID
+        RequestBody title = RequestBody.create(MediaType.parse("text/plain"), titles);
+        RequestBody description = RequestBody.create(MediaType.parse("text/plain"), des);
+        RequestBody keyword = RequestBody.create(MediaType.parse("text/plain"), key);
+        RequestBody visible = RequestBody.create(MediaType.parse("text/plain"), visiblee);
+        RequestBody visibleQuizQuestion = RequestBody.create(MediaType.parse("text/plain"), visibleQues);
+        RequestBody shuffle = RequestBody.create(MediaType.parse("text/plain"), shuffer);
+
+        // Make API call to update existing quiz
+        Call<QuizResponse> call = quizApi.updateQuiz(
+                currentQuizId,
+                userId,
+                quizCollectionId,
+                title,
+                description,
+                keyword,
+                visible,
+                visibleQuizQuestion,
+                shuffle,
+                filePart
+        );
+
+        call.enqueue(new Callback<QuizResponse>() {
+            @Override
+            public void onResponse(Call<QuizResponse> call, Response<QuizResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Update stored quiz details
+                    storeQuizSuccess(response.body().getId(), response.body().getTitle());
+                    Toast.makeText(CreateQuizActivity.this, "Quiz updated successfully!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Quiz updated with ID: " + currentQuizId);
+                } else {
+                    // Dismiss progress dialog on error
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    Toast.makeText(CreateQuizActivity.this, "Failed to update quiz: " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Failed to update quiz: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<QuizResponse> call, Throwable t) {
+                // Dismiss progress dialog on error
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                Toast.makeText(CreateQuizActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Network error: " + t.getMessage());
+            }
+        });
+    }
+
     private void addChip(String keyword) {
         Chip chip = new Chip(this);
         chip.setText(keyword);
@@ -445,36 +618,29 @@ public class CreateQuizActivity extends AppCompatActivity {
         chip.setCheckable(false);
         chip.setClickable(true);
 
-        // Thiết lập màu sắc và kiểu dáng
         chip.setChipBackgroundColorResource(R.color.chip_background);
         chip.setTextColor(getResources().getColor(R.color.chip_text));
 
-        // Thêm viền
         chip.setChipStrokeWidth(1);
         chip.setChipStrokeColorResource(R.color.chip_stroke);
 
-        // Xử lý khi click vào icon đóng
         chip.setOnCloseIconClickListener(v -> {
             chipContainer.removeView(chip);
             keywordsList.remove(keyword);
         });
 
-        // Thêm chip vào container
         chipContainer.addView(chip);
     }
 
-    // Phương thức để lưu từ khóa vào SharedPreferences
     private void saveKeywordsToPrefs() {
         SharedPreferences prefs = getSharedPreferences("QuizzoPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        // Tạo chuỗi JSON từ danh sách
         JSONArray jsonArray = new JSONArray(keywordsList);
         editor.putString("saved_keywords", jsonArray.toString());
         editor.apply();
     }
 
-    // Phương thức để tải từ khóa từ SharedPreferences
     private void loadKeywordsFromPrefs() {
         SharedPreferences prefs = getSharedPreferences("QuizzoPrefs", MODE_PRIVATE);
         String jsonKeywords = prefs.getString("saved_keywords", "[]");
@@ -496,10 +662,10 @@ public class CreateQuizActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Không gọi super.onBackPressed() ở đây để ngăn activity đóng ngay lập tức
         super.onBackPressed();
         showExitConfirmationDialog();
     }
+
     private File getFileFromUri(Uri uri) {
         File file = null;
         try {
@@ -536,5 +702,14 @@ public class CreateQuizActivity extends AppCompatActivity {
             result = uri.getLastPathSegment();
         }
         return result;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Dismiss dialog to prevent window leak
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }

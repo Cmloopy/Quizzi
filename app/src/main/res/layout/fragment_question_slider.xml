@@ -126,7 +126,7 @@
             >
 
 
-            <com.cmloopy.quizzi.utils.QuizCreate.slider.QCCustomSlider
+            <com.cmloopy.quizzi.utils.QuestionCreate.slider.QCCustomSlider
                 android:id="@+id/custom_slider"
                 android:layout_width="match_parent"
                 android:layout_height="125dp" />

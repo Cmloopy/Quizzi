@@ -18,12 +18,14 @@
         android:layout_height="match_parent">
 
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/question_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#f4f4f4"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/UIQCRoundedImageViewBNV"
+            />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/question_number"
