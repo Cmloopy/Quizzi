@@ -2,6 +2,7 @@ package com.cmloopy.quizzi.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.Quiz;
-import com.cmloopy.quizzi.views.AuthorDetailsAboutActivity;
 import com.cmloopy.quizzi.views.QuizzDetails;
 
 import java.util.List;
 
 public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
+    private static final String TAG = "QuizAdapter";
     private List<Quiz> items;
 
     public QuizAdapter(List<Quiz> items) {
@@ -42,18 +43,23 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
         holder.dateAndPlaysText.setText(item.getDate() + " • " + item.getPlays());
         holder.authorName.setText(item.getAuthor());
         holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
-
-        holder.questionsText.setText(item.getQuestions().size()+" Qs");
+        holder.questionsText.setText(item.getQuestions().size() + " Qs");
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, QuizzDetails.class);
+
+                // Truyền quizId qua Intent
+                intent.putExtra("quizId", item.getId());
+
+                // Log để debug
+                Log.d("QuizAdapter", "Clicked on quiz with ID: " + item.getId());
+
                 context.startActivity(intent);
             }
         });
-
     }
 
     @Override
@@ -84,4 +90,3 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
         }
     }
 }
-

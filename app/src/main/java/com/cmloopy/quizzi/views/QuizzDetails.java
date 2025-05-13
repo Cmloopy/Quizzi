@@ -2,6 +2,7 @@ package com.cmloopy.quizzi.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -22,17 +23,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuizzDetails extends AppCompatActivity {
+    private static final String TAG = "QuizzDetails";
     private RecyclerView questionRecyclerView;
     private QuizzDetailsQuestionAdapter questionAdapter;
     private List<QuizzDetailsQuestion> questionList;
     private ImageView btnEdit;
     private PopupWindow popupWindow;
     private Button btn;
+    private int quizId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quizz_details_full_page);
+
+        // Lấy quizId từ Intent
+        if (getIntent() != null) {
+            quizId = getIntent().getIntExtra("quizId", -1);
+
+            // Debug: hiển thị quizId
+            Toast.makeText(this, "Quiz ID: " + quizId, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Received quiz ID: " + quizId);
+        }
 
         questionRecyclerView = findViewById(R.id.quizDetailsQuestionRecyclerView);
         questionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,9 +69,12 @@ public class QuizzDetails extends AppCompatActivity {
                 showPopupMenu(v);
             }
         });
+
+        // Đảm bảo truyền quizId khi chuyển đến màn hình khác
         btn = findViewById(R.id.btnPlayWithFriends);
         btn.setOnClickListener(v -> {
             Intent intent = new Intent(QuizzDetails.this, UI41.class);
+            intent.putExtra("quizId", quizId); // Truyền quizId sang màn hình tiếp theo
             startActivity(intent);
         });
     }
@@ -98,6 +113,7 @@ public class QuizzDetails extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(QuizzDetails.this, "Generating QR Code...", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(QuizzDetails.this, UI_40_generate_qr.class);
+                intent.putExtra("quizId", quizId); // Truyền quizId sang màn hình QR Code
                 startActivity(intent);
                 popupWindow.dismiss();
             }

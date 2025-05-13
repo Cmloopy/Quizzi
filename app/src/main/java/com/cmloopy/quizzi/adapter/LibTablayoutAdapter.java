@@ -1,30 +1,32 @@
 package com.cmloopy.quizzi.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.cmloopy.quizzi.fragment.FavoriteFragment;
 import com.cmloopy.quizzi.fragment.MyQuizzoFragment;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class LibTablayoutAdapter extends FragmentStateAdapter {
-    private final List<Fragment> fragments;
-    public LibTablayoutAdapter(Fragment fragment){
+    private int userId;
+
+    public LibTablayoutAdapter(Fragment fragment, int userId) {
         super(fragment);
-        fragments = Arrays.asList(
-                new MyQuizzoFragment(),
-                new FavoriteFragment()
-        );
+        this.userId = userId;
     }
+
     @Override
     public int getItemCount() {
-        return fragments.size();
+        return 2; // Hoặc bất kỳ số lượng tab nào bạn cần
     }
 
+    @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return fragments.get(position);
+        if (position == 0) {
+            return MyQuizzoFragment.newInstance(userId);
+        } else {
+            return new FavoriteFragment(); // Hoặc FavoriteFragment.newInstance(userId) nếu cần
+        }
     }
 }

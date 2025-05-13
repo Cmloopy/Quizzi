@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Quiz {
+    private int id;
     private int imageResource;
     private String title;
     private String date;
@@ -71,6 +72,14 @@ public class Quiz {
                 ", description='" + description + '\'' +
                 ", questions=" + questions.size() +
                 '}';
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getImageResource() {
