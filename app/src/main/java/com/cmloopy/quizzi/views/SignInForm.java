@@ -186,7 +186,9 @@ public class SignInForm extends AppCompatActivity {
 
     private void performSignIn(String email, String password) {
         CheckLoginUser loginRequest = new CheckLoginUser(email, password);
+
         UserApi userApi = RetrofitClient.getUserApi();
+
         Call<LoginResponse> call = userApi.loginUser(loginRequest);
 
         call.enqueue(new Callback<LoginResponse>() {

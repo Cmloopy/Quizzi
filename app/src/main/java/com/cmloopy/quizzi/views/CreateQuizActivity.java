@@ -36,6 +36,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.data.RetrofitClient;
+import com.cmloopy.quizzi.data.api.QuizzApi;
 import com.cmloopy.quizzi.data.api.UserApi;
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
 import com.cmloopy.quizzi.views.QuizCreate.after.QuizCreateActivity;
@@ -385,7 +386,7 @@ public class CreateQuizActivity extends AppCompatActivity {
 
     private void saveQuizAndAddQuestion(int idUser) {
         saveKeywordsToPrefs();
-        UserApi userApi = RetrofitClient.getUserApi();
+        QuizzApi quizzApi = RetrofitClient.getQuizzApi();
         String titles = etTitle.getText().toString().trim();
         String des = etDescription.getText().toString().trim();
         String key = etKeyword.getText().toString().trim();
@@ -409,7 +410,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         RequestBody visibleQuizQuestion = RequestBody.create(MediaType.parse("text/plain"), visibleQues);
         RequestBody shuffle = RequestBody.create(MediaType.parse("text/plain"), shuffer);
 
-        Call<QuizResponse> call = userApi.uploadQuiz(
+        Call<QuizResponse> call = quizzApi.uploadQuiz(
                 userId, quizCollectionId, title, description, keyword,
                 visible, visibleQuizQuestion, shuffle, filePart
         );

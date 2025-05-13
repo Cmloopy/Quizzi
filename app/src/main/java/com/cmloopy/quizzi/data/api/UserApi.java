@@ -14,28 +14,15 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface UserApi {
     @POST("auth/login")
     Call<LoginResponse> loginUser(@Body CheckLoginUser loginRequest);
 
-    @Multipart
-    @POST("quizzes")
-    Call<QuizResponse> uploadQuiz(
-            @Part("userId") RequestBody userId,
-            @Part("quizCollectionId") RequestBody quizCollectionId,
-            @Part("title") RequestBody title,
-            @Part("description") RequestBody description,
-            @Part("keyword") RequestBody keyword,
-            @Part("visible") RequestBody visible,
-            @Part("visibleQuizQuestion") RequestBody visibleQuizQuestion,
-            @Part("shuffle") RequestBody shuffle,
-            @Part MultipartBody.Part coverPhotoFile
-    );
-
     @POST("auth/register")
     Call<LoginResponse> register(@Body RegisterUser registerUser);
 
     @GET("users/{userId}")
-    Call<User> getInfoUserById(@Part("userId") int userId);
+    Call<User> getInfoUserById(@Path("userId") int userId);
 }
