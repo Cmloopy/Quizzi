@@ -23,6 +23,13 @@ public class LibraryFragment extends Fragment {
     private ViewPager2 viewPager;
     private final String[] tabTitles = {"My Quizzo", "Favorites"};
 
+    public static LibraryFragment newInstance(int idUser){
+        LibraryFragment libraryFragment = new LibraryFragment();
+        Bundle args = new Bundle();
+        args.putInt("userId", idUser);
+        libraryFragment.setArguments(args);
+        return libraryFragment;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +39,8 @@ public class LibraryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_library, container, false);
+
+        int idUser = getArguments().getInt("userId",-1);
 
         libTablayoutAdapter = new LibTablayoutAdapter(this);
         tabLayout = view.findViewById(R.id.tab_layout_lib);

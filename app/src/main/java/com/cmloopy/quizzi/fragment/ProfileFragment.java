@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuizAdapter;
 import com.cmloopy.quizzi.adapter.TopCollectionsCategoryAdapter;
+import com.cmloopy.quizzi.data.RetrofitClient;
+import com.cmloopy.quizzi.data.api.UserApi;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.TopCollectionsCategory;
 import com.cmloopy.quizzi.views.FollowActivity;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
+    UserApi userApi = RetrofitClient.getUserApi();
 
     private RecyclerView recyclerView;
 
@@ -61,8 +64,8 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         RadioGroup radioGroup = view.findViewById(R.id.tabGroup1);
-        int idUser = getArguments().getInt("idUser",-1);
-        Toast.makeText(requireContext(), idUser+ "", Toast.LENGTH_SHORT).show();
+        int idUser = getArguments().getInt("userId",-1);
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkId) {

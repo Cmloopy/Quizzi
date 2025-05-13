@@ -20,7 +20,6 @@ import com.cmloopy.quizzi.adapter.HomeDiscoverAdapter;
 import com.cmloopy.quizzi.models.HomeCollection;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.RecommendUser;
-import com.cmloopy.quizzi.views.DetailTopCollections;
 import com.cmloopy.quizzi.views.DiscoveryActivity;
 import com.cmloopy.quizzi.views.RecommendAuthorActivity;
 import com.cmloopy.quizzi.views.SearchActivity;
@@ -37,11 +36,25 @@ public class HomeFragment extends Fragment {
     private RecyclerView TopPick;
     private RecyclerView TopAuthor;
     private RecyclerView Collectjon;
-    public HomeFragment() {}
+    public static HomeFragment newInstance(int idUser) {
+        HomeFragment fragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putInt("userId", idUser);
+        fragment.setArguments(args);
+        return fragment;
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        if (getActivity().getIntent() != null) {
+            int idUser = getActivity().getIntent().getIntExtra("userId", -1);
+            if (idUser != -1) {
+                // Use the idUser as needed
+            }
+        }
+//        int idUser = getArguments().getInt("userId",-1);
 
         List<Quiz> ListDisCover = Quiz.CreateSampleData();
         List<RecommendUser> ListUser = CreateSampleData2();

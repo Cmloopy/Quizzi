@@ -25,6 +25,7 @@ public class UI65 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_65_john_game);
 
+        int userId = getIntent().getIntExtra("userId", -1);
 
         rootLayout = findViewById(R.id.UI65JoinGameLayout);
         tabLayout = findViewById(R.id.UI65tabLayout);

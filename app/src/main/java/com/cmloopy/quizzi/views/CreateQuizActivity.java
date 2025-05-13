@@ -106,7 +106,7 @@ public class CreateQuizActivity extends AppCompatActivity {
             Log.d(TAG, "Resuming quiz with ID: " + currentQuizId);
         }
 
-        idUser = getIntent().getIntExtra("idUser", -1);
+        idUser = getIntent().getIntExtra("userId", -1);
         Log.d(TAG, "CURRENT id user: " + idUser);
 
 //        int idUser;
