@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +20,15 @@ import com.cmloopy.quizzi.adapter.HomeCollectionAdapter;
 import com.cmloopy.quizzi.adapter.HomeDiscoverAdapter;
 import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.CollectionApi;
+import com.cmloopy.quizzi.data.api.QuestionCreate.QuizAPI;
 import com.cmloopy.quizzi.data.api.UserApi;
 import com.cmloopy.quizzi.models.CollectionModel;
 import com.cmloopy.quizzi.models.HomeCollection;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.RecommendUser;
+import com.cmloopy.quizzi.models.quiz.QuizResponse;
 import com.cmloopy.quizzi.models.user.User;
+import com.cmloopy.quizzi.utils.QuizMapper;
 import com.cmloopy.quizzi.views.DiscoveryActivity;
 import com.cmloopy.quizzi.views.RecommendAuthorActivity;
 import com.cmloopy.quizzi.views.SearchActivity;
@@ -31,6 +36,8 @@ import com.cmloopy.quizzi.views.TopCollections;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 import com.cmloopy.quizzi.data.manager.AuthorDataManager;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -48,10 +55,14 @@ public class HomeFragment extends Fragment {
     private RecyclerView Collectjon;
     private HomeAuthorAdapter topAuthorAdapter;
     private HomeCollectionAdapter collectionAdapter;
+    private HomeDiscoverAdapter discoverAdapter;
     private UserApi userApi;
     private CollectionApi collectionApi;
+    private QuizAPI quizApi;
+
     private List<RecommendUser> topAuthorsList = new ArrayList<>();
     private List<HomeCollection> collectionList = new ArrayList<>();
+    private List<Quiz> discoverQuizzes = new ArrayList<>(); // Thêm danh sách quiz cho DISCOVER
 
     public static HomeFragment newInstance(int idUser) {
         HomeFragment fragment = new HomeFragment();
@@ -69,6 +80,7 @@ public class HomeFragment extends Fragment {
         // Khởi tạo API client
         userApi = RetrofitClient.getUserApi();
         collectionApi = RetrofitClient.getCollectionApi();
+        quizApi = RetrofitClient.getQuizAPI(); // Thêm dòng này
 
         if (getActivity().getIntent() != null) {
             int idUser = getActivity().getIntent().getIntExtra("userId", -1);
@@ -77,22 +89,25 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        List<Quiz> ListDisCover = Quiz.CreateSampleData();
-
+        // Khởi tạo với danh sách trống, sẽ được cập nhật từ API
         //Discover
         DiscoverRcl = view.findViewById(R.id.rcl_home_discover);
         DiscoverRcl.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        DiscoverRcl.setAdapter(new HomeDiscoverAdapter(ListDisCover));
+        discoverAdapter = new HomeDiscoverAdapter(discoverQuizzes);
+        DiscoverRcl.setAdapter(discoverAdapter);
 
-        //Trending Quiz
+        // Gọi API để lấy dữ liệu quiz cho DISCOVER
+        fetchDiscoverQuizzes();
+
+        //Trending Quiz - Tạm thời sử dụng dữ liệu mẫu
         TrendingQuiz = view.findViewById(R.id.rcl_home_trending_quiz);
         TrendingQuiz.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        TrendingQuiz.setAdapter(new HomeDiscoverAdapter(ListDisCover));
+        TrendingQuiz.setAdapter(new HomeDiscoverAdapter(Quiz.CreateSampleData()));
 
-        //Top Pick
+        //Top Pick - Tạm thời sử dụng dữ liệu mẫu
         TopPick = view.findViewById(R.id.rcl_home_top_pick);
         TopPick.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        TopPick.setAdapter(new HomeDiscoverAdapter(ListDisCover));
+        TopPick.setAdapter(new HomeDiscoverAdapter(Quiz.CreateSampleData()));
 
         //Top Author - Khởi tạo với danh sách trống, sẽ được cập nhật từ API
         TopAuthor = view.findViewById(R.id.rcl_home_top_author);
@@ -145,15 +160,96 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-
-
         return view;
     }
 
-    // Cập nhật phương thức fetchTopAuthors() trong HomeFragment.java
+    // Thêm phương thức mới để gọi API quizzes cho phần DISCOVER
+    private void fetchDiscoverQuizzes() {
+        if (quizApi == null) {
+            Log.e("API_DEBUG", "quizApi is null!");
+            return;
+        }
 
-    // Sửa trong HomeFragment.java, phương thức fetchTopAuthors()
+        Log.d("API_DEBUG", "Fetching quizzes...");
+        Call<List<QuizResponse>> call = quizApi.getAllQuizzes();
 
+        call.enqueue(new Callback<List<QuizResponse>>() {
+            @Override
+            public void onResponse(Call<List<QuizResponse>> call, Response<List<QuizResponse>> response) {
+                Log.d("API_DEBUG", "Response received, code: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    List<QuizResponse> allQuizzes = response.body();
+                    Log.d("API_DEBUG", "Received " + allQuizzes.size() + " quizzes");
+
+                    // Lọc chỉ lấy các quiz có visible = true
+                    List<QuizResponse> visibleQuizzes = new ArrayList<>();
+                    for (QuizResponse quiz : allQuizzes) {
+                        if (quiz.isVisible()) {
+                            visibleQuizzes.add(quiz);
+                        }
+                    }
+                    Log.d("API_DEBUG", "Filtered " + visibleQuizzes.size() + " visible quizzes");
+
+                    // Sắp xếp theo score giảm dần
+                    Collections.sort(visibleQuizzes, new Comparator<QuizResponse>() {
+                        @Override
+                        public int compare(QuizResponse q1, QuizResponse q2) {
+                            // Xử lý trường hợp score có thể null
+                            Integer score1 = q1.getScore() != null ? q1.getScore() : 0;
+                            Integer score2 = q2.getScore() != null ? q2.getScore() : 0;
+                            return Integer.compare(score2, score1);
+                        }
+                    });
+
+                    // Giới hạn số lượng hiển thị
+                    int limit = Math.min(10, visibleQuizzes.size());
+                    if (visibleQuizzes.size() > 0) {
+                        List<QuizResponse> limitedQuizzes = visibleQuizzes.subList(0, limit);
+
+                        // Chuyển đổi từ QuizResponse sang Quiz
+                        Log.d("API_DEBUG", "Converting to Quiz models...");
+                        List<Quiz> mappedQuizzes = QuizMapper.fromResponseList(limitedQuizzes);
+
+                        // Cập nhật danh sách và thông báo cho adapter
+                        Log.d("API_DEBUG", "Updating adapter with " + mappedQuizzes.size() + " quizzes");
+                        discoverQuizzes.clear();
+                        discoverQuizzes.addAll(mappedQuizzes);
+                        discoverAdapter.notifyDataSetChanged();
+                    } else {
+                        Log.d("API_DEBUG", "No visible quizzes found");
+                        Toast.makeText(getContext(), "Không có quiz nào hiển thị", Toast.LENGTH_SHORT).show();
+
+                        // Sử dụng dữ liệu mẫu
+                        discoverQuizzes.clear();
+                        discoverQuizzes.addAll(Quiz.CreateSampleData());
+                        discoverAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    Log.e("API_DEBUG", "API error: " + response.message());
+                    Toast.makeText(getContext(), "Không thể tải dữ liệu quizzes", Toast.LENGTH_SHORT).show();
+
+                    // Sử dụng dữ liệu mẫu
+                    discoverQuizzes.clear();
+                    discoverQuizzes.addAll(Quiz.CreateSampleData());
+                    discoverAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<QuizResponse>> call, Throwable t) {
+                Log.e("API_DEBUG", "Network error: " + t.getMessage(), t);
+                Toast.makeText(getContext(), "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                // Sử dụng dữ liệu mẫu
+                discoverQuizzes.clear();
+                discoverQuizzes.addAll(Quiz.CreateSampleData());
+                discoverAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    // Phương thức fetchTopAuthors hiện có
     private void fetchTopAuthors() {
         Call<List<User>> call = userApi.getAllUsers();
         call.enqueue(new Callback<List<User>>() {
@@ -211,6 +307,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    // Phương thức fetchTopCollections hiện có
     private void fetchTopCollections() {
         Call<List<CollectionModel>> call = collectionApi.getAllCollections();
         call.enqueue(new Callback<List<CollectionModel>>() {

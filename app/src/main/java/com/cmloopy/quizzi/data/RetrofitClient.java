@@ -1,10 +1,13 @@
 package com.cmloopy.quizzi.data;
 
+import android.util.Log;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import com.cmloopy.quizzi.data.api.CollectionApi;
 import com.cmloopy.quizzi.data.api.QuestionCreate.QuestionAPI;
+import com.cmloopy.quizzi.data.api.QuestionCreate.QuizAPI;
 import com.cmloopy.quizzi.data.api.QuestionCreate.serializer.QuestionDeserializer;
 import com.cmloopy.quizzi.data.api.UserApi;
 import com.cmloopy.quizzi.models.QuestionCreate.Question;
@@ -17,45 +20,56 @@ public class RetrofitClient {
     private static final String GITHUB_CODESPACE_BASE_URL = "https://upgraded-telegram-9v4jgg9jvjjh465-8080.app.github.dev/api/";
     private static Retrofit retrofit;
 
-    public static UserApi getUserApi() {
+    // Thêm phương thức getRetrofitInstance để sử dụng trong phương thức getQuizAPI
+    private static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(GITHUB_CODESPACE_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit.create(UserApi.class);
+        return retrofit;
+    }
+
+    public static UserApi getUserApi() {
+        return getRetrofitInstance().create(UserApi.class);
     }
 
     public static QuestionAPI getQuestionApi() {
-        if (retrofit == null) {
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Question.class, new QuestionDeserializer())
-                    .create();
+        // Trong trường hợp cần xử lý đặc biệt với Gson cho Question
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Question.class, new QuestionDeserializer())
+                .create();
 
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(GITHUB_CODESPACE_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .build();
-        }
-        return retrofit.create(QuestionAPI.class);
+        // Tạo retrofit mới với Gson tùy chỉnh
+        Retrofit customRetrofit = new Retrofit.Builder()
+                .baseUrl(GITHUB_CODESPACE_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        return customRetrofit.create(QuestionAPI.class);
     }
 
     public static CollectionApi getCollectionApi() {
+        return getRetrofitInstance().create(CollectionApi.class);
+    }
+
+    public static Retrofit getRetrofit() {
+        return getRetrofitInstance();
+    }
+
+    // Sử dụng getRetrofitInstance để lấy QuizAPI instance
+    public static QuizAPI getQuizAPI() {
+        // Log để debug
+        Log.d("RETROFIT_DEBUG", "Getting QuizAPI with base URL: " + GITHUB_CODESPACE_BASE_URL);
+
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(GITHUB_CODESPACE_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit.create(CollectionApi.class);
+        return getRetrofitInstance().create(QuizAPI.class);
     }
 
-    public static Retrofit getRetrofit() {
-        retrofit = new Retrofit.Builder()
-                .baseUrl(GITHUB_CODESPACE_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        return retrofit;
-    }
 }
