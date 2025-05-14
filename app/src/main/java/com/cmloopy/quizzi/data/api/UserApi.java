@@ -8,6 +8,8 @@ import com.cmloopy.quizzi.models.user.LoginResponse;
 import com.cmloopy.quizzi.models.user.RegisterUser;
 import com.cmloopy.quizzi.models.user.User;
 
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -40,5 +42,9 @@ public interface UserApi {
     Call<LoginResponse> register(@Body RegisterUser registerUser);
 
     @GET("users/{userId}")
-    Call<User> getInfoUserById(@Path("userId") int userId);
+    Call<User> getInfoUserById(@Part("userId") int userId);
+
+    @GET("users")
+    Call<List<User>> getAllUsers();
 }
+

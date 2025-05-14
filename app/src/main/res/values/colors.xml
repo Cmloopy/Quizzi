@@ -60,5 +60,8 @@
     <color name="on_question_bnv_unclick">#A0A0A0</color>
     <color name="correctAnswerColor">#12D18E</color>
     <color name="incorrectAnswerColor">#F75455</color>
+
     <color name="shimmer_color">#DDDDDD</color>
+    <color name="purplee">#5D5FEF</color>
+    <color name="light_gray">#F0F0F0</color>
 </resources>

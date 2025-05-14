@@ -47,6 +47,7 @@ public class HomeDiscoverAdapter extends RecyclerView.Adapter<HomeDiscoverAdapte
                 context.startActivity(intent);
             }
         });
+
     }
 
     @Override

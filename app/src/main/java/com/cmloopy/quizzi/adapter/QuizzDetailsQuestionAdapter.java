@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.QuizzDetailsQuestion;
+import com.cmloopy.quizzi.models.question.Question;
 
 import java.util.List;
 public class QuizzDetailsQuestionAdapter extends RecyclerView.Adapter<QuizzDetailsQuestionAdapter.QuestionViewHolder> {
     private Context context;
-    private List<QuizzDetailsQuestion> questionList;
+    private List<Question> questionList;
 
-    public QuizzDetailsQuestionAdapter(Context context, List<QuizzDetailsQuestion> questionList) {
+    public QuizzDetailsQuestionAdapter(Context context, List<Question> questionList) {
         this.context = context;
         this.questionList = questionList;
     }
@@ -31,10 +32,9 @@ public class QuizzDetailsQuestionAdapter extends RecyclerView.Adapter<QuizzDetai
 
     @Override
     public void onBindViewHolder(@NonNull QuestionViewHolder holder, int position) {
-        QuizzDetailsQuestion question = questionList.get(position);
-        holder.questionTitle.setText(question.getQuestionNumber());
-        holder.questionDescription.setText(question.getQuestionText());
-        holder.questionImage.setImageResource(question.getQuestionImageResId());
+        Question question = questionList.get(position);
+        holder.questionTitle.setText(question.content);
+        holder.questionDescription.setText(question.description);
     }
 
     @Override

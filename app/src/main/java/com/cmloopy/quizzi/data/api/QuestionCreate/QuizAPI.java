@@ -2,9 +2,11 @@ package com.cmloopy.quizzi.data.api.QuestionCreate;
 
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
 
+import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -26,6 +28,10 @@ public interface QuizAPI {
             @Part MultipartBody.Part coverPhotoFile
     );
 
+
+    @GET("quizzes")
+    Call<List<QuizResponse>> getAllQuizzes();
+
     @Multipart
     @PUT("quizzes/{quizId}")
     Call<QuizResponse> updateQuiz(
@@ -41,3 +47,4 @@ public interface QuizAPI {
             @Part MultipartBody.Part coverPhotoFile
     );
 }
+
