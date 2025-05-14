@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.Quiz;
-import com.cmloopy.quizzi.views.AuthorDetailsAboutActivity;
+import com.cmloopy.quizzi.views.AuthorDetailsActivity;
 import com.cmloopy.quizzi.views.QuizzDetails;
 
 import java.util.List;
@@ -35,25 +35,62 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Quiz item = items.get(position);
+        Quiz quiz = items.get(position);
 
-        holder.podcastImage.setImageResource(item.getImageResource());
-        holder.titleText.setText(item.getTitle());
-        holder.dateAndPlaysText.setText(item.getDate() + " • " + item.getPlays());
-        holder.authorName.setText(item.getAuthor());
-        holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
+        // Thiết lập tiêu đề quiz sử dụng getter
+        holder.titleText.setText(quiz.getTitle());
 
-        holder.questionsText.setText(item.getQuestions().size()+" Qs");
+        // Thiết lập thông tin ngày và lượt chơi
+        StringBuilder dateAndPlays = new StringBuilder();
+        dateAndPlays.append(quiz.getDate());
+        if (quiz.getPlays() != null && !quiz.getPlays().isEmpty()) {
+            dateAndPlays.append(" • ").append(quiz.getPlays());
+        }
+        holder.dateAndPlaysText.setText(dateAndPlays.toString());
 
+        // Thiết lập số câu hỏi (nếu có thông tin)
+        if (quiz.getQuestions() != null && !quiz.getQuestions().isEmpty()) {
+            holder.questionsText.setText(quiz.getQuestions().size() + " questions");
+        } else {
+            holder.questionsText.setText("? questions");
+        }
+
+        // Thiết lập ảnh quiz
+        holder.podcastImage.setImageResource(quiz.getImageResource());
+
+        // Thiết lập thông tin tác giả
+        holder.authorName.setText(quiz.getAuthor());
+
+        // Thiết lập avatar tác giả
+        holder.authorAvatar.setImageResource(quiz.getAuthorAvatarResource());
+
+        // Thêm click listener cho quiz
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, QuizzDetails.class);
+                // Đối với quizId, chúng ta không có thông tin này trong lớp Quiz hiện tại
+                // Nếu bạn cần truyền một ID, bạn có thể sử dụng vị trí trong danh sách làm tạm
+                intent.putExtra("quizId", position);
                 context.startActivity(intent);
             }
         });
 
+        // Thêm click listener cho tác giả
+        View.OnClickListener authorClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context context = v.getContext();
+                Intent intent = new Intent(context, AuthorDetailsActivity.class);
+                // Đối với userId, chúng ta không có thông tin này trong lớp Quiz hiện tại
+                // Bạn có thể cần thêm phương thức getUserId() vào lớp Quiz nếu cần
+                context.startActivity(intent);
+            }
+        };
+
+        holder.authorAvatar.setOnClickListener(authorClickListener);
+        holder.authorName.setOnClickListener(authorClickListener);
     }
 
     @Override
@@ -63,6 +100,12 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
 
     public List<Quiz> getListQuiz() {
         return items;
+    }
+
+    // Thêm phương thức để cập nhật dữ liệu
+    public void updateQuizzes(List<Quiz> newQuizzes) {
+        this.items = newQuizzes;
+        notifyDataSetChanged();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -84,4 +127,3 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
         }
     }
 }
-

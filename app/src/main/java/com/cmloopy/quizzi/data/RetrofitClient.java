@@ -1,9 +1,9 @@
 package com.cmloopy.quizzi.data;
 
+import android.util.Log;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-
+import com.cmloopy.quizzi.data.api.CollectionApi;
 import com.cmloopy.quizzi.data.api.GamePlayApi;
 import com.cmloopy.quizzi.data.api.QuestionApi;
 import com.cmloopy.quizzi.data.api.QuizzApi;
@@ -26,6 +26,7 @@ public class RetrofitClient {
     private static final String GITHUB_CODESPACE_BASE_URL = "https://upgraded-telegram-9v4jgg9jvjjh465-8080.app.github.dev/api/";
     private static Retrofit retrofit;
 
+
     private static Retrofit getRetrofit() {
         if (retrofit == null) {
             Gson gson = new GsonBuilder()
@@ -33,10 +34,28 @@ public class RetrofitClient {
                     .registerTypeAdapter(Question.class, new QuestionDeserializer()) // Của đức
                     .registerTypeAdapter(Question.class, new QuestionDeserializer()) //PlayQuiz 
                     .create();
+        Retrofit customRetrofit = new Retrofit.Builder()
+                .baseUrl(GITHUB_CODESPACE_BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
 
+        return customRetrofit.create(QuestionAPI.class);
+    }
+
+    public static CollectionApi getCollectionApi() {
+        return getRetrofitInstance().create(CollectionApi.class);
+    }
+
+    public static Retrofit getRetrofit() {
+        return getRetrofitInstance();
+    }
+
+    public static QuizAPI getQuizAPI() {
+
+        if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(GITHUB_CODESPACE_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
         return retrofit;
