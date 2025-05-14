@@ -19,40 +19,45 @@ public class LibraryFragment extends Fragment {
 
     private LibTablayoutAdapter libTablayoutAdapter;
     private TabLayout tabLayout;
-
     private ViewPager2 viewPager;
     private final String[] tabTitles = {"My Quizzo", "Favorites"};
+    private int userId = -1;
 
-    public static LibraryFragment newInstance(int idUser){
+    public static LibraryFragment newInstance(int idUser) {
         LibraryFragment libraryFragment = new LibraryFragment();
         Bundle args = new Bundle();
         args.putInt("userId", idUser);
         libraryFragment.setArguments(args);
         return libraryFragment;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            userId = getArguments().getInt("userId", -1);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_library, container, false);
 
-        int idUser = getArguments().getInt("userId",-1);
+        // Lấy userId từ arguments
+        int userId = -1;
+        if (getArguments() != null) {
+            userId = getArguments().getInt("userId", -1);
+        }
 
-        libTablayoutAdapter = new LibTablayoutAdapter(this);
+        // Tạo adapter với userId
+        libTablayoutAdapter = new LibTablayoutAdapter(this, userId);
         tabLayout = view.findViewById(R.id.tab_layout_lib);
         viewPager = view.findViewById(R.id.vpg_lib);
 
         viewPager.setAdapter(libTablayoutAdapter);
 
-        new TabLayoutMediator(tabLayout, viewPager, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                tab.setText(tabTitles[position]);
-            }
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            tab.setText(tabTitles[position]);
         }).attach();
 
         return view;

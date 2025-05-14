@@ -2,6 +2,7 @@ package com.cmloopy.quizzi.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.cmloopy.quizzi.views.QuizzDetails;
 import java.util.List;
 
 public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
+    private static final String TAG = "QuizAdapter";
     private List<Quiz> items;
 
     public QuizAdapter(List<Quiz> items) {
@@ -37,6 +39,12 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Quiz quiz = items.get(position);
 
+        //holder.podcastImage.setImageResource(item.getImageResource());
+        //holder.titleText.setText(item.getTitle());
+        //holder.dateAndPlaysText.setText(item.getDate() + " • " + item.getPlays());
+        //holder.authorName.setText(item.getAuthor());
+        //holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
+        //holder.questionsText.setText(item.getQuestions().size() + " Qs");
         // Thiết lập tiêu đề quiz sử dụng getter
         holder.titleText.setText(quiz.getTitle());
 
@@ -70,8 +78,6 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, QuizzDetails.class);
-                // Đối với quizId, chúng ta không có thông tin này trong lớp Quiz hiện tại
-                // Nếu bạn cần truyền một ID, bạn có thể sử dụng vị trí trong danh sách làm tạm
                 intent.putExtra("quizId", position);
                 context.startActivity(intent);
             }
@@ -83,8 +89,6 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, AuthorDetailsActivity.class);
-                // Đối với userId, chúng ta không có thông tin này trong lớp Quiz hiện tại
-                // Bạn có thể cần thêm phương thức getUserId() vào lớp Quiz nếu cần
                 context.startActivity(intent);
             }
         };

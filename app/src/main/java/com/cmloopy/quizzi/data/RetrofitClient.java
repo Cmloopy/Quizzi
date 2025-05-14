@@ -15,7 +15,9 @@ import com.cmloopy.quizzi.data.api.QuestionCreate.QuestionAPI;
 import com.cmloopy.quizzi.data.api.QuestionCreate.QuizAPI;
 import com.cmloopy.quizzi.data.api.QuestionCreate.deserializer.DateDeserializer;
 import com.cmloopy.quizzi.data.api.QuestionCreate.serializer.QuestionDeserializer;
+import com.cmloopy.quizzi.data.api.Topcollection.CollectionService;
 import com.cmloopy.quizzi.data.api.UserApi;
+import com.cmloopy.quizzi.data.api.Library.MyQuizAPI;
 import com.cmloopy.quizzi.models.QuestionCreate.Question;
 
 import java.util.Date;
@@ -23,7 +25,8 @@ import java.util.Date;
 public class RetrofitClient {
 
     private static final String BASE_URL = "http://192.168.101.69:8080/api/";
-    private static final String GITHUB_CODESPACE_BASE_URL = "https://upgraded-telegram-9v4jgg9jvjjh465-8080.app.github.dev/api/";
+//    private static final String GITHUB_CODESPACE_BASE_URL = "https://upgraded-telegram-9v4jgg9jvjjh465-8080.app.github.dev/api/";
+    private static final String GITHUB_CODESPACE_BASE_URL = "http://192.168.100.150:8080/api/";
     private static Retrofit retrofit;
 
 
@@ -60,6 +63,26 @@ public class RetrofitClient {
         }
         return retrofit;
     }
+    public static MyQuizAPI getQuizApi() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(GITHUB_CODESPACE_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit.create(MyQuizAPI.class);
+    }
+
+    public static CollectionService getCollectionService() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(GITHUB_CODESPACE_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit.create(CollectionService.class);
+    }
+
 
     public static UserApi getUserApi() {
         return getRetrofit().create(UserApi.class);
@@ -84,4 +107,5 @@ public class RetrofitClient {
     public static GamePlayApi playGame() {
         return getRetrofit().create(GamePlayApi.class);
     }
+
 }
