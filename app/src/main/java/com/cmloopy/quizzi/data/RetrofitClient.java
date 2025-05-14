@@ -49,6 +49,7 @@ public class RetrofitClient {
         return getRetrofitInstance().create(CollectionApi.class);
     }
 
+
     public static Retrofit getRetrofit() {
         return getRetrofitInstance();
     }
