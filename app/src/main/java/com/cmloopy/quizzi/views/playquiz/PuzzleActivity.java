@@ -32,7 +32,7 @@ public class PuzzleActivity extends AppCompatActivity {
 
     private int totalScore;
     private int userId;
-    private int quizId;
+    private long quizId;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class PuzzleActivity extends AppCompatActivity {
         int[] listQuesId = getIntent().getIntArrayExtra("listIdQues");
         String []listQuesType = getIntent().getStringArrayExtra("listTypeQues");
         userId = getIntent().getIntExtra("userId",-1);
-        quizId = getIntent().getIntExtra("quizId",-1);
+        quizId = getIntent().getLongExtra("quizId",-1);
 
         binding.txtNumAnswerPuzzle.setText(((questionId+1) + "") + "/" + (listQuesId.length + ""));
         binding.progressBarTimePuzzle.setProgress(100);

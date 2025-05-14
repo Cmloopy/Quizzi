@@ -9,12 +9,12 @@ import com.cmloopy.quizzi.models.QuestionCreate.BatchQuestionDTO;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.PuzzleOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.TypeTextOption;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSlider;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTrueFalse;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
 import com.cmloopy.quizzi.utils.QuestionCreate.tracker.QCQuestionChangeTracker;
 import com.google.gson.Gson;
 
@@ -42,15 +42,15 @@ public class QuestionService {
     public QuestionService(Context context) {
         this.context = context;
         this.changeTracker = new QCQuestionChangeTracker();
-        this.apiService = RetrofitClient.getQuestionApi();
+        this.apiService = RetrofitClient.getQuestionCreateApi();
     }
 
-    public void initializeChangeTracker(List<Question> questions) {
-        changeTracker.initialize(questions);
+    public void initializeChangeTracker(List<QuestionCreate> questionCreates) {
+        changeTracker.initialize(questionCreates);
     }
 
-    public void registerQuestionChange(int position, Question question) {
-        changeTracker.questionModified(position, question);
+    public void registerQuestionChange(int position, QuestionCreate questionCreate) {
+        changeTracker.questionModified(position, questionCreate);
     }
 
     public void registerNewQuestion(int position) {
@@ -65,7 +65,7 @@ public class QuestionService {
         return changeTracker.hasChanges();
     }
 
-    public void saveAllChanges(List<Question> questions, Long quizId, final SaveOperationListener listener) {
+    public void saveAllChanges(List<QuestionCreate> questionCreates, Long quizId, final SaveOperationListener listener) {
         if (!changeTracker.hasChanges()) {
             listener.onSaveComplete(true, "No changes to save");
             return;
@@ -75,8 +75,8 @@ public class QuestionService {
         final AtomicInteger remainingOperations = new AtomicInteger(0);
         final List<String> errors = new ArrayList<>();
 
-        for (Question question : questions) {
-            QCQuestionChangeTracker.ChangeState state = changeTracker.getQuestionState(question.getPosition());
+        for (QuestionCreate questionCreate : questionCreates) {
+            QCQuestionChangeTracker.ChangeState state = changeTracker.getQuestionState(questionCreate.getPosition());
             if (state == QCQuestionChangeTracker.ChangeState.MODIFIED ||
                     state == QCQuestionChangeTracker.ChangeState.NEW) {
                 remainingOperations.incrementAndGet();
@@ -91,9 +91,9 @@ public class QuestionService {
         }
 
         for (Integer position : changeTracker.getDeletedPositions()) {
-            Question deletedQuestion = findQuestionByPosition(questions, position);
-            if (deletedQuestion != null && deletedQuestion.getId() != null) {
-                deleteQuestion(deletedQuestion.getId(), new OperationCallback() {
+            QuestionCreate deletedQuestionCreate = findQuestionByPosition(questionCreates, position);
+            if (deletedQuestionCreate != null && deletedQuestionCreate.getId() != null) {
+                deleteQuestion(deletedQuestionCreate.getId(), new OperationCallback() {
                     @Override
                     public void onComplete(boolean isSuccessful, String message) {
                         if (!isSuccessful) {
@@ -102,22 +102,22 @@ public class QuestionService {
                         }
 
                         if (remainingOperations.decrementAndGet() == 0) {
-                            finalizeSaveOperation(listener, success.get(), errors, questions);
+                            finalizeSaveOperation(listener, success.get(), errors, questionCreates);
                         }
                     }
                 });
             } else {
                 if (remainingOperations.decrementAndGet() == 0) {
-                    finalizeSaveOperation(listener, success.get(), errors, questions);
+                    finalizeSaveOperation(listener, success.get(), errors, questionCreates);
                 }
             }
         }
 
-        for (Question question : questions) {
-            QCQuestionChangeTracker.ChangeState state = changeTracker.getQuestionState(question.getPosition());
+        for (QuestionCreate questionCreate : questionCreates) {
+            QCQuestionChangeTracker.ChangeState state = changeTracker.getQuestionState(questionCreate.getPosition());
 
             if (state == QCQuestionChangeTracker.ChangeState.NEW) {
-                createQuestion(question, quizId, new OperationCallback() {
+                createQuestion(questionCreate, quizId, new OperationCallback() {
                     @Override
                     public void onComplete(boolean isSuccessful, String message) {
                         if (!isSuccessful) {
@@ -126,12 +126,12 @@ public class QuestionService {
                         }
 
                         if (remainingOperations.decrementAndGet() == 0) {
-                            finalizeSaveOperation(listener, success.get(), errors, questions);
+                            finalizeSaveOperation(listener, success.get(), errors, questionCreates);
                         }
                     }
                 });
             } else if (state == QCQuestionChangeTracker.ChangeState.MODIFIED) {
-                updateQuestion(question, quizId, new OperationCallback() {
+                updateQuestion(questionCreate, quizId, new OperationCallback() {
                     @Override
                     public void onComplete(boolean isSuccessful, String message) {
                         if (!isSuccessful) {
@@ -140,7 +140,7 @@ public class QuestionService {
                         }
 
                         if (remainingOperations.decrementAndGet() == 0) {
-                            finalizeSaveOperation(listener, success.get(), errors, questions);
+                            finalizeSaveOperation(listener, success.get(), errors, questionCreates);
                         }
                     }
                 });
@@ -148,9 +148,9 @@ public class QuestionService {
         }
     }
 
-    private void finalizeSaveOperation(SaveOperationListener listener, boolean success, List<String> errors, List<Question> currentQuestions) {
+    private void finalizeSaveOperation(SaveOperationListener listener, boolean success, List<String> errors, List<QuestionCreate> currentQuestionCreates) {
         if (success) {
-            changeTracker.resetAfterSave(currentQuestions);
+            changeTracker.resetAfterSave(currentQuestionCreates);
             listener.onSaveComplete(true, "All changes saved successfully");
         } else {
             StringBuilder errorMessage = new StringBuilder("Save operation failed: ");
@@ -161,8 +161,8 @@ public class QuestionService {
         }
     }
 
-    private Question findQuestionByPosition(List<Question> questions, int position) {
-        for (Question q : questions) {
+    private QuestionCreate findQuestionByPosition(List<QuestionCreate> questionCreates, int position) {
+        for (QuestionCreate q : questionCreates) {
             if (q.getPosition() == position) {
                 return q;
             }
@@ -170,42 +170,42 @@ public class QuestionService {
         return null;
     }
 
-    private void createQuestion(Question question, Long quizId, final OperationCallback callback) {
-        if (question instanceof QuestionTrueFalse) {
-            createTrueFalseQuestion((QuestionTrueFalse) question, quizId, callback);
-        } else if (question instanceof QuestionChoice) {
-            createChoiceQuestion((QuestionChoice) question, quizId, callback);
-        } else if (question instanceof QuestionSlider) {
-            createSliderQuestion((QuestionSlider) question, quizId, callback);
-        } else if (question instanceof QuestionPuzzle) {
-            createPuzzleQuestion((QuestionPuzzle) question, quizId, callback);
-        } else if (question instanceof QuestionTypeText) {
-            createTextQuestion((QuestionTypeText) question, quizId, callback);
+    private void createQuestion(QuestionCreate questionCreate, Long quizId, final OperationCallback callback) {
+        if (questionCreate instanceof QuestionCreateTrueFalse) {
+            createTrueFalseQuestion((QuestionCreateTrueFalse) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreateChoice) {
+            createChoiceQuestion((QuestionCreateChoice) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreateSlider) {
+            createSliderQuestion((QuestionCreateSlider) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreatePuzzle) {
+            createPuzzleQuestion((QuestionCreatePuzzle) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreateTypeText) {
+            createTextQuestion((QuestionCreateTypeText) questionCreate, quizId, callback);
         } else {
             // Generic question
-            createGenericQuestion(question, quizId, callback);
+            createGenericQuestion(questionCreate, quizId, callback);
         }
     }
 
-    private void updateQuestion(Question question, Long quizId, final OperationCallback callback) {
-        if (question.getId() == null) {
+    private void updateQuestion(QuestionCreate questionCreate, Long quizId, final OperationCallback callback) {
+        if (questionCreate.getId() == null) {
             callback.onComplete(false, "Cannot update question without ID");
             return;
         }
 
-        if (question instanceof QuestionTrueFalse) {
-            updateTrueFalseQuestion((QuestionTrueFalse) question, quizId, callback);
-        } else if (question instanceof QuestionChoice) {
-            updateChoiceQuestion((QuestionChoice) question, quizId, callback);
-        } else if (question instanceof QuestionSlider) {
-            updateSliderQuestion((QuestionSlider) question, quizId, callback);
-        } else if (question instanceof QuestionPuzzle) {
-            updatePuzzleQuestion((QuestionPuzzle) question, quizId, callback);
-        } else if (question instanceof QuestionTypeText) {
-            updateTextQuestion((QuestionTypeText) question, quizId, callback);
+        if (questionCreate instanceof QuestionCreateTrueFalse) {
+            updateTrueFalseQuestion((QuestionCreateTrueFalse) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreateChoice) {
+            updateChoiceQuestion((QuestionCreateChoice) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreateSlider) {
+            updateSliderQuestion((QuestionCreateSlider) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreatePuzzle) {
+            updatePuzzleQuestion((QuestionCreatePuzzle) questionCreate, quizId, callback);
+        } else if (questionCreate instanceof QuestionCreateTypeText) {
+            updateTextQuestion((QuestionCreateTypeText) questionCreate, quizId, callback);
         } else {
             // Generic question
-            updateGenericQuestion(question, quizId, callback);
+            updateGenericQuestion(questionCreate, quizId, callback);
         }
     }
 
@@ -251,31 +251,31 @@ public class QuestionService {
     }
 
 
-    private void createGenericQuestion(Question question, Long quizId, final OperationCallback callback) {
+    private void createGenericQuestion(QuestionCreate questionCreate, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody questionTypeIdBody = RequestBody.create(MediaType.parse("text/plain"),
-                question.getQuestionType().getId().toString());
+                questionCreate.getQuestionType().getId().toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
-                question.getContent() != null ? question.getContent() : "");
-        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
+                questionCreate.getContent() != null ? questionCreate.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(questionCreate.getPosition()));
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
-                String.valueOf(question.getPoint()));
+                String.valueOf(questionCreate.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
-                String.valueOf(question.getTimeLimit()));
+                String.valueOf(questionCreate.getTimeLimit()));
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
-                question.getDescription() != null ? question.getDescription() : "");
+                questionCreate.getDescription() != null ? questionCreate.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", questionCreate.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", questionCreate.getAudio());
 
         apiService.createQuestion(
                 quizIdBody, questionTypeIdBody, contentBody, positionBody, pointBody,
                 timeLimitBody, descriptionBody, imageFilePart, audioFilePart
-        ).enqueue(new Callback<Question>() {
+        ).enqueue(new Callback<QuestionCreate>() {
             @Override
-            public void onResponse(Call<Question> call, Response<Question> response) {
+            public void onResponse(Call<QuestionCreate> call, Response<QuestionCreate> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    question.setId(response.body().getId());
+                    questionCreate.setId(response.body().getId());
                     callback.onComplete(true, "Question created successfully");
                 } else {
                     callback.onComplete(false, "Failed to create question: " + response.code());
@@ -283,36 +283,36 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<Question> call, Throwable t) {
+            public void onFailure(Call<QuestionCreate> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void updateGenericQuestion(Question question, Long quizId, final OperationCallback callback) {
+    private void updateGenericQuestion(QuestionCreate questionCreate, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody questionTypeIdBody = RequestBody.create(MediaType.parse("text/plain"),
-                question.getQuestionType().getId().toString());
+                questionCreate.getQuestionType().getId().toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
-                question.getContent() != null ? question.getContent() : "");
-        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(question.getPosition()));
+                questionCreate.getContent() != null ? questionCreate.getContent() : "");
+        RequestBody positionBody = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(questionCreate.getPosition()));
 
         RequestBody pointBody = RequestBody.create(MediaType.parse("text/plain"),
-                String.valueOf(question.getPoint()));
+                String.valueOf(questionCreate.getPoint()));
         RequestBody timeLimitBody = RequestBody.create(MediaType.parse("text/plain"),
-                String.valueOf(question.getTimeLimit()));
+                String.valueOf(questionCreate.getTimeLimit()));
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"),
-                question.getDescription() != null ? question.getDescription() : "");
+                questionCreate.getDescription() != null ? questionCreate.getDescription() : "");
 
-        MultipartBody.Part imageFilePart = createFilePart("imageFile", question.getImage());
-        MultipartBody.Part audioFilePart = createFilePart("audioFile", question.getAudio());
+        MultipartBody.Part imageFilePart = createFilePart("imageFile", questionCreate.getImage());
+        MultipartBody.Part audioFilePart = createFilePart("audioFile", questionCreate.getAudio());
 
         apiService.updateQuestion(
-                question.getId(), quizIdBody, questionTypeIdBody, contentBody, positionBody, pointBody,
+                questionCreate.getId(), quizIdBody, questionTypeIdBody, contentBody, positionBody, pointBody,
                 timeLimitBody, descriptionBody, imageFilePart, audioFilePart
-        ).enqueue(new Callback<Question>() {
+        ).enqueue(new Callback<QuestionCreate>() {
             @Override
-            public void onResponse(Call<Question> call, Response<Question> response) {
+            public void onResponse(Call<QuestionCreate> call, Response<QuestionCreate> response) {
                 if (response.isSuccessful()) {
                     callback.onComplete(true, "Question updated successfully");
                 } else {
@@ -321,13 +321,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<Question> call, Throwable t) {
+            public void onFailure(Call<QuestionCreate> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void createTrueFalseQuestion(QuestionTrueFalse question, Long quizId, final OperationCallback callback) {
+    private void createTrueFalseQuestion(QuestionCreateTrueFalse question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -347,9 +347,9 @@ public class QuestionService {
         apiService.createTrueFalseQuestion(
                 quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, correctAnswerBody, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionTrueFalse>() {
+        ).enqueue(new Callback<QuestionCreateTrueFalse>() {
             @Override
-            public void onResponse(Call<QuestionTrueFalse> call, Response<QuestionTrueFalse> response) {
+            public void onResponse(Call<QuestionCreateTrueFalse> call, Response<QuestionCreateTrueFalse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     question.setId(response.body().getId());
                     callback.onComplete(true, "True/False question created successfully");
@@ -359,13 +359,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionTrueFalse> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateTrueFalse> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void updateTrueFalseQuestion(QuestionTrueFalse question, Long quizId, final OperationCallback callback) {
+    private void updateTrueFalseQuestion(QuestionCreateTrueFalse question, Long quizId, final OperationCallback callback) {
         // Similar implementation for updating true/false question
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
@@ -386,9 +386,9 @@ public class QuestionService {
         apiService.updateTrueFalseQuestion(
                 question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, correctAnswerBody, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionTrueFalse>() {
+        ).enqueue(new Callback<QuestionCreateTrueFalse>() {
             @Override
-            public void onResponse(Call<QuestionTrueFalse> call, Response<QuestionTrueFalse> response) {
+            public void onResponse(Call<QuestionCreateTrueFalse> call, Response<QuestionCreateTrueFalse> response) {
                 if (response.isSuccessful()) {
                     callback.onComplete(true, "True/False question updated successfully");
                 } else {
@@ -397,13 +397,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionTrueFalse> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateTrueFalse> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void createChoiceQuestion(QuestionChoice question, Long quizId, final OperationCallback callback) {
+    private void createChoiceQuestion(QuestionCreateChoice question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -467,9 +467,9 @@ public class QuestionService {
         apiService.createChoiceQuestion(
                 quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, choiceOptionsParts, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionChoice>() {
+        ).enqueue(new Callback<QuestionCreateChoice>() {
             @Override
-            public void onResponse(Call<QuestionChoice> call, Response<QuestionChoice> response) {
+            public void onResponse(Call<QuestionCreateChoice> call, Response<QuestionCreateChoice> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     question.setId(response.body().getId());
                     callback.onComplete(true, "Choice question created successfully");
@@ -479,13 +479,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionChoice> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateChoice> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void updateChoiceQuestion(QuestionChoice question, Long quizId, final OperationCallback callback) {
+    private void updateChoiceQuestion(QuestionCreateChoice question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -542,9 +542,9 @@ public class QuestionService {
         apiService.updateChoiceQuestion(
                 question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, choiceOptionsParts, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionChoice>() {
+        ).enqueue(new Callback<QuestionCreateChoice>() {
             @Override
-            public void onResponse(Call<QuestionChoice> call, Response<QuestionChoice> response) {
+            public void onResponse(Call<QuestionCreateChoice> call, Response<QuestionCreateChoice> response) {
                 if (response.isSuccessful()) {
                     callback.onComplete(true, "Choice question updated successfully");
                 } else {
@@ -553,13 +553,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionChoice> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateChoice> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void createSliderQuestion(QuestionSlider question, Long quizId, final OperationCallback callback) {
+    private void createSliderQuestion(QuestionCreateSlider question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -588,9 +588,9 @@ public class QuestionService {
                 quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, minValueBody, maxValueBody, defaultValueBody,
                 correctAnswerBody, colorBody, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionSlider>() {
+        ).enqueue(new Callback<QuestionCreateSlider>() {
             @Override
-            public void onResponse(Call<QuestionSlider> call, Response<QuestionSlider> response) {
+            public void onResponse(Call<QuestionCreateSlider> call, Response<QuestionCreateSlider> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     question.setId(response.body().getId());
                     callback.onComplete(true, "Slider question created successfully");
@@ -600,13 +600,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionSlider> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateSlider> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void updateSliderQuestion(QuestionSlider question, Long quizId, final OperationCallback callback) {
+    private void updateSliderQuestion(QuestionCreateSlider question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -635,9 +635,9 @@ public class QuestionService {
                 question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, minValueBody, maxValueBody, defaultValueBody,
                 correctAnswerBody, colorBody, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionSlider>() {
+        ).enqueue(new Callback<QuestionCreateSlider>() {
             @Override
-            public void onResponse(Call<QuestionSlider> call, Response<QuestionSlider> response) {
+            public void onResponse(Call<QuestionCreateSlider> call, Response<QuestionCreateSlider> response) {
                 if (response.isSuccessful()) {
                     callback.onComplete(true, "Slider question updated successfully");
                 } else {
@@ -646,13 +646,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionSlider> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateSlider> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void createPuzzleQuestion(QuestionPuzzle question, Long quizId, final OperationCallback callback) {
+    private void createPuzzleQuestion(QuestionCreatePuzzle question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -691,9 +691,9 @@ public class QuestionService {
         apiService.createPuzzleQuestion(
                 quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, puzzlePiecesParts, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionPuzzle>() {
+        ).enqueue(new Callback<QuestionCreatePuzzle>() {
             @Override
-            public void onResponse(Call<QuestionPuzzle> call, Response<QuestionPuzzle> response) {
+            public void onResponse(Call<QuestionCreatePuzzle> call, Response<QuestionCreatePuzzle> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     question.setId(response.body().getId());
                     callback.onComplete(true, "Puzzle question created successfully");
@@ -703,13 +703,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionPuzzle> call, Throwable t) {
+            public void onFailure(Call<QuestionCreatePuzzle> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void updatePuzzleQuestion(QuestionPuzzle question, Long quizId, final OperationCallback callback) {
+    private void updatePuzzleQuestion(QuestionCreatePuzzle question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -748,9 +748,9 @@ public class QuestionService {
         apiService.updatePuzzleQuestion(
                 question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, puzzlePiecesParts, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionPuzzle>() {
+        ).enqueue(new Callback<QuestionCreatePuzzle>() {
             @Override
-            public void onResponse(Call<QuestionPuzzle> call, Response<QuestionPuzzle> response) {
+            public void onResponse(Call<QuestionCreatePuzzle> call, Response<QuestionCreatePuzzle> response) {
                 if (response.isSuccessful()) {
                     callback.onComplete(true, "Puzzle question updated successfully");
                 } else {
@@ -759,13 +759,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionPuzzle> call, Throwable t) {
+            public void onFailure(Call<QuestionCreatePuzzle> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void createTextQuestion(QuestionTypeText question, Long quizId, final OperationCallback callback) {
+    private void createTextQuestion(QuestionCreateTypeText question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -801,9 +801,9 @@ public class QuestionService {
         apiService.createTextQuestion(
                 quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, caseSensitiveBody, acceptedAnswersParts, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionTypeText>() {
+        ).enqueue(new Callback<QuestionCreateTypeText>() {
             @Override
-            public void onResponse(Call<QuestionTypeText> call, Response<QuestionTypeText> response) {
+            public void onResponse(Call<QuestionCreateTypeText> call, Response<QuestionCreateTypeText> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     question.setId(response.body().getId());
                     callback.onComplete(true, "Text question created successfully");
@@ -813,13 +813,13 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionTypeText> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateTypeText> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
     }
 
-    private void updateTextQuestion(QuestionTypeText question, Long quizId, final OperationCallback callback) {
+    private void updateTextQuestion(QuestionCreateTypeText question, Long quizId, final OperationCallback callback) {
         RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
         RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"),
                 question.getContent() != null ? question.getContent() : "");
@@ -853,9 +853,9 @@ public class QuestionService {
         apiService.updateTextQuestion(
                 question.getId(), quizIdBody, contentBody, positionBody, pointBody, timeLimitBody,
                 descriptionBody, caseSensitiveBody, acceptedAnswersParts, imageFilePart, audioFilePart
-        ).enqueue(new Callback<QuestionTypeText>() {
+        ).enqueue(new Callback<QuestionCreateTypeText>() {
             @Override
-            public void onResponse(Call<QuestionTypeText> call, Response<QuestionTypeText> response) {
+            public void onResponse(Call<QuestionCreateTypeText> call, Response<QuestionCreateTypeText> response) {
                 if (response.isSuccessful()) {
                     callback.onComplete(true, "Text question updated successfully");
                 } else {
@@ -864,7 +864,7 @@ public class QuestionService {
             }
 
             @Override
-            public void onFailure(Call<QuestionTypeText> call, Throwable t) {
+            public void onFailure(Call<QuestionCreateTypeText> call, Throwable t) {
                 callback.onComplete(false, "Network error: " + t.getMessage());
             }
         });
@@ -931,16 +931,16 @@ public class QuestionService {
         return result;
     }
 
-    public void saveBatchQuestionsWithFullReset(List<Question> questions, Long quizId, final SaveOperationListener listener) {
-        if (questions == null || questions.isEmpty()) {
+    public void saveBatchQuestionsWithFullReset(List<QuestionCreate> questionCreates, Long quizId, final SaveOperationListener listener) {
+        if (questionCreates == null || questionCreates.isEmpty()) {
             listener.onSaveComplete(true, "No questions to save");
             return;
         }
 
         // First, delete all existing questions if needed
         boolean needDelete = false;
-        for (Question question : questions) {
-            if (question.getId() != null && question.getId() >= 1) {
+        for (QuestionCreate questionCreate : questionCreates) {
+            if (questionCreate.getId() != null && questionCreate.getId() >= 1) {
                 needDelete = true;
                 break;
             }
@@ -955,23 +955,23 @@ public class QuestionService {
                         return;
                     }
                     // After deletion, create all questions in batch
-                    createQuestionsBatch(questions, quizId, listener);
+                    createQuestionsBatch(questionCreates, quizId, listener);
                 }
             });
         } else {
-            createQuestionsBatch(questions, quizId, listener);
+            createQuestionsBatch(questionCreates, quizId, listener);
         }
     }
 
-    private void createQuestionsBatch(List<Question> questions, Long quizId, final SaveOperationListener listener) {
+    private void createQuestionsBatch(List<QuestionCreate> questionCreates, Long quizId, final SaveOperationListener listener) {
         try {
             RequestBody quizIdBody = RequestBody.create(MediaType.parse("text/plain"), quizId.toString());
 
             List<BatchQuestionDTO> batchDTOs = new ArrayList<>();
             Map<String, MultipartBody.Part> fileParts = new HashMap<>();
 
-            for (Question question : questions) {
-                BatchQuestionDTO batchDTO = convertToBatchDTO(question, fileParts);
+            for (QuestionCreate questionCreate : questionCreates) {
+                BatchQuestionDTO batchDTO = convertToBatchDTO(questionCreate, fileParts);
                 batchDTOs.add(batchDTO);
             }
 
@@ -984,16 +984,16 @@ public class QuestionService {
 
             // Make the API call
             apiService.createQuestionsBatch(quizIdBody, questionsJsonBody, filePartsList)
-                    .enqueue(new Callback<List<Question>>() {
+                    .enqueue(new Callback<List<QuestionCreate>>() {
                         @Override
-                        public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
+                        public void onResponse(Call<List<QuestionCreate>> call, Response<List<QuestionCreate>> response) {
                             if (response.isSuccessful() && response.body() != null) {
                                 // Update the local questions with server-assigned IDs
-                                List<Question> createdQuestions = response.body();
-                                for (int i = 0; i < Math.min(questions.size(), createdQuestions.size()); i++) {
-                                    questions.get(i).setId(createdQuestions.get(i).getId());
+                                List<QuestionCreate> createdQuestionCreates = response.body();
+                                for (int i = 0; i < Math.min(questionCreates.size(), createdQuestionCreates.size()); i++) {
+                                    questionCreates.get(i).setId(createdQuestionCreates.get(i).getId());
                                 }
-                                changeTracker.resetAfterSave(questions);
+                                changeTracker.resetAfterSave(questionCreates);
                                 listener.onSaveComplete(true, "All questions saved successfully");
                             } else {
                                 listener.onSaveComplete(false, "Failed to save questions: " +
@@ -1002,7 +1002,7 @@ public class QuestionService {
                         }
 
                         @Override
-                        public void onFailure(Call<List<Question>> call, Throwable t) {
+                        public void onFailure(Call<List<QuestionCreate>> call, Throwable t) {
                             listener.onSaveComplete(false, "Network error: " + t.getMessage());
                         }
                     });
@@ -1012,34 +1012,34 @@ public class QuestionService {
         }
     }
 
-    private BatchQuestionDTO convertToBatchDTO(Question question, Map<String, MultipartBody.Part> fileParts) {
+    private BatchQuestionDTO convertToBatchDTO(QuestionCreate questionCreate, Map<String, MultipartBody.Part> fileParts) {
         BatchQuestionDTO dto = new BatchQuestionDTO();
 
-        dto.setContent(question.getContent());
-        dto.setDescription(question.getDescription());
-        dto.setTimeLimit(question.getTimeLimit());
-        dto.setPoint(question.getPoint());
-        dto.setPosition(question.getPosition());
+        dto.setContent(questionCreate.getContent());
+        dto.setDescription(questionCreate.getDescription());
+        dto.setTimeLimit(questionCreate.getTimeLimit());
+        dto.setPoint(questionCreate.getPoint());
+        dto.setPosition(questionCreate.getPosition());
 
-        if (question.getQuestionType() != null) {
-            dto.setQuestionType(question.getQuestionType().getName());
+        if (questionCreate.getQuestionType() != null) {
+            dto.setQuestionType(questionCreate.getQuestionType().getName());
         }
 
-        if (question.getImage() != null && !question.getImage().isEmpty()) {
-            String fileName = "image_" + System.currentTimeMillis() + "_" + question.getPosition() + ".jpg";
+        if (questionCreate.getImage() != null && !questionCreate.getImage().isEmpty()) {
+            String fileName = "image_" + System.currentTimeMillis() + "_" + questionCreate.getPosition() + ".jpg";
             dto.setImageFileName(fileName);
 
-            MultipartBody.Part imagePart = createFilePart("files", question.getImage());
+            MultipartBody.Part imagePart = createFilePart("files", questionCreate.getImage());
             if (imagePart != null) {
                 fileParts.put(fileName, imagePart);
             }
         }
 
-        if (question.getAudio() != null && !question.getAudio().isEmpty()) {
-            String fileName = "audio_" + System.currentTimeMillis() + "_" + question.getPosition() + ".mp3";
+        if (questionCreate.getAudio() != null && !questionCreate.getAudio().isEmpty()) {
+            String fileName = "audio_" + System.currentTimeMillis() + "_" + questionCreate.getPosition() + ".mp3";
             dto.setAudioFileName(fileName);
 
-            MultipartBody.Part audioPart = createFilePart("files", question.getAudio());
+            MultipartBody.Part audioPart = createFilePart("files", questionCreate.getAudio());
             if (audioPart != null) {
                 fileParts.put(fileName, audioPart);
             }
@@ -1047,36 +1047,36 @@ public class QuestionService {
 
         Map<String, Object> data = new HashMap<>();
 
-        if (question instanceof QuestionTrueFalse) {
-            QuestionTrueFalse tf = (QuestionTrueFalse) question;
+        if (questionCreate instanceof QuestionCreateTrueFalse) {
+            QuestionCreateTrueFalse tf = (QuestionCreateTrueFalse) questionCreate;
             data.put("correctAnswer", tf.isCorrectAnswer());
-        } else if (question instanceof QuestionChoice) {
-            QuestionChoice choice = (QuestionChoice) question;
+        } else if (questionCreate instanceof QuestionCreateChoice) {
+            QuestionCreateChoice choice = (QuestionCreateChoice) questionCreate;
             data.put("choiceOptions", choice.getChoiceOptions());
-        } else if (question instanceof QuestionSlider) {
-            QuestionSlider slider = (QuestionSlider) question;
+        } else if (questionCreate instanceof QuestionCreateSlider) {
+            QuestionCreateSlider slider = (QuestionCreateSlider) questionCreate;
             data.put("minValue", slider.getMinValue());
             data.put("maxValue", slider.getMaxValue());
             data.put("defaultValue", slider.getDefaultValue());
             data.put("correctAnswer", slider.getCorrectAnswer());
             data.put("color", slider.getColor());
-        } else if (question instanceof QuestionPuzzle) {
-            QuestionPuzzle puzzle = (QuestionPuzzle) question;
+        } else if (questionCreate instanceof QuestionCreatePuzzle) {
+            QuestionCreatePuzzle puzzle = (QuestionCreatePuzzle) questionCreate;
             data.put("puzzlePieces", puzzle.getPuzzlePieces());
-        } else if (question instanceof QuestionTypeText) {
-            QuestionTypeText text = (QuestionTypeText) question;
+        } else if (questionCreate instanceof QuestionCreateTypeText) {
+            QuestionCreateTypeText text = (QuestionCreateTypeText) questionCreate;
             data.put("caseSensitive", text.isCaseSensitive());
             data.put("acceptedAnswers", text.getAcceptedAnswers());
         }
 //        else {
 //        }
-        data.put("questionTypeId", question.getQuestionType().getId());
+        data.put("questionTypeId", questionCreate.getQuestionType().getId());
 
         dto.setData(data);
         return dto;
     }
 
-    public void saveAllQuestionsWithFullReset(List<Question> questions, Long quizId, final SaveOperationListener listener) {
+    public void saveAllQuestionsWithFullReset(List<QuestionCreate> questionCreates, Long quizId, final SaveOperationListener listener) {
 //        if (questions == null || questions.isEmpty()) {
 //            listener.onSaveComplete(true, "No questions to save");
 //            return;
@@ -1085,17 +1085,17 @@ public class QuestionService {
         final AtomicBoolean success = new AtomicBoolean(true);
         final List<String> errors = new ArrayList<>();
         final AtomicInteger remainingOperations = new AtomicInteger(0);
-        if(!questions.isEmpty()) {
+        if(!questionCreates.isEmpty()) {
             boolean needDelete = false;
-            for(Question question : questions) {
-                if (question.getId() != null && question.getId() >= 1)
+            for(QuestionCreate questionCreate : questionCreates) {
+                if (questionCreate.getId() != null && questionCreate.getId() >= 1)
                     needDelete = true;
             }
 
             if (!needDelete) {
-                remainingOperations.set(questions.size());
-                for (Question question : questions) {
-                    createQuestion(question, quizId, new OperationCallback() {
+                remainingOperations.set(questionCreates.size());
+                for (QuestionCreate questionCreate : questionCreates) {
+                    createQuestion(questionCreate, quizId, new OperationCallback() {
                         @Override
                         public void onComplete(boolean isSuccessful, String message) {
                             if (!isSuccessful) {
@@ -1129,15 +1129,15 @@ public class QuestionService {
                     return;
                 }
 
-                remainingOperations.set(questions.size());
+                remainingOperations.set(questionCreates.size());
 
-                if (questions.isEmpty()) {
+                if (questionCreates.isEmpty()) {
                     listener.onSaveComplete(true, "All questions deleted successfully");
                     return;
                 }
 
-                for (Question question : questions) {
-                    createQuestion(question, quizId, new OperationCallback() {
+                for (QuestionCreate questionCreate : questionCreates) {
+                    createQuestion(questionCreate, quizId, new OperationCallback() {
                         @Override
                         public void onComplete(boolean isSuccessful, String message) {
                             if (!isSuccessful) {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Quiz {
-    private int id;
+    private Long id;
     private int imageResource;
     private String title;
     private String date;
@@ -16,7 +16,8 @@ public class Quiz {
     private String description;
     private List<Question> questions;
 
-    public Quiz(int imageResource, String title, String date, String plays, String author, int authorAvatarResource, String description) {
+    public Quiz(Long id, int imageResource, String title, String date, String plays, String author, int authorAvatarResource, String description) {
+        this.id = id;
         this.imageResource = imageResource;
         this.title = title;
         this.date = date;
@@ -30,35 +31,6 @@ public class Quiz {
 //        questions.addAll(SingleChoiceQuestion.createSampleData());
     }
 
-    public static List<Quiz> CreateSampleData() {
-        List<Quiz> items = new ArrayList<>();
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Get Smarter with Prod...",
-                "2 months ago", "5.5K plays", "Titus Kitamura", R.drawable.ic_launcher_background,
-                "A quiz designed to boost your productivity and efficiency."));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Great Ideas Come from...",
-                "6 months ago", "10.3K plays", "Alfonzo Schuessler", R.drawable.ic_launcher_background,
-                "Explore the origins of great ideas and how creativity shapes innovation."));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Having Fun & Always S...",
-                "2 years ago", "18.5K plays", "Daryl Nehls", R.drawable.ic_launcher_background,
-                "A fun and engaging quiz that keeps you entertained while learning."));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Can You Imagine, Worl...",
-                "3 months ago", "4.9K plays", "Edgar Torrey", R.drawable.ic_launcher_background,
-                "Test your imagination and creativity with thought-provoking questions."));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Back to School, Get Sm...",
-                "1 year ago", "12.4K plays", "Darcel Ballentine", R.drawable.ic_launcher_background,
-                "A back-to-school quiz to refresh your knowledge and challenge your mind."));
-
-        items.add(new Quiz(R.drawable.ic_launcher_background, "What is Your Favorite ...",
-                "5 months ago", "6.2K plays", "Elmer Laverty", R.drawable.ic_launcher_background,
-                "Discover what your preferences say about you with this fun quiz."));
-
-        return items;
-    }
 
     @Override
     public String toString() {
@@ -74,11 +46,11 @@ public class Quiz {
                 '}';
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

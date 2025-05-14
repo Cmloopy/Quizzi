@@ -28,6 +28,7 @@ public class QuizMapper {
         String author = "Unknown"; // API không cung cấp tên tác giả
 
         Quiz quiz = new Quiz(
+                response.getId(),
                 R.drawable.ic_launcher_background, // Hình ảnh mặc định
                 response.getTitle() != null ? response.getTitle() : "Untitled Quiz",
                 relativeTime,

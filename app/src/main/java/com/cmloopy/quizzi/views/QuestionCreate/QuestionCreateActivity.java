@@ -19,7 +19,6 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -39,11 +38,11 @@ import com.cmloopy.quizzi.fragment.QuestionCreate.QCBaseQuestionFragment;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionBNVFragment;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionEmptyPlaceHolder;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionFragmentManager;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSlider;
 import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 import com.cmloopy.quizzi.utils.QuestionCreate.manager.QCQuestionSaveManager;
 import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
@@ -75,9 +74,9 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     private ImageButton saveButton;
     private ImageButton deleteButton;
     private QCQuestionBNVFragment bottomFragment;
-    private List<Question> questions;
+    private List<QuestionCreate> questionCreates;
     private QuestionAPI questionAPI;
-    private List<Question> questionListResponse;
+    private List<QuestionCreate> questionCreateListResponse;
     private ProgressBar loadingIndicator;
     private QCQuestionSaveManager saveManager;
     private boolean updatingQuestion = false;
@@ -91,7 +90,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
         initializeQuizId();
         saveService = new QuestionService(this);
 
-        questionAPI = RetrofitClient.getQuestionApi();
+        questionAPI = RetrofitClient.getQuestionCreateApi();
         saveManager = new QCQuestionSaveManager(this, quizId);
         Log.d(TAG, "LOADING question");
 
@@ -104,7 +103,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
 
 
 
-        questions = new ArrayList<>();
+        questionCreates = new ArrayList<>();
         loadQuizQuestions();
 
         clearButton = findViewById(R.id.clearButton);
@@ -113,7 +112,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
         deleteButton = findViewById(R.id.deleteButton);
 
         loadBottomNavigationFrame();
-        if (questions.isEmpty()) {
+        if (questionCreates.isEmpty()) {
             Fragment emptyFragment = new QCQuestionEmptyPlaceHolder();
             loadQuestionTypeFrame(getSupportFragmentManager(), emptyFragment);
         }
@@ -163,7 +162,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                     progressDialog.setCancelable(false);
                     progressDialog.show();
 
-                    saveService.saveAllQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
+                    saveService.saveAllQuestionsWithFullReset(questionCreates, quizId, (isSuccessful, message) -> {
                         progressDialog.dismiss();
                         if (isSuccessful) {
                             Toast.makeText(this, "Questions saved successfully", Toast.LENGTH_SHORT).show();
@@ -194,47 +193,47 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                 loadingDialog.dismiss();
             }
 
-            saveManager.initialize(questions);
+            saveManager.initialize(questionCreates);
 
             if (bottomFragment != null) {
-                bottomFragment.setQuestions(questions);
+                bottomFragment.setQuestions(questionCreates);
                 bottomFragment.notifyBottomFragment();
             }
 
-            if (questions.isEmpty()) {
+            if (questionCreates.isEmpty()) {
                 Fragment emptyFragment = new QCQuestionEmptyPlaceHolder();
                 loadQuestionTypeFrame(getSupportFragmentManager(), emptyFragment);
             } else {
             }
         };
 
-        final Callback<List<Question>> callback = new Callback<List<Question>>() {
+        final Callback<List<QuestionCreate>> callback = new Callback<List<QuestionCreate>>() {
             @Override
-            public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
+            public void onResponse(Call<List<QuestionCreate>> call, Response<List<QuestionCreate>> response) {
                 Log.d(TAG, "Response received. Success: " + response.isSuccessful()
                         + ", Code: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Question> questionsList = response.body();
+                    List<QuestionCreate> questionsList = response.body();
                     Log.d(TAG, "Successfully parsed questions. Count: " + questionsList.size());
 
-                    for (Question question : questionsList) {
+                    for (QuestionCreate question : questionsList) {
                         Log.d(TAG, "Before Question class: " + question.getClass().getName());
                         Log.d(TAG, "Before Question type: " + question.getQuestionType().getName());
-                        if (question instanceof QuestionChoice) {
-                        QuestionChoice choiceQuestion = (QuestionChoice) question;
+                        if (question instanceof QuestionCreateChoice) {
+                        QuestionCreateChoice choiceQuestion = (QuestionCreateChoice) question;
                             Log.d(TAG, "Choice question: " + choiceQuestion.getContent() +
                                     ", Options: " + choiceQuestion.getChoiceOptions().size());
-                        } else if (question instanceof QuestionPuzzle) {
-                            QuestionPuzzle puzzleQuestion = (QuestionPuzzle) question;
+                        } else if (question instanceof QuestionCreatePuzzle) {
+                            QuestionCreatePuzzle puzzleQuestion = (QuestionCreatePuzzle) question;
                             Log.d(TAG, "Puzzle question: " + puzzleQuestion.getContent() +
                                     ", Pieces: " + puzzleQuestion.getPuzzlePieces().size());
-                        } else if (question instanceof QuestionSlider) {
-                            QuestionSlider sliderQuestion = (QuestionSlider) question;
+                        } else if (question instanceof QuestionCreateSlider) {
+                            QuestionCreateSlider sliderQuestion = (QuestionCreateSlider) question;
                             Log.d(TAG, "Slider question: " + sliderQuestion.getContent() +
                                     ", Range: " + sliderQuestion.getMinValue() + "-" + sliderQuestion.getMaxValue());
-                        } else if (question instanceof QuestionTypeText) {
-                            QuestionTypeText textQuestion = (QuestionTypeText) question;
+                        } else if (question instanceof QuestionCreateTypeText) {
+                            QuestionCreateTypeText textQuestion = (QuestionCreateTypeText) question;
                             Log.d(TAG, "Text question: " + textQuestion.getContent() +
                                     ", Accepted answers: " + textQuestion.getAcceptedAnswers().size());
                         }
@@ -244,11 +243,11 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                     }
 
                     // Update the questions list
-                    questions = new ArrayList<>(questionsList);
+                    questionCreates = new ArrayList<>(questionsList);
 
                     runOnUiThread(() -> {
                         Toast.makeText(QuestionCreateActivity.this,
-                                "Loaded " + questions.size() + " questions",
+                                "Loaded " + questionCreates.size() + " questions",
                                 Toast.LENGTH_SHORT).show();
 
                         // Call the completion callback
@@ -285,7 +284,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
             }
 
             @Override
-            public void onFailure(Call<List<Question>> call, Throwable t) {
+            public void onFailure(Call<List<QuestionCreate>> call, Throwable t) {
                 Log.e(TAG, "Network failure: " + t.getClass().getSimpleName() + ": " + t.getMessage(), t);
 
                 if (retryCount.getAndIncrement() < MAX_RETRIES) {
@@ -337,7 +336,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     }
 
     private void loadBottomNavigationFrame() {
-        bottomFragment = new QCQuestionBNVFragment(questions);
+        bottomFragment = new QCQuestionBNVFragment(questionCreates);
         bottomFragment.setListener(this);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -432,12 +431,12 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        saveService.saveAllQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
+        saveService.saveAllQuestionsWithFullReset(questionCreates, quizId, (isSuccessful, message) -> {
             progressDialog.dismiss();
 //
             if (isSuccessful) {
                 Toast.makeText(this, "Questions saved successfully", Toast.LENGTH_SHORT).show();
-                saveService.initializeChangeTracker(questions);
+                saveService.initializeChangeTracker(questionCreates);
             } else {
                 new AlertDialog.Builder(this)
                         .setTitle("Save Error")
@@ -453,7 +452,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
 
         if (currentFragment instanceof QCBaseQuestionFragment) {
             QCBaseQuestionFragment questionFragment = (QCBaseQuestionFragment) currentFragment;
-            Question currentQuestion = questionFragment.getCurrentQuestion();
+            QuestionCreate currentQuestionCreate = questionFragment.getCurrentQuestion();
 
             saveManager.showDeleteConfirmationDialog(
                     () -> {
@@ -463,7 +462,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                         progressDialog.show();
 
 
-                        saveService.deleteQuestionById(currentQuestion.getId(), new QuestionService.SaveOperationListener() {
+                        saveService.deleteQuestionById(currentQuestionCreate.getId(), new QuestionService.SaveOperationListener() {
                             @Override
                             public void onSaveComplete(boolean isSuccessful, String message) {
                                 if (progressDialog != null && progressDialog.isShowing()) {
@@ -482,9 +481,9 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                                 }
 
 
-                                questions.remove(currentQuestion.getPosition());
+                                questionCreates.remove(currentQuestionCreate.getPosition());
                                 if (bottomFragment != null) {
-                                    bottomFragment.onDeleteQuestion(currentQuestion.getPosition(), currentQuestion);
+                                    bottomFragment.onDeleteQuestion(currentQuestionCreate.getPosition(), currentQuestionCreate);
                                 }
                             }
                         });
@@ -498,14 +497,14 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     }
 
     @Override
-    public void onClickListener(Question question) {
+    public void onClickListener(QuestionCreate questionCreate) {
         QCQuestionFragmentManager fragmentManager = new QCQuestionFragmentManager(getSupportFragmentManager(), R.id.question_type_frame_container);
-        fragmentManager.showQuestionFragment(question, this);
-        Log.d("SHOWFRAGMENT", "Updating question at position: " + question.getPosition() + " " + question.getContent());
+        fragmentManager.showQuestionFragment(questionCreate, this);
+        Log.d("SHOWFRAGMENT", "Updating question at position: " + questionCreate.getPosition() + " " + questionCreate.getContent());
     }
 
     @Override
-    public void onDeleteQuestion(int position, Question question, List<Question> questions) {
+    public void onDeleteQuestion(int position, QuestionCreate questionCreate, List<QuestionCreate> questionCreates) {
         Log.d("QuizCreateActivity", "Handling deletion of question at position: " + position);
 
         getSupportFragmentManager()
@@ -548,7 +547,7 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     }
 
     @Override
-    public void onUpdateQuestion(int position, Question question) {
+    public void onUpdateQuestion(int position, QuestionCreate questionCreate) {
         if (updatingQuestion) {
             return;
         }
@@ -556,10 +555,10 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
         try {
             updatingQuestion = true;
 
-            saveManager.onQuestionUpdated(position, question);
+            saveManager.onQuestionUpdated(position, questionCreate);
 
             if (bottomFragment != null) {
-                bottomFragment.updateQuestionInView(position, question);
+                bottomFragment.updateQuestionInView(position, questionCreate);
             }
         } finally {
             updatingQuestion = false;
@@ -567,34 +566,34 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     }
 
     @Override
-    public void onFabAddQuestion(List<Question> _questions, QCQuestionBNVAdapter questionBottomAdapter) {
+    public void onFabAddQuestion(List<QuestionCreate> _questionCreates, QCQuestionBNVAdapter questionBottomAdapter) {
 
         QCHelper.showQuestionTypeBottomSheet(
                 this,
                 getSupportFragmentManager(),
                 (questionType) -> {
                     String name = questionType.getName();
-                    Question question = QCHelper.QuestionTypeMapper.createQuestionInstance(questions, name);
-                    question.setQuestionType(questionType);
+                    QuestionCreate questionCreate = QCHelper.QuestionTypeMapper.createQuestionInstance(questionCreates, name);
+                    questionCreate.setQuestionType(questionType);
 
-                    int newPosition = questions.size();
-                    question.setPosition(newPosition);
-                    questions.add(question);
-                    _questions.add(question);
+                    int newPosition = questionCreates.size();
+                    questionCreate.setPosition(newPosition);
+                    questionCreates.add(questionCreate);
+                    _questionCreates.add(questionCreate);
                     questionBottomAdapter.notifyItemInserted(newPosition);
 
                     if (saveManager != null) {
                         saveManager.onQuestionAdded(newPosition);
                     }
-                    onClickListener(questions.get(questions.size() - 1));
+                    onClickListener(questionCreates.get(questionCreates.size() - 1));
                 }
         );
     }
 
     @Override
-    public void onDeleteQuestion(int position, Question question) {
+    public void onDeleteQuestion(int position, QuestionCreate questionCreate) {
         if (bottomFragment != null) {
-            bottomFragment.onDeleteQuestion(position, question);
+            bottomFragment.onDeleteQuestion(position, questionCreate);
         }
     }
 }

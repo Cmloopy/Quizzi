@@ -2,19 +2,19 @@ package com.cmloopy.quizzi.models.QuestionCreate;
 
 import java.io.Serializable;
 
-public class QuestionSayWord extends Question implements Serializable {
+public class QuestionCreateSayWord extends QuestionCreate implements Serializable {
     private String correctAnswer;
     private String word;
     private String pronunciation;
 
-    public QuestionSayWord() {
+    public QuestionCreateSayWord() {
         super();
         this.correctAnswer = "";
         this.word = "";
         this.pronunciation = "";
     }
 
-    public QuestionSayWord(int position, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, String correctAnswer, String word, String pronunciation) {
+    public QuestionCreateSayWord(int position, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, String correctAnswer, String word, String pronunciation) {
         super(position, content, imageUrl, audioUrl, point, timeLimit, description);
         this.correctAnswer = correctAnswer;
         this.word = word;
@@ -22,7 +22,7 @@ public class QuestionSayWord extends Question implements Serializable {
     }
 
 
-    public QuestionSayWord(int position, Long id, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, String correctAnswer, String word, String pronunciation) {
+    public QuestionCreateSayWord(int position, Long id, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, String correctAnswer, String word, String pronunciation) {
         super(position, id, content, imageUrl, audioUrl, point, timeLimit, description);
         this.correctAnswer = correctAnswer;
         this.word = word;

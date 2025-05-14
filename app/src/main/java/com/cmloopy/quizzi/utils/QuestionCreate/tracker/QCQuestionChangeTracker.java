@@ -1,6 +1,7 @@
 package com.cmloopy.quizzi.utils.QuestionCreate.tracker;
 
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,31 +21,31 @@ public class QCQuestionChangeTracker {
 
     private Map<Integer, ChangeState> questionStates = new HashMap<>();
 
-    private Map<Integer, Question> originalQuestions = new HashMap<>();
+    private Map<Integer, QuestionCreate> originalQuestions = new HashMap<>();
 
     private List<Integer> deletedPositions = new ArrayList<>();
 
     private boolean hasChanges = false;
-    public void initialize(List<Question> questions) {
+    public void initialize(List<QuestionCreate> questionCreates) {
         questionStates.clear();
         originalQuestions.clear();
         deletedPositions.clear();
         hasChanges = false;
 
-        if (questions != null) {
-            for (Question question : questions) {
-                int position = question.getPosition();
+        if (questionCreates != null) {
+            for (QuestionCreate questionCreate : questionCreates) {
+                int position = questionCreate.getPosition();
                 questionStates.put(position, ChangeState.UNCHANGED);
 
-                originalQuestions.put(position, createDeepCopy(question));
+                originalQuestions.put(position, createDeepCopy(questionCreate));
             }
         }
     }
 
-    private Question createDeepCopy(Question question) {
-        return question;
+    private QuestionCreate createDeepCopy(QuestionCreate questionCreate) {
+        return questionCreate;
     }
-    public void questionModified(int position, Question question) {
+    public void questionModified(int position, QuestionCreate questionCreate) {
         if (questionStates.containsKey(position)) {
             if (questionStates.get(position) != ChangeState.NEW) {
                 questionStates.put(position, ChangeState.MODIFIED);
@@ -85,7 +86,7 @@ public class QCQuestionChangeTracker {
         return deletedPositions;
     }
 
-    public void resetAfterSave(List<Question> currentQuestions) {
-        initialize(currentQuestions);
+    public void resetAfterSave(List<QuestionCreate> currentQuestionCreates) {
+        initialize(currentQuestionCreates);
     }
 }

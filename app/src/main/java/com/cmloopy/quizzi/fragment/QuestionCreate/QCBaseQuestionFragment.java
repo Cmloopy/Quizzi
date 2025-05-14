@@ -2,7 +2,6 @@ package com.cmloopy.quizzi.fragment.QuestionCreate;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -27,21 +26,9 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.MultiTransformation;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
 import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCGenericSelectionDialog;
-import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -98,35 +85,35 @@ public abstract class QCBaseQuestionFragment extends Fragment {
     private int currentSpeedIndex = 2; // Start with 1.0x (index 2)
 
     public interface OnChangeListener {
-        void onUpdateQuestion(int position, Question question);
-        void onDeleteQuestion(int position, Question question);
+        void onUpdateQuestion(int position, QuestionCreate questionCreate);
+        void onDeleteQuestion(int position, QuestionCreate questionCreate);
     }
 
     public void setListener(OnChangeListener listener) {
         this.listener = listener;
     }
 
-    protected static Bundle createBaseBundle(Question question) {
+    protected static Bundle createBaseBundle(QuestionCreate questionCreate) {
         Bundle args = new Bundle();
         return args;
     }
 
-    protected void setUpBaseView(Question question) {
-        timeLimitButton.setText(String.format("%s sec", String.valueOf(question.getTimeLimit())));
-        pointButton.setText(String.format("%s pt", String.valueOf(question.getPoint())));
+    protected void setUpBaseView(QuestionCreate questionCreate) {
+        timeLimitButton.setText(String.format("%s sec", String.valueOf(questionCreate.getTimeLimit())));
+        pointButton.setText(String.format("%s pt", String.valueOf(questionCreate.getPoint())));
         timeLimitButton.setAllCaps(false);
         pointButton.setAllCaps(false);
-        questionEditText.setText(question.getContent());
+        questionEditText.setText(questionCreate.getContent());
 
         setupMediaMode(isAudioMode);
 
         if (isAudioMode) {
-            if (question.getAudio() != null && !question.getAudio().isEmpty()) {
-                setQuestionMedia(question);
+            if (questionCreate.getAudio() != null && !questionCreate.getAudio().isEmpty()) {
+                setQuestionMedia(questionCreate);
             }
         } else {
-            if (question.getImage() != null && !question.getImage().isEmpty()) {
-                setQuestionMedia(question);
+            if (questionCreate.getImage() != null && !questionCreate.getImage().isEmpty()) {
+                setQuestionMedia(questionCreate);
             }
         }
     }
@@ -623,7 +610,7 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         }
     }
 
-    public abstract Question getCurrentQuestion();
+    public abstract QuestionCreate getCurrentQuestion();
 
     private static final int REQUEST_MEDIA_PICK = 1001;
     protected Uri mediaUri;
@@ -752,8 +739,8 @@ public abstract class QCBaseQuestionFragment extends Fragment {
         }
     }
 
-    protected void setQuestionMedia(Question question) {
-        String mediaPath = isAudioMode ? question.getAudio() : question.getImage();
+    protected void setQuestionMedia(QuestionCreate questionCreate) {
+        String mediaPath = isAudioMode ? questionCreate.getAudio() : questionCreate.getImage();
         if (mediaPath != null && !mediaPath.isEmpty()) {
             try {
                 Uri uri = Uri.parse(mediaPath);

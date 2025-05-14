@@ -21,10 +21,10 @@ import com.cmloopy.quizzi.adapter.QuestionCreate.QCQuestionBNVAdapter;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.PuzzleOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.TypeTextOption;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
 import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCQuestionDataGenerator;
 import com.cmloopy.quizzi.utils.QuestionCreate.manager.QCQuestionSaveManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,7 +41,7 @@ public class QCQuestionBNVFragment extends Fragment
     private FloatingActionButton fabAdd;
 
     private OnQuestionBNVListener listener;
-    private List<Question> questions;
+    private List<QuestionCreate> questionCreates;
     private QCQuestionSaveManager saveManager;
     private boolean updatingQuestion = false; // Flag to prevent recursive calls
 
@@ -51,11 +51,11 @@ public class QCQuestionBNVFragment extends Fragment
     private static final String TEXT = "TEXT";
 
     public QCQuestionBNVFragment() {
-        questions = QCQuestionDataGenerator.generateQuestions(2);
+        questionCreates = QCQuestionDataGenerator.generateQuestions(2);
     }
 
-    public QCQuestionBNVFragment(List<Question> questions) {
-        this.questions = questions;
+    public QCQuestionBNVFragment(List<QuestionCreate> questionCreates) {
+        this.questionCreates = questionCreates;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class QCQuestionBNVFragment extends Fragment
     }
 
     @Override
-    public void onUpdateQuestion(int position, Question question) {
+    public void onUpdateQuestion(int position, QuestionCreate questionCreate) {
         if (updatingQuestion) {
             return;
         }
@@ -74,59 +74,59 @@ public class QCQuestionBNVFragment extends Fragment
         try {
             updatingQuestion = true;
 
-            questions.set(position, question);
+            questionCreates.set(position, questionCreate);
             Log.d("QCQuestionBNVFragment", "Updating question at position: " + position);
             questionBottomAdapter.notifyItemChanged(position);
 
             if (listener != null) {
-                listener.onUpdateQuestion(position, question);
+                listener.onUpdateQuestion(position, questionCreate);
             }
         } finally {
             updatingQuestion = false;
         }
     }
 
-    public void updateQuestionInView(int position, Question question) {
-        if (position >= 0 && position < questions.size()) {
-            questions.set(position, question);
+    public void updateQuestionInView(int position, QuestionCreate questionCreate) {
+        if (position >= 0 && position < questionCreates.size()) {
+            questionCreates.set(position, questionCreate);
             if (questionBottomAdapter != null) {
                 questionBottomAdapter.notifyItemChanged(position);
             }
         }
     }
 
-    public void addQuestion(Question question) {
-        if (isQuestionValid(question)) {
-            questions.add(question);
+    public void addQuestion(QuestionCreate questionCreate) {
+        if (isQuestionValid(questionCreate)) {
+            questionCreates.add(questionCreate);
             questionBottomAdapter.notifyDataSetChanged();
 
             if (listener != null && getActivity() != null && saveManager != null) {
-                saveManager.onQuestionAdded(question.getPosition());
+                saveManager.onQuestionAdded(questionCreate.getPosition());
             }
         } else {
-            showValidationError(question);
+            showValidationError(questionCreate);
         }
     }
 
-    private boolean isQuestionValid(Question question) {
-        String questionType = question.getQuestionType().getName();
-        if(question.getContent() == null || question.getContent().isEmpty()) return true; // Allow empty questions initially
+    private boolean isQuestionValid(QuestionCreate questionCreate) {
+        String questionType = questionCreate.getQuestionType().getName();
+        if(questionCreate.getContent() == null || questionCreate.getContent().isEmpty()) return true; // Allow empty questions initially
         switch (questionType) {
             case SINGLE_CHOICE:
             case MULTI_CHOICE:
-                return validateChoiceQuestion(question);
+                return validateChoiceQuestion(questionCreate);
             case PUZZLE:
-                return validatePuzzleQuestion(question);
+                return validatePuzzleQuestion(questionCreate);
             case TEXT:
-                return validateTextQuestion(question);
+                return validateTextQuestion(questionCreate);
             default:
                 return true;
         }
     }
 
-    private boolean validateChoiceQuestion(Question question) {
-        if(!(question instanceof QuestionChoice)) return false;
-        QuestionChoice questionChoice = (QuestionChoice) question;
+    private boolean validateChoiceQuestion(QuestionCreate questionCreate) {
+        if(!(questionCreate instanceof QuestionCreateChoice)) return false;
+        QuestionCreateChoice questionChoice = (QuestionCreateChoice) questionCreate;
         if (questionChoice.getChoiceOptions() == null || questionChoice.getChoiceOptions().size() < 4) {
             return false;
         }
@@ -140,9 +140,9 @@ public class QCQuestionBNVFragment extends Fragment
         return true;
     }
 
-    private boolean validatePuzzleQuestion(Question question) {
-        if(!(question instanceof QuestionPuzzle)) return false;
-        QuestionPuzzle questionPuzzle = (QuestionPuzzle) question;
+    private boolean validatePuzzleQuestion(QuestionCreate questionCreate) {
+        if(!(questionCreate instanceof QuestionCreatePuzzle)) return false;
+        QuestionCreatePuzzle questionPuzzle = (QuestionCreatePuzzle) questionCreate;
         if (questionPuzzle.getPuzzlePieces() == null || questionPuzzle.getPuzzlePieces().size() < 4) {
             return false;
         }
@@ -156,9 +156,9 @@ public class QCQuestionBNVFragment extends Fragment
         return true;
     }
 
-    private boolean validateTextQuestion(Question question) {
-        if(!(question instanceof QuestionTypeText)) return false;
-        QuestionTypeText questionTypeText = (QuestionTypeText) question;
+    private boolean validateTextQuestion(QuestionCreate questionCreate) {
+        if(!(questionCreate instanceof QuestionCreateTypeText)) return false;
+        QuestionCreateTypeText questionTypeText = (QuestionCreateTypeText) questionCreate;
         if (questionTypeText.getAcceptedAnswers() == null || questionTypeText.getAcceptedAnswers().isEmpty()) {
             return false;
         }
@@ -174,8 +174,8 @@ public class QCQuestionBNVFragment extends Fragment
         return hasValidAnswer;
     }
 
-    private void showValidationError(Question question) {
-        String questionType = question.getQuestionType().getName();
+    private void showValidationError(QuestionCreate questionCreate) {
+        String questionType = questionCreate.getQuestionType().getName();
         String errorMessage;
 
         switch (questionType) {
@@ -201,22 +201,22 @@ public class QCQuestionBNVFragment extends Fragment
     private boolean validateAllQuestions() {
         boolean allValid = true;
         int invalidQuestionPosition = -1;
-        Question invalidQuestion = null;
+        QuestionCreate invalidQuestionCreate = null;
 
-        for (int i = 0; i < questions.size(); i++) {
-            Question question = questions.get(i);
-            if (!isQuestionValid(question)) {
+        for (int i = 0; i < questionCreates.size(); i++) {
+            QuestionCreate questionCreate = questionCreates.get(i);
+            if (!isQuestionValid(questionCreate)) {
                 allValid = false;
                 invalidQuestionPosition = i;
-                invalidQuestion = question;
+                invalidQuestionCreate = questionCreate;
                 break;
             }
         }
 
-        if (!allValid && invalidQuestion != null) {
-            showValidationError(invalidQuestion);
+        if (!allValid && invalidQuestionCreate != null) {
+            showValidationError(invalidQuestionCreate);
             if (listener != null) {
-                listener.onClickListener(invalidQuestion);
+                listener.onClickListener(invalidQuestionCreate);
                 Toast.makeText(getContext(),
                         "Please complete question " + (invalidQuestionPosition + 1) + " before adding a new one.",
                         Toast.LENGTH_LONG).show();
@@ -227,32 +227,32 @@ public class QCQuestionBNVFragment extends Fragment
     }
 
     @Override
-    public void onDeleteQuestion(int position, Question question) {
-        questions.remove(position);
+    public void onDeleteQuestion(int position, QuestionCreate questionCreate) {
+        questionCreates.remove(position);
 
-        for (int i = position; i < questions.size(); i++) {
-            questions.get(i).setPosition(i);
+        for (int i = position; i < questionCreates.size(); i++) {
+            questionCreates.get(i).setPosition(i);
         }
 
         questionBottomAdapter.notifyDataSetChanged();
 
         if (listener != null) {
-            listener.onDeleteQuestion(position, question, questions);
+            listener.onDeleteQuestion(position, questionCreate, questionCreates);
         }
 
-        if (!questions.isEmpty()) {
-            int newPosition = Math.min(position, questions.size() - 1);
-            listener.onClickListener(questions.get(newPosition));
+        if (!questionCreates.isEmpty()) {
+            int newPosition = Math.min(position, questionCreates.size() - 1);
+            listener.onClickListener(questionCreates.get(newPosition));
         }
 
         Log.d("QCQuestionBNVFragment", "Deleted question at position: " + position);
     }
 
     public interface OnQuestionBNVListener {
-        void onClickListener(Question question);
-        void onDeleteQuestion(int position, Question question, List<Question> questions);
-        void onUpdateQuestion(int position, Question question);
-        void onFabAddQuestion(List<Question> questions, QCQuestionBNVAdapter questionBNVAdapter);
+        void onClickListener(QuestionCreate questionCreate);
+        void onDeleteQuestion(int position, QuestionCreate questionCreate, List<QuestionCreate> questionCreates);
+        void onUpdateQuestion(int position, QuestionCreate questionCreate);
+        void onFabAddQuestion(List<QuestionCreate> questionCreates, QCQuestionBNVAdapter questionBNVAdapter);
     }
 
     public void setListener(OnQuestionBNVListener listener) {
@@ -267,7 +267,7 @@ public class QCQuestionBNVFragment extends Fragment
         questionScrollView = view.findViewById(R.id.question_scroll_view);
         fabAdd = view.findViewById(R.id.fab_add);
         Context context = getContext();
-        questionBottomAdapter = new QCQuestionBNVAdapter(context, questions, this);
+        questionBottomAdapter = new QCQuestionBNVAdapter(context, questionCreates, this);
         questionBottomAdapter.setListener(this);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
@@ -290,47 +290,47 @@ public class QCQuestionBNVFragment extends Fragment
 //                    return;
 //                }
 
-                listener.onFabAddQuestion(questions, questionBottomAdapter);
+                listener.onFabAddQuestion(questionCreates, questionBottomAdapter);
 
             }
         });
 
-        if(!questions.isEmpty() && listener != null) {
-            listener.onClickListener(questions.get(0));
+        if(!questionCreates.isEmpty() && listener != null) {
+            listener.onClickListener(questionCreates.get(0));
         }
         return view;
     }
 
     @Override
-    public void onQuestionClick(Question question, int position) {
-        listener.onClickListener(question);
+    public void onQuestionClick(QuestionCreate questionCreate, int position) {
+        listener.onClickListener(questionCreate);
     }
 
-    public List<Question> getQuestions() {
-        if(questions == null) questions = new ArrayList<>();
-        return questions;
+    public List<QuestionCreate> getQuestions() {
+        if(questionCreates == null) questionCreates = new ArrayList<>();
+        return questionCreates;
     }
 
-    public void setQuestions(List<Question> questions) {
-        this.questions.clear();
+    public void setQuestions(List<QuestionCreate> questionCreates) {
+        this.questionCreates.clear();
 
-        for (int i = 0; i < questions.size(); i++) {
-            Question question = questions.get(i);
-            question.setPosition(i);
-            this.questions.add(question);
+        for (int i = 0; i < questionCreates.size(); i++) {
+            QuestionCreate questionCreate = questionCreates.get(i);
+            questionCreate.setPosition(i);
+            this.questionCreates.add(questionCreate);
         }
 
         if (questionBottomAdapter != null) {
             questionBottomAdapter.notifyDataSetChanged();
         }
 
-        if (!this.questions.isEmpty() && listener != null) {
-            listener.onClickListener(this.questions.get(0));
+        if (!this.questionCreates.isEmpty() && listener != null) {
+            listener.onClickListener(this.questionCreates.get(0));
         }
 
         // Initialize the save manager with the new questions
         if (saveManager != null && getActivity() != null) {
-            saveManager.initialize(this.questions);
+            saveManager.initialize(this.questionCreates);
         }
     }
 

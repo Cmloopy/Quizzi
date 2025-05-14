@@ -9,15 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSayWord;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSayWord;
 
 public class QCQuestionSayWordFragment extends QCBaseQuestionFragment {
 
     private static final String ARG_RESPONSE_SAY_WORD = "response_choice";
-    private QuestionSayWord questionSayWord;
+    private QuestionCreateSayWord questionSayWord;
 
-    public static QCQuestionSayWordFragment newInstance(QuestionSayWord questionSayWord) {
+    public static QCQuestionSayWordFragment newInstance(QuestionCreateSayWord questionSayWord) {
         QCQuestionSayWordFragment fragment = new QCQuestionSayWordFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_RESPONSE_SAY_WORD, questionSayWord);
@@ -29,12 +29,12 @@ public class QCQuestionSayWordFragment extends QCBaseQuestionFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            questionSayWord = (QuestionSayWord) getArguments().getSerializable(ARG_RESPONSE_SAY_WORD);
+            questionSayWord = (QuestionCreateSayWord) getArguments().getSerializable(ARG_RESPONSE_SAY_WORD);
             if (questionSayWord == null) {
-                questionSayWord = new QuestionSayWord();
+                questionSayWord = new QuestionCreateSayWord();
             }
         } else {
-            questionSayWord = new QuestionSayWord();
+            questionSayWord = new QuestionCreateSayWord();
         }
     }
 
@@ -54,7 +54,7 @@ public class QCQuestionSayWordFragment extends QCBaseQuestionFragment {
     }
 
     @Override
-    public Question getCurrentQuestion() {
+    public QuestionCreate getCurrentQuestion() {
         return questionSayWord;
     }
 }

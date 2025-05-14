@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
 import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCChoiceOptionCreateDialog;
 import com.cmloopy.quizzi.adapter.QuestionCreate.QCChoiceOptionAdapter;
 
@@ -26,13 +26,13 @@ import java.util.List;
 public class QCQuestionCheckboxFragment extends QCBaseQuestionFragment implements QCChoiceOptionAdapter.OnAnswerClickListener {
 
     private static final String ARG_RESPONSE_CHOICE = "response_choice";
-    private QuestionChoice questionChoice;
+    private QuestionCreateChoice questionChoice;
     private RecyclerView answersRecyclerView;
     private QCChoiceOptionAdapter answerAdapter;
     private final List<ChoiceOption> tempAnswers = new ArrayList<>();
     private View coverImagePlaceholder;
 
-    public static QCQuestionCheckboxFragment newInstance(QuestionChoice questionChoice) {
+    public static QCQuestionCheckboxFragment newInstance(QuestionCreateChoice questionChoice) {
         QCQuestionCheckboxFragment fragment = new QCQuestionCheckboxFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_RESPONSE_CHOICE, questionChoice);
@@ -44,13 +44,13 @@ public class QCQuestionCheckboxFragment extends QCBaseQuestionFragment implement
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            questionChoice = (QuestionChoice) getArguments().getSerializable(ARG_RESPONSE_CHOICE);
+            questionChoice = (QuestionCreateChoice) getArguments().getSerializable(ARG_RESPONSE_CHOICE);
             if (questionChoice == null) {
-                questionChoice = new QuestionChoice();
+                questionChoice = new QuestionCreateChoice();
             }
             initializeTempAnswers();
         } else {
-            questionChoice = new QuestionChoice();
+            questionChoice = new QuestionCreateChoice();
             initializeTempAnswers();
         }
     }
@@ -156,7 +156,7 @@ public class QCQuestionCheckboxFragment extends QCBaseQuestionFragment implement
     }
 
     @Override
-    public Question getCurrentQuestion() {
+    public QuestionCreate getCurrentQuestion() {
         return questionChoice;
     }
 }

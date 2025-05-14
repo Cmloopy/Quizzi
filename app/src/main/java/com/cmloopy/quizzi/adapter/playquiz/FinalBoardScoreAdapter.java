@@ -19,7 +19,7 @@ import java.util.List;
 
 public class FinalBoardScoreAdapter extends RecyclerView.Adapter<FinalBoardScoreAdapter.FinalViewHolder> {
     public List<QuizGameTracking> answerList;
-    public List<String> namee = Arrays.asList("Arda", "Guller", "Gun", "Chestt", "Tomasl", "Chels", "Host", "Goyed");
+    public List<String> namee = Arrays.asList("Arda", "Guller", "Gun", "Chestt", "Tomasl", "Chels", "Host", "Goyed","Arda", "Guller", "Gun", "Chestt", "Tomasl", "Chels", "Host", "Goyed","Arda", "Guller", "Gun", "Chestt", "Tomasl", "Chels", "Host", "Goyed");
     private Context context;
     public FinalBoardScoreAdapter(Context context, List<QuizGameTracking> answerList){
         this.context = context;
@@ -41,7 +41,7 @@ public class FinalBoardScoreAdapter extends RecyclerView.Adapter<FinalBoardScore
 
     @Override
     public int getItemCount() {
-        return 8;
+        return answerList.size();
     }
 
     public static class FinalViewHolder extends RecyclerView.ViewHolder {

@@ -66,7 +66,7 @@
         app:layout_constraintTop_toBottomOf="@+id/shapeableImageView_slider"
         tools:layout_editor_absoluteX="15dp" />
 
-    <com.cmloopy.quizzi.utils.QuizCreate.slider.QCCustomSlider
+    <com.cmloopy.quizzi.utils.QuestionCreate.slider.QCCustomSlider
         android:id="@+id/custom_slider_ques"
         android:layout_width="match_parent"
         android:layout_height="125dp"
@@ -85,6 +85,19 @@
         android:layout_marginEnd="15dp"
         app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/crr_ans_slider"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Correct Answer: "
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/materialButton_submit_slider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/custom_slider_ques" />
     <androidx.cardview.widget.CardView
         android:visibility="gone"
         android:id="@+id/noti_status_slider"

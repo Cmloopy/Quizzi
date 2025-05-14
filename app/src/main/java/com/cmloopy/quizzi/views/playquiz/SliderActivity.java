@@ -7,20 +7,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.QuestionApi;
 import com.cmloopy.quizzi.databinding.ActivitySliderBinding;
 import com.cmloopy.quizzi.models.question.Question;
-import com.cmloopy.quizzi.models.question.choice.SingleChoiceQuestion;
 import com.cmloopy.quizzi.models.question.slider.SliderQuestion;
 
 import retrofit2.Call;
@@ -31,7 +25,7 @@ public class SliderActivity extends AppCompatActivity {
     private ActivitySliderBinding binding;
     private int totalScore;
     private int userId;
-    private int quizId;
+    private long quizId;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +38,7 @@ public class SliderActivity extends AppCompatActivity {
         int[] listQuesId = getIntent().getIntArrayExtra("listIdQues");
         String []listQuesType = getIntent().getStringArrayExtra("listTypeQues");
         userId = getIntent().getIntExtra("userId", -1);
-        quizId = getIntent().getIntExtra("quizId", -1);
+        quizId = getIntent().getLongExtra("quizId", -1);
         binding.txtNumAnswerSlider.setText(((questionId+1) + "") + "/" + (listQuesId.length + ""));
         binding.progressBarTimeSlider.setProgress(100);
 
@@ -63,6 +57,8 @@ public class SliderActivity extends AppCompatActivity {
 
                         binding.materialButtonSubmitSlider.setOnClickListener(v->{
                             int currentAnswer = (int) binding.customSliderQues.getCurrentValue();
+                            binding.crrAnsSlider.setText("Correct Answer: "+ (sliderQuestion.correctAnswer + ""));
+                            binding.crrAnsSlider.setVisibility(View.VISIBLE);
                             if(currentAnswer == sliderQuestion.correctAnswer){
                                 totalScore += sliderQuestion.point;
                                 int myColor = ContextCompat.getColor(SliderActivity.this, R.color.correct_green);

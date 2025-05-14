@@ -4,14 +4,14 @@ import java.util.List;
 
 public class QuizTrackingResponse {
     private int id;
-    private int quizId;
+    private long quizId;
     private int userId;
     private int totalPoints;
     private int rank;
     private int currentStreak;
     private int bestStreak;
 
-    public QuizTrackingResponse(int id, int quizId, int userId, int totalPoints, int rank, int currentStreak, int bestStreak) {
+    public QuizTrackingResponse(int id, long quizId, int userId, int totalPoints, int rank, int currentStreak, int bestStreak) {
         this.id = id;
         this.quizId = quizId;
         this.userId = userId;
@@ -21,7 +21,7 @@ public class QuizTrackingResponse {
         this.bestStreak = bestStreak;
     }
 
-    public QuizTrackingResponse(int quizId, int userId, int totalPoints, int rank, int currentStreak, int bestStreak) {
+    public QuizTrackingResponse(long quizId, int userId, int totalPoints, int rank, int currentStreak, int bestStreak) {
         this.quizId = quizId;
         this.userId = userId;
         this.totalPoints = totalPoints;
@@ -38,11 +38,11 @@ public class QuizTrackingResponse {
         this.id = id;
     }
 
-    public int getQuizId() {
+    public long getQuizId() {
         return quizId;
     }
 
-    public void setQuizId(int quizId) {
+    public void setQuizId(long quizId) {
         this.quizId = quizId;
     }
 

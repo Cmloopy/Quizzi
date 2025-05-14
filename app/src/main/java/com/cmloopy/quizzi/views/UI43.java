@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.transition.Slide;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.data.RetrofitClient;
@@ -16,6 +17,7 @@ import com.cmloopy.quizzi.models.question.Question;
 import com.cmloopy.quizzi.views.playquiz.MultiChoiceActivity;
 import com.cmloopy.quizzi.views.playquiz.PuzzleActivity;
 import com.cmloopy.quizzi.views.playquiz.SingleChoiceActivity;
+import com.cmloopy.quizzi.views.playquiz.SliderActivity;
 import com.cmloopy.quizzi.views.playquiz.TextActivity;
 import com.cmloopy.quizzi.views.playquiz.TrueFalseActivity;
 
@@ -32,7 +34,7 @@ public class UI43 extends AppCompatActivity {
     private int progressStatus = 0;
     private Handler handler = new Handler();
     private int userId;
-    private int quizId;
+    private Long quizId;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,7 @@ public class UI43 extends AppCompatActivity {
         setContentView(R.layout.ui_43);
 
         progressBar = findViewById(R.id.UI43progressBar);
-        quizId = getIntent().getIntExtra("quizId", -1);
+        quizId = getIntent().getLongExtra("quizId", -1);
         userId = getIntent().getIntExtra("userId", -1);
 
         if(progressStatus < 60) {
@@ -119,10 +121,11 @@ public class UI43 extends AppCompatActivity {
             finish();
         }
         if(types[0].equals("SLIDER")){
-            Intent intent = new Intent(UI43.this, TrueFalseActivity.class);
+            Intent intent = new Intent(UI43.this, SliderActivity.class);
             intent.putExtra("userId", userId);
             intent.putExtra("quizId", quizId);
-            intent.putExtra("questionId", ids[0]);
+            intent.putExtra("questionId", 0);
+            intent.putExtra("totalPoint", 0);
             intent.putExtra("listIdQues", ids);
             intent.putExtra("listTypeQues", types);
             startActivity(intent);

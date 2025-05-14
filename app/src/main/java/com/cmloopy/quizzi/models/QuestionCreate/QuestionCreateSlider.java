@@ -2,14 +2,14 @@ package com.cmloopy.quizzi.models.QuestionCreate;
 
 import java.io.Serializable;
 
-public class QuestionSlider extends Question implements Serializable {
+public class QuestionCreateSlider extends QuestionCreate implements Serializable {
     private int minValue;
     private int maxValue;
     private int defaultValue;
     private int correctAnswer;
     private String color;
 
-    public QuestionSlider() {
+    public QuestionCreateSlider() {
         super();
         this.minValue = 0;
         this.maxValue = 100;
@@ -19,7 +19,7 @@ public class QuestionSlider extends Question implements Serializable {
     }
 
 
-    public QuestionSlider(int position, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, int minValue, int maxValue, int defaultValue, int correctAnswer, String color) {
+    public QuestionCreateSlider(int position, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, int minValue, int maxValue, int defaultValue, int correctAnswer, String color) {
         super(position, content, imageUrl, audioUrl, point, timeLimit, description);
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -28,7 +28,7 @@ public class QuestionSlider extends Question implements Serializable {
         this.color = color;
     }
 
-    public QuestionSlider(int position, Long id, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, int minValue, int maxValue, int defaultValue, int correctAnswer, String color) {
+    public QuestionCreateSlider(int position, Long id, String content, String imageUrl, String audioUrl, int point, int timeLimit, String description, int minValue, int maxValue, int defaultValue, int correctAnswer, String color) {
         super(position, id, content, imageUrl, audioUrl, point, timeLimit, description);
         this.minValue = minValue;
         this.maxValue = maxValue;

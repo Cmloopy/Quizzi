@@ -62,6 +62,7 @@ public class ProfileFragment extends Fragment {
 
     // Lưu trữ thông tin user
     private User userData;
+    private int userId;
 
     RecyclerView.Adapter<?> adapter = null;
 
@@ -76,6 +77,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userId = getArguments().getInt("userId", -1);
     }
 
     @Override
@@ -349,26 +351,26 @@ public class ProfileFragment extends Fragment {
         // Đây là nơi để lấy dữ liệu quiz từ API nếu có
         List<Quiz> items = new ArrayList<>();
 
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Get Smarter with Prod...",
+        items.add(new Quiz(1L, R.drawable.ic_launcher_background, "Get Smarter with Prod...",
                 "2 months ago", "5.5K plays", "Titus Kitamura", R.drawable.ic_launcher_background, "16 Qs"));
 
         // Thêm các quiz khác
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Great Ideas Come from...",
+        items.add(new Quiz(1L, R.drawable.ic_launcher_background, "Great Ideas Come from...",
                 "6 months ago", "10.3K plays", "Alfonzo Schuessler", R.drawable.ic_launcher_background, "10 Qs"));
 
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Having Fun & Always S...",
+        items.add(new Quiz(1L,R.drawable.ic_launcher_background, "Having Fun & Always S...",
                 "2 years ago", "18.5K plays", "Daryl Nehls", R.drawable.ic_launcher_background, "12 Qs"));
 
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Can You Imagine, Worl...",
+        items.add(new Quiz(1L, R.drawable.ic_launcher_background, "Can You Imagine, Worl...",
                 "3 months ago", "4.9K plays", "Edgar Torrey", R.drawable.ic_launcher_background, "20 Qs"));
 
-        items.add(new Quiz(R.drawable.ic_launcher_background, "Back to School, Get Sm...",
+        items.add(new Quiz(1L,R.drawable.ic_launcher_background, "Back to School, Get Sm...",
                 "1 year ago", "12.4K plays", "Darcel Ballentine", R.drawable.ic_launcher_background, "10 Qs"));
 
-        items.add(new Quiz(R.drawable.ic_launcher_background, "What is Your Favorite ...",
+        items.add(new Quiz(1L,R.drawable.ic_launcher_background, "What is Your Favorite ...",
                 "5 months ago", "6.2K plays", "Elmer Laverty", R.drawable.ic_launcher_background, "16 Qs"));
 
-        return new QuizAdapter(items);
+        return new QuizAdapter(items, userId);
     }
 
     private TopCollectionsCategoryAdapter getCollectionAdapter() {

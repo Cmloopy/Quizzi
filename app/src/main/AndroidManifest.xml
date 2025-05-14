@@ -44,18 +44,18 @@
             android:exported="false" />
         <activity
             android:name=".views.SplashActivity"
-            android:exported="true" />
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".views.AboutQuizzoActivity"
             android:exported="false" />
         <activity
             android:name=".views.AuthorDetailsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.AuthorDetailsCollections"
-            android:exported="false" />
-        <activity
-            android:name=".views.AuthorDetailsQuizzo"
             android:exported="false" />
         <activity
             android:name=".views.CreateAccountStep1Activity"
@@ -95,13 +95,7 @@
             android:exported="false" />
         <activity
             android:name=".views.QuizzDetails"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".views.RecommendAuthorActivity"
             android:exported="false" />
@@ -134,9 +128,6 @@
             android:exported="false" />
         <activity
             android:name=".views.CreateQuizActivity"
-            android:exported="false" />
-        <activity
-            android:name=".views.QuizCreate.after.QuizCreateActivity"
             android:exported="false" />
         <activity
             android:name=".views.UI43"

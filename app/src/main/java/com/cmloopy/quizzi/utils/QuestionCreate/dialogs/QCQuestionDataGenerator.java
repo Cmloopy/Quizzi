@@ -1,14 +1,14 @@
 package com.cmloopy.quizzi.utils.QuestionCreate.dialogs;
 
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSayWord;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSayWord;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTrueFalse;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSlider;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionType;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.*;
 
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 public class QCQuestionDataGenerator {
     private static final Random random = new Random();
@@ -36,25 +35,25 @@ public class QCQuestionDataGenerator {
         return types;
     }
 
-    public static List<Question> generateQuestions(int totalQuestions) {
+    public static List<QuestionCreate> generateQuestions(int totalQuestions) {
         // Ensure we have at least one of each type
         if (totalQuestions < 8) {
             totalQuestions = 6; // We have 8 question types
         }
 
-        List<Question> questions = new ArrayList<>();
+        List<QuestionCreate> questionCreates = new ArrayList<>();
 
         // Add one of each type first to ensure all types are represented
-        questions.add(generateQuizQuestion(0));
-        questions.add(generateCheckboxQuestion(1));
-        questions.add(generatePuzzleQuestion(2));
-        questions.add(generateTextQuestion(3));
-        questions.add(generateSliderQuestion(4));
-        questions.add(generateTrueFalseQuestion(5));
+        questionCreates.add(generateQuizQuestion(0));
+        questionCreates.add(generateCheckboxQuestion(1));
+        questionCreates.add(generatePuzzleQuestion(2));
+        questionCreates.add(generateTextQuestion(3));
+        questionCreates.add(generateSliderQuestion(4));
+        questionCreates.add(generateTrueFalseQuestion(5));
 //        questions.add(generateQuizAudioQuestion(4));
 //        questions.add(generateSayWordQuestion(7));
 
-        return questions;
+        return questionCreates;
     }
 
     private static QuestionType getQuestionTypeByName(String name) {
@@ -67,7 +66,7 @@ public class QCQuestionDataGenerator {
     }
 
 
-    private static QuestionSlider generateSliderQuestion(int position) {
+    private static QuestionCreateSlider generateSliderQuestion(int position) {
         String[] titles = {
                 "Adjust the slider to match the temperature shown in the thermometer",
                 "Move the slider to indicate the correct angle",
@@ -105,7 +104,7 @@ public class QCQuestionDataGenerator {
         int defaultValue = (minValue + maxValue) / 2;
         int colorIndex = random.nextInt(colors.length); // 0-3 for color values
 
-        QuestionSlider question = new QuestionSlider(
+        QuestionCreateSlider question = new QuestionCreateSlider(
                 position,
                 titles[titleIndex],
                 imageUrls[titleIndex],
@@ -125,7 +124,7 @@ public class QCQuestionDataGenerator {
         return question;
     }
 
-    private static QuestionChoice generateQuizQuestion(int position) {
+    private static QuestionCreateChoice generateQuizQuestion(int position) {
         String[] titles = {
                 "Which of these animals is shown in the image?",
                 "What is the capital city displayed in the photo?",
@@ -173,7 +172,7 @@ public class QCQuestionDataGenerator {
             ));
         }
 
-        QuestionChoice question = new QuestionChoice(
+        QuestionCreateChoice question = new QuestionCreateChoice(
                 position,
                 titles[titleIndex],
                 imageUrls[titleIndex],
@@ -189,7 +188,7 @@ public class QCQuestionDataGenerator {
         return question;
     }
 
-    private static QuestionChoice generateCheckboxQuestion(int position) {
+    private static QuestionCreateChoice generateCheckboxQuestion(int position) {
         String[] titles = {
                 "Select all animals that are mammals",
                 "Choose all elements that are metals",
@@ -244,7 +243,7 @@ public class QCQuestionDataGenerator {
             ));
         }
 
-        QuestionChoice question = new QuestionChoice(
+        QuestionCreateChoice question = new QuestionCreateChoice(
                 position,
                 titles[titleIndex],
                 imageUrls[titleIndex],
@@ -260,7 +259,7 @@ public class QCQuestionDataGenerator {
         return question;
     }
 
-    private static QuestionPuzzle generatePuzzleQuestion(int position) {
+    private static QuestionCreatePuzzle generatePuzzleQuestion(int position) {
         String[] titles = {
                 "Arrange the pieces to complete the historical timeline",
                 "Solve the jigsaw puzzle of the landmark",
@@ -309,7 +308,7 @@ public class QCQuestionDataGenerator {
             ));
         }
 
-        QuestionPuzzle question = new QuestionPuzzle(
+        QuestionCreatePuzzle question = new QuestionCreatePuzzle(
                 position,
                 titles[titleIndex],
                 imageUrls[titleIndex],
@@ -325,7 +324,7 @@ public class QCQuestionDataGenerator {
         return question;
     }
 
-    private static QuestionTypeText generateTextQuestion(int position) {
+    private static QuestionCreateTypeText generateTextQuestion(int position) {
         String[] titles = {
                 "What is the name of the animal shown in the image?",
                 "Enter the chemical formula displayed in the diagram",
@@ -372,7 +371,7 @@ public class QCQuestionDataGenerator {
             cnt++;
         }
 
-        QuestionTypeText question = new QuestionTypeText(
+        QuestionCreateTypeText question = new QuestionCreateTypeText(
                 position,
                 titles[titleIndex],
                 imageUrls[titleIndex],
@@ -389,7 +388,7 @@ public class QCQuestionDataGenerator {
         return question;
     }
 
-    private static QuestionChoice generateQuizAudioQuestion(int position) {
+    private static QuestionCreateChoice generateQuizAudioQuestion(int position) {
         String[] titles = {
                 "Identify the instrument playing in the audio",
                 "Which animal makes this sound?",
@@ -437,7 +436,7 @@ public class QCQuestionDataGenerator {
             ));
         }
 
-        QuestionChoice question = new QuestionChoice(
+        QuestionCreateChoice question = new QuestionCreateChoice(
                 position,
                 titles[titleIndex],
                 "",
@@ -453,7 +452,7 @@ public class QCQuestionDataGenerator {
         return question;
     }
 
-    private static QuestionTrueFalse generateTrueFalseQuestion(int position) {
+    private static QuestionCreateTrueFalse generateTrueFalseQuestion(int position) {
         String[] titles = {
                 "Is the statement about this animal correct?",
                 "Is this mathematical equation true?",
@@ -488,7 +487,7 @@ public class QCQuestionDataGenerator {
 
         int titleIndex = random.nextInt(titles.length);
 
-        QuestionTrueFalse question = new QuestionTrueFalse(
+        QuestionCreateTrueFalse question = new QuestionCreateTrueFalse(
                 position,
                 titles[titleIndex],
                 imageUrls[titleIndex],
@@ -504,7 +503,7 @@ public class QCQuestionDataGenerator {
         return question;
     }
 
-    private static QuestionSayWord generateSayWordQuestion(int position) {
+    private static QuestionCreateSayWord generateSayWordQuestion(int position) {
         String[] titles = {
                 "Say the name of this animal shown in the image",
                 "Pronounce the name of this country",
@@ -547,7 +546,7 @@ public class QCQuestionDataGenerator {
 
         int titleIndex = random.nextInt(titles.length);
 
-        QuestionSayWord question = new QuestionSayWord(
+        QuestionCreateSayWord question = new QuestionCreateSayWord(
                 position,
                 titles[titleIndex],
                 imageUrls[titleIndex],

@@ -26,5 +26,5 @@ public interface QuizzApi {
             @Part MultipartBody.Part coverPhotoFile
     );
     @GET("quizzes/{quizId}")
-    Call<QuizResponse> getQuizById(@Path("quizId") int quizId);
+    Call<QuizResponse> getQuizById(@Path("quizId") long quizId);
 }

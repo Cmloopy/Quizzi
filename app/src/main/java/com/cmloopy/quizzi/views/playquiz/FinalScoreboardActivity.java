@@ -25,7 +25,7 @@ import retrofit2.Response;
 public class FinalScoreboardActivity extends AppCompatActivity {
     private ActivityFinalScoreboardBinding binding;
     private int userId;
-    private int quizId;
+    private long quizId;
     GamePlayApi gamePlayApi = RetrofitClient.playGame();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class FinalScoreboardActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         userId = getIntent().getIntExtra("userId",-1);
-        quizId = getIntent().getIntExtra("quizId",-1);
+        quizId = getIntent().getLongExtra("quizId",-1);
 
         Call<List<QuizGameTracking>> call = gamePlayApi.getQuizTracking(quizId);
         call.enqueue(new Callback<List<QuizGameTracking>>() {
@@ -48,14 +48,39 @@ public class FinalScoreboardActivity extends AppCompatActivity {
                             return Integer.compare(p2.getTotalPoints(), p1.getTotalPoints());
                         }
                     });
-                    binding.tvFirstPlaceScore.setText(res.get(0).getTotalPoints()+ "");
-                    binding.tvSecondPlaceScore.setText(res.get(1).getTotalPoints()+ "");
-                    binding.tvThirdPlaceScore.setText(res.get(2).getTotalPoints()+ "");
-                    res.remove(0);
-                    res.remove(0);
-                    res.remove(0);
-                    binding.rvLeaderboard.setLayoutManager(new LinearLayoutManager(FinalScoreboardActivity.this));
-                    binding.rvLeaderboard.setAdapter(new FinalBoardScoreAdapter(FinalScoreboardActivity.this, res));
+                    int totalPlayer = res.size();
+                    if(totalPlayer == 1){
+                        binding.tvFirstPlaceScore.setText(res.get(0).getTotalPoints()+ "");
+                        binding.tvSecondPlaceScore.setText("0");
+                        binding.tvThirdPlaceScore.setText("0");
+                        binding.rvLeaderboard.setLayoutManager(new LinearLayoutManager(FinalScoreboardActivity.this));
+                        binding.rvLeaderboard.setAdapter(new FinalBoardScoreAdapter(FinalScoreboardActivity.this, Collections.emptyList()));
+                    }
+                    if (totalPlayer == 2){
+                        binding.tvFirstPlaceScore.setText(res.get(0).getTotalPoints()+ "");
+                        binding.tvSecondPlaceScore.setText(res.get(1).getTotalPoints()+ "");
+                        binding.tvThirdPlaceScore.setText("0");
+                        binding.rvLeaderboard.setLayoutManager(new LinearLayoutManager(FinalScoreboardActivity.this));
+                        binding.rvLeaderboard.setAdapter(new FinalBoardScoreAdapter(FinalScoreboardActivity.this, Collections.emptyList()));
+                    }
+                    if (totalPlayer == 3){
+                        binding.tvFirstPlaceScore.setText(res.get(0).getTotalPoints()+ "");
+                        binding.tvSecondPlaceScore.setText(res.get(1).getTotalPoints()+ "");
+                        binding.tvSecondPlaceScore.setText(res.get(2).getTotalPoints()+ "");
+                        binding.rvLeaderboard.setLayoutManager(new LinearLayoutManager(FinalScoreboardActivity.this));
+                        binding.rvLeaderboard.setAdapter(new FinalBoardScoreAdapter(FinalScoreboardActivity.this, Collections.emptyList()));
+                    }
+                    if(totalPlayer>3) {
+
+                        binding.tvFirstPlaceScore.setText(res.get(0).getTotalPoints() + "");
+                        binding.tvSecondPlaceScore.setText(res.get(1).getTotalPoints() + "");
+                        binding.tvThirdPlaceScore.setText(res.get(2).getTotalPoints() + "");
+                        res.remove(0);
+                        res.remove(0);
+                        res.remove(0);
+                        binding.rvLeaderboard.setLayoutManager(new LinearLayoutManager(FinalScoreboardActivity.this));
+                        binding.rvLeaderboard.setAdapter(new FinalBoardScoreAdapter(FinalScoreboardActivity.this, res));
+                    }
                 }
             }
 

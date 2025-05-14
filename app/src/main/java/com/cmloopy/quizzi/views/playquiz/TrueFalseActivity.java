@@ -31,7 +31,7 @@ public class TrueFalseActivity extends AppCompatActivity {
     private ActivityTrueFalseBinding binding;
     private int totalScore;
     private int userId;
-    private int quizId;
+    private long quizId;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class TrueFalseActivity extends AppCompatActivity {
         int[] listQuesId = getIntent().getIntArrayExtra("listIdQues");
         String []listQuesType = getIntent().getStringArrayExtra("listTypeQues");
         userId = getIntent().getIntExtra("userId",-1);
-        quizId = getIntent().getIntExtra("quizId",-1);
+        quizId = getIntent().getLongExtra("quizId",-1);
         binding.txtNumAnswerTrue.setText(((questionId+1) + "") + "/" + (listQuesId.length + ""));
         binding.progressBarTimeTrue.setProgress(100);
 

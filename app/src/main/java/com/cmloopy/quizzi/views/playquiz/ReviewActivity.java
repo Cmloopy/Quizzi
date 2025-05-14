@@ -19,7 +19,7 @@ import retrofit2.Response;
 public class ReviewActivity extends AppCompatActivity {
     private ActivityReviewBinding binding;
     private int userId;
-    private int quizId;
+    private long quizId;
     private int totalPoint;
 
     GamePlayApi gamePlayApi = RetrofitClient.playGame();
@@ -29,10 +29,10 @@ public class ReviewActivity extends AppCompatActivity {
         binding = ActivityReviewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         userId = getIntent().getIntExtra("userId",-1);
-        quizId = getIntent().getIntExtra("quizId",-1);
+        quizId = getIntent().getLongExtra("quizId",-1);
         totalPoint = getIntent().getIntExtra("totalPoint",-1);
 
-        binding.textView2.setText(totalPoint+ "");
+        binding.textView2.setText("Your TotalScore: " + (totalPoint+ ""));
 
         QuizTrackingResponse quizTrackingResponse = new QuizTrackingResponse(quizId, userId, totalPoint, 0, 0, 0);
         Call<QuizTrackingResponse> call = gamePlayApi.saveTotalPoint(quizTrackingResponse);

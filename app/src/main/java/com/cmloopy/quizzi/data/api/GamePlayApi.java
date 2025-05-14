@@ -12,5 +12,5 @@ public interface GamePlayApi {
     @POST("quiz-game-tracking")
     Call<QuizTrackingResponse> saveTotalPoint(@Body QuizTrackingResponse quizTrackingResponse);
     @GET("quiz-game-tracking/quiz/{quizId}")
-    Call<List<QuizGameTracking>> getQuizTracking(@Path("quizId") int quizId);
+    Call<List<QuizGameTracking>> getQuizTracking(@Path("quizId") long quizId);
 }

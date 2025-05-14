@@ -25,6 +25,7 @@ public class RecommendAuthorActivity extends AppCompatActivity {
     private RecommendAuthorAdapter recommendedFriendsAdapter;
     private List<RecommendUser> authorsList = new ArrayList<>();
     private AuthorDataManager authorDataManager;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +34,14 @@ public class RecommendAuthorActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_with_search_view);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Top Authors");
+        userId = getIntent().getIntExtra("userId",-1);
 
         recommendedFriendsRecyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recommendedFriendsRecyclerView.setLayoutManager(linearLayoutManager);
 
         // Khởi tạo adapter với danh sách rỗng ban đầu
-        recommendedFriendsAdapter = new RecommendAuthorAdapter(authorsList);
+        recommendedFriendsAdapter = new RecommendAuthorAdapter(authorsList, userId);
         recommendedFriendsRecyclerView.setAdapter(recommendedFriendsAdapter);
 
         // Tải dữ liệu từ AuthorDataManager

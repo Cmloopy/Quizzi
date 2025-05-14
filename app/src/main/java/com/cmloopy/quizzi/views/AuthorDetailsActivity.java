@@ -24,6 +24,7 @@ public class AuthorDetailsActivity extends AppCompatActivity {
 
     // Biến lưu trữ thông tin tác giả
     private String authorId;
+    private int userId;
     private String authorName;
     private String authorUsername;
     private int authorAvatar;
@@ -80,6 +81,7 @@ public class AuthorDetailsActivity extends AppCompatActivity {
             Log.d("AuthorDetails", "Intent extras: " + intent.getExtras());
 
             // Thông tin cơ bản
+            userId = getIntent().getIntExtra("userId",-1);
             authorId = intent.getStringExtra("AUTHOR_ID");
             authorName = intent.getStringExtra("AUTHOR_NAME");
             authorUsername = intent.getStringExtra("AUTHOR_USERNAME");

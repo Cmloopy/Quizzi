@@ -70,7 +70,7 @@ public class AuthorQuizzoFragment extends Fragment {
         quizzoCountText.setText(totalQuizs + " Quizzo");
 
         // Thiết lập adapter
-        adapter = new QuizAdapter(quizList);
+        adapter = new QuizAdapter(quizList, 1);
         recyclerView.setAdapter(adapter);
 
         return view;

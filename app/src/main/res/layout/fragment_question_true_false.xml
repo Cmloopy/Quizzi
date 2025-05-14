@@ -107,7 +107,7 @@
                     android:inputType="text"
                     android:cursorVisible="true"
                     android:focusable="true"
-                    android:hint="Enter your question"
+                    android:hint="Enter your questionCreate"
                     android:focusableInTouchMode="true"/>
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>

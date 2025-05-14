@@ -37,7 +37,7 @@ public class TextActivity extends AppCompatActivity {
     private ActivityTextBinding binding;
     private int totalScore;
     private int userId;
-    private int quizId;
+    private long quizId;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,7 @@ public class TextActivity extends AppCompatActivity {
         int[] listQuesId = getIntent().getIntArrayExtra("listIdQues");
         String []listQuesType = getIntent().getStringArrayExtra("listTypeQues");
         userId = getIntent().getIntExtra("userId",-1);
-        quizId = getIntent().getIntExtra("quizId",-1);
+        quizId = getIntent().getLongExtra("quizId",-1);
 
         binding.txtNumAnswerText.setText(((questionId+1) + "") + "/" + (listQuesId.length + ""));
         binding.progressBarTimeText.setProgress(100);
@@ -82,6 +82,8 @@ public class TextActivity extends AppCompatActivity {
                                     binding.textCountPointText.setText("Try it out!");
                                     binding.txtSttText.setText("Incorrect!");
                                     binding.notiStatusText.setVisibility(View.VISIBLE);
+                                    binding.crrAnsText.setText("Correct Answer: " + (ans.get(0).text));
+                                    binding.crrAnsText.setVisibility(View.VISIBLE);
                                 }
                                 Log.e("totalPoint", totalScore+ "");
                                 new Handler(Looper.getMainLooper()).postDelayed(() -> {

@@ -25,9 +25,11 @@ import java.util.List;
 
 public class RecommendAuthorAdapter extends RecyclerView.Adapter<RecommendAuthorAdapter.FriendViewHolder> {
     private List<RecommendUser> friendsList;
+    private int userId;
 
-    public RecommendAuthorAdapter(List<RecommendUser> friendsList) {
+    public RecommendAuthorAdapter(List<RecommendUser> friendsList, int userId) {
         this.friendsList = friendsList;
+        this.userId = userId;
     }
 
     @NonNull
@@ -83,6 +85,7 @@ public class RecommendAuthorAdapter extends RecyclerView.Adapter<RecommendAuthor
                         Intent intent = new Intent(context, AuthorDetailsActivity.class);
 
                         // Thông tin cơ bản
+                        intent.putExtra("userId",userId);
                         intent.putExtra("AUTHOR_ID", String.valueOf(user.getId()));
                         intent.putExtra("AUTHOR_NAME", user.getFullName());
                         intent.putExtra("AUTHOR_USERNAME", user.getUsername());

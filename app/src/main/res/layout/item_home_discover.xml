@@ -25,18 +25,21 @@
         android:padding="5dp"
         android:textSize="11sp"
         android:layout_marginStart="130dp"/>
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/txt_title"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="130dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:textColor="@color/black"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginEnd="10dp"
+        android:maxLines="2"
+        android:ellipsize="end"
         android:fontFamily="@font/nunitomedium"
-        android:text="Get Smarter with Productivity Quizz..."/>
+        android:text="Get Smarter with Productivity Quizz..."
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/img_biaAuthor"

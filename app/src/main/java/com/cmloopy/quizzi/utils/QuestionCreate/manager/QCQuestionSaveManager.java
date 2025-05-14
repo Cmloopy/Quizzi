@@ -9,7 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.cmloopy.quizzi.data.api.QuestionCreate.service.QuestionService;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
 
 import java.util.List;
 
@@ -35,12 +35,12 @@ public class QCQuestionSaveManager {
         }
     }
 
-    public void initialize(List<Question> questions) {
-        saveService.initializeChangeTracker(questions);
+    public void initialize(List<QuestionCreate> questionCreates) {
+        saveService.initializeChangeTracker(questionCreates);
     }
 
-    public void onQuestionUpdated(int position, Question question) {
-        saveService.registerQuestionChange(position, question);
+    public void onQuestionUpdated(int position, QuestionCreate questionCreate) {
+        saveService.registerQuestionChange(position, questionCreate);
     }
 
     public void onQuestionAdded(int position) {
@@ -55,17 +55,17 @@ public class QCQuestionSaveManager {
         return saveService.hasUnsavedChanges();
     }
 
-    public void saveAllChanges(List<Question> questions, QuestionService.SaveOperationListener listener) {
+    public void saveAllChanges(List<QuestionCreate> questionCreates, QuestionService.SaveOperationListener listener) {
         if (quizId == null) {
             listener.onSaveComplete(false, "No quiz ID available");
             return;
         }
 
-        saveService.saveAllChanges(questions, quizId, listener);
+        saveService.saveAllChanges(questionCreates, quizId, listener);
     }
 
     public void showBackConfirmationDialog(
-            List<Question> questions,
+            List<QuestionCreate> questionCreates,
             Runnable onDiscardCallback,
             QuestionService.SaveOperationListener onSaveCallback) {
 
@@ -85,7 +85,7 @@ public class QCQuestionSaveManager {
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            saveAllChanges(questions, (isSuccessful, message) -> {
+            saveAllChanges(questionCreates, (isSuccessful, message) -> {
                 progressDialog.dismiss();
                 onSaveCallback.onSaveComplete(isSuccessful, message);
             });
@@ -106,7 +106,7 @@ public class QCQuestionSaveManager {
         dialog.show();
     }
 
-    public void showSaveConfirmationDialog(List<Question> questions) {
+    public void showSaveConfirmationDialog(List<QuestionCreate> questionCreates) {
         if (!hasUnsavedChanges()) {
             Toast.makeText(context, "No changes to save", Toast.LENGTH_SHORT).show();
             return;
@@ -126,7 +126,7 @@ public class QCQuestionSaveManager {
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            saveAllChanges(questions, (isSuccessful, message) -> {
+            saveAllChanges(questionCreates, (isSuccessful, message) -> {
                 progressDialog.dismiss();
 
                 if (isSuccessful) {
@@ -147,7 +147,7 @@ public class QCQuestionSaveManager {
         dialog.show();
     }
 
-    public void showSaveConfirmationDialog2(List<Question> questions) {
+    public void showSaveConfirmationDialog2(List<QuestionCreate> questionCreates) {
 //        if (!hasUnsavedChanges()) {
 //            Toast.makeText(context, "No changes to save", Toast.LENGTH_SHORT).show();
 //            return;
@@ -166,12 +166,12 @@ public class QCQuestionSaveManager {
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            saveService.saveAllQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
+            saveService.saveAllQuestionsWithFullReset(questionCreates, quizId, (isSuccessful, message) -> {
                 progressDialog.dismiss();
 
                 if (isSuccessful) {
                     Toast.makeText(context, "Questions saved successfully", Toast.LENGTH_SHORT).show();
-                    saveService.initializeChangeTracker(questions);
+                    saveService.initializeChangeTracker(questionCreates);
                 } else {
                     new AlertDialog.Builder(context)
                             .setTitle("Save Error")

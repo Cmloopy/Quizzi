@@ -1,11 +1,11 @@
 package com.cmloopy.quizzi.data.api.QuestionCreate;
 
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSlider;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTrueFalse;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
 
 import java.util.List;
 
@@ -22,20 +22,20 @@ import retrofit2.http.Path;
 
 public interface QuestionAPI {
     @GET("questions/quiz/{quizId}")
-    Call<List<Question>> getQuizQuestions(@Path("quizId") Long quizId);
+    Call<List<QuestionCreate>> getQuizQuestions(@Path("quizId") Long quizId);
     @GET("questions/{questionId}")
-    Call<Question> getQuestionById(@Path("questionId") int questionId);
+    Call<QuestionCreate> getQuestionById(@Path("questionId") int questionId);
 
     @Multipart
     @POST("questions/batch")
-    Call<List<Question>> createQuestionsBatch(
+    Call<List<QuestionCreate>> createQuestionsBatch(
             @Part("quizId") RequestBody quizId,
             @Part("questionsJson") RequestBody questionsJson,
             @Part List<MultipartBody.Part> files
     );
     @Multipart
     @POST("questions")
-    Call<Question> createQuestion(
+    Call<QuestionCreate> createQuestion(
             @Part("quizId") RequestBody quizId,
             @Part("questionTypeId") RequestBody questionTypeId,
             @Part("content") RequestBody content,
@@ -52,7 +52,7 @@ public interface QuestionAPI {
 
     @Multipart
     @PUT("questions/{id}")
-    Call<Question> updateQuestion(
+    Call<QuestionCreate> updateQuestion(
             @Path("id") Long id,
             @Part("quizId") RequestBody quizId,
             @Part("questionTypeId") RequestBody questionTypeId,
@@ -70,7 +70,7 @@ public interface QuestionAPI {
 
     @Multipart
     @POST("questions/true-false")
-    Call<QuestionTrueFalse> createTrueFalseQuestion(
+    Call<QuestionCreateTrueFalse> createTrueFalseQuestion(
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
             @Part("position") RequestBody position,
@@ -84,7 +84,7 @@ public interface QuestionAPI {
 
     @Multipart
     @PUT("questions/true-false/{id}")
-    Call<QuestionTrueFalse> updateTrueFalseQuestion(
+    Call<QuestionCreateTrueFalse> updateTrueFalseQuestion(
             @Path("id") Long id,
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
@@ -99,7 +99,7 @@ public interface QuestionAPI {
 
     @Multipart
     @POST("questions/choice")
-    Call<QuestionChoice> createChoiceQuestion(
+    Call<QuestionCreateChoice> createChoiceQuestion(
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
             @Part("position") RequestBody position,
@@ -113,7 +113,7 @@ public interface QuestionAPI {
 
     @Multipart
     @PUT("questions/choice/{id}")
-    Call<QuestionChoice> updateChoiceQuestion(
+    Call<QuestionCreateChoice> updateChoiceQuestion(
             @Path("id") Long id,
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
@@ -128,7 +128,7 @@ public interface QuestionAPI {
 
     @Multipart
     @POST("questions/slider")
-    Call<QuestionSlider> createSliderQuestion(
+    Call<QuestionCreateSlider> createSliderQuestion(
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
             @Part("position") RequestBody position,
@@ -146,7 +146,7 @@ public interface QuestionAPI {
 
     @Multipart
     @PUT("questions/slider/{id}")
-    Call<QuestionSlider> updateSliderQuestion(
+    Call<QuestionCreateSlider> updateSliderQuestion(
             @Path("id") Long id,
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
@@ -165,7 +165,7 @@ public interface QuestionAPI {
 
     @Multipart
     @POST("questions/puzzle")
-    Call<QuestionPuzzle> createPuzzleQuestion(
+    Call<QuestionCreatePuzzle> createPuzzleQuestion(
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
             @Part("position") RequestBody position,
@@ -179,7 +179,7 @@ public interface QuestionAPI {
 
     @Multipart
     @PUT("questions/puzzle/{id}")
-    Call<QuestionPuzzle> updatePuzzleQuestion(
+    Call<QuestionCreatePuzzle> updatePuzzleQuestion(
             @Path("id") Long id,
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
@@ -194,7 +194,7 @@ public interface QuestionAPI {
 
     @Multipart
     @POST("questions/text")
-    Call<QuestionTypeText> createTextQuestion(
+    Call<QuestionCreateTypeText> createTextQuestion(
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,
             @Part("position") RequestBody position,
@@ -209,7 +209,7 @@ public interface QuestionAPI {
 
     @Multipart
     @PUT("questions/text/{id}")
-    Call<QuestionTypeText> updateTextQuestion(
+    Call<QuestionCreateTypeText> updateTextQuestion(
             @Path("id") Long id,
             @Part("quizId") RequestBody quizId,
             @Part("content") RequestBody content,

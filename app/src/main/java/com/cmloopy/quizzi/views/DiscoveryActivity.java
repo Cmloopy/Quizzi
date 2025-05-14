@@ -43,11 +43,14 @@ public class DiscoveryActivity extends AppCompatActivity {
     private QuizAdapter adapter;
     private ProgressBar progressBar;
     private QuizAPI quizApi;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discovery);
+
+        userId = getIntent().getIntExtra("userId",-1);
 
         // Thiết lập toolbar
         Toolbar toolbar = findViewById(R.id.toolbar_with_search_view);
@@ -65,14 +68,14 @@ public class DiscoveryActivity extends AppCompatActivity {
         }
 
         // Khởi tạo API client
-        quizApi = RetrofitClient.getQuizAPI();
+        quizApi = RetrofitClient.getQuizCreateApi();
 
         // Thiết lập RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Sử dụng dữ liệu mẫu ban đầu
-        adapter = new QuizAdapter(Quiz.CreateSampleData());
+        adapter = new QuizAdapter(Collections.emptyList(), userId);
         recyclerView.setAdapter(adapter);
 
         // Lấy danh sách quizzes từ API
@@ -100,7 +103,6 @@ public class DiscoveryActivity extends AppCompatActivity {
 
                 if (response.isSuccessful() && response.body() != null) {
                     List<QuizResponse> allQuizzes = response.body();
-                    Log.d(TAG, "Đã nhận " + allQuizzes.size() + " quizzes");
 
                     // Lọc chỉ lấy các quiz có visible = true
                     List<QuizResponse> visibleQuizzes = new ArrayList<>();
@@ -109,7 +111,6 @@ public class DiscoveryActivity extends AppCompatActivity {
                             visibleQuizzes.add(quiz);
                         }
                     }
-                    Log.d(TAG, "Đã lọc được " + visibleQuizzes.size() + " quiz có thể hiển thị");
 
                     if (visibleQuizzes.size() > 0) {
                         // Sắp xếp quiz theo score (cao nhất trước) giống như trong HomeFragment
@@ -148,6 +149,7 @@ public class DiscoveryActivity extends AppCompatActivity {
                             // Tạo đối tượng Quiz từ QuizResponse
                             // Sử dụng constructor và các phương thức của lớp Quiz
                             Quiz quiz = new Quiz(
+                                    quizResponse.getId(),
                                     R.drawable.ic_launcher_background, // imageResource
                                     quizResponse.getTitle() != null ? quizResponse.getTitle() : "Không có tiêu đề", // title
                                     formattedDate, // date

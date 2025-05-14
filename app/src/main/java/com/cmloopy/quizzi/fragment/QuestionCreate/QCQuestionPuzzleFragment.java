@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuestionCreate.QCPuzzleOptionAdapter;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.PuzzleOption;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
 import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCPuzzleOptionCreateDialog;
 
 import java.util.ArrayList;
@@ -26,13 +26,13 @@ import java.util.List;
 public class QCQuestionPuzzleFragment extends QCBaseQuestionFragment implements QCPuzzleOptionAdapter.OnPuzzlePieceClickListener {
 
     private static final String ARG_RESPONSE_PUZZLE = "response_puzzle";
-    private QuestionPuzzle questionPuzzle;
+    private QuestionCreatePuzzle questionPuzzle;
     private RecyclerView answersRecyclerView;
     private QCPuzzleOptionAdapter answerAdapter;
     private ItemTouchHelper itemTouchHelper;
     private final List<PuzzleOption> tempAnswers = new ArrayList<>();
 
-    public static QCQuestionPuzzleFragment newInstance(QuestionPuzzle questionPuzzle) {
+    public static QCQuestionPuzzleFragment newInstance(QuestionCreatePuzzle questionPuzzle) {
         QCQuestionPuzzleFragment fragment = new QCQuestionPuzzleFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_RESPONSE_PUZZLE, questionPuzzle);
@@ -44,13 +44,13 @@ public class QCQuestionPuzzleFragment extends QCBaseQuestionFragment implements 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            questionPuzzle = (QuestionPuzzle) getArguments().getSerializable(ARG_RESPONSE_PUZZLE);
+            questionPuzzle = (QuestionCreatePuzzle) getArguments().getSerializable(ARG_RESPONSE_PUZZLE);
             if (questionPuzzle == null) {
-                questionPuzzle = new QuestionPuzzle();
+                questionPuzzle = new QuestionCreatePuzzle();
             }
             initializeTempAnswers();
         } else {
-            questionPuzzle = new QuestionPuzzle();
+            questionPuzzle = new QuestionCreatePuzzle();
             initializeTempAnswers();
         }
     }
@@ -153,7 +153,7 @@ public class QCQuestionPuzzleFragment extends QCBaseQuestionFragment implements 
     }
 
     @Override
-    public Question getCurrentQuestion() {
+    public QuestionCreate getCurrentQuestion() {
         return questionPuzzle;
     }
 

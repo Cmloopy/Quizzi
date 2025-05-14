@@ -39,7 +39,7 @@ public class MultiChoiceActivity extends AppCompatActivity {
     private String[] listQuesType;
     private int totalScore;
     private int userId;
-    private int quizId;
+    private long quizId;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class MultiChoiceActivity extends AppCompatActivity {
         listQuesId = getIntent().getIntArrayExtra("listIdQues");
         listQuesType = getIntent().getStringArrayExtra("listTypeQues");
         userId = getIntent().getIntExtra("userId",-1);
-        quizId = getIntent().getIntExtra("quizId",-1);
+        quizId = getIntent().getLongExtra("quizId",-1);
 
         binding.txtNumAnswerMultiChoice.setText(((questionId+1) + "") + "/" + (listQuesId.length + ""));
         binding.progressBarTimeMultichoice.setProgress(100);

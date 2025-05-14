@@ -11,42 +11,42 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
 import com.google.android.material.card.MaterialCardView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class QCQuestionBNVAdapter extends RecyclerView.Adapter<QCQuestionBNVAdapter.ViewHolder> {
-    private List<Question> questions;
+    private List<QuestionCreate> questionCreates;
     private Context context;
     private OnQuestionClickListener listener;
     private int selectedPosition = 0;
 
     public interface OnQuestionClickListener {
-        void onQuestionClick(Question question, int position);
+        void onQuestionClick(QuestionCreate questionCreate, int position);
     }
 
     public void setListener(OnQuestionClickListener listener) {
         this.listener = listener;
     }
 
-    public QCQuestionBNVAdapter(Context context, List<Question> questions, OnQuestionClickListener listener) {
+    public QCQuestionBNVAdapter(Context context, List<QuestionCreate> questionCreates, OnQuestionClickListener listener) {
         this.context = context;
-        this.questions = questions;
+        this.questionCreates = questionCreates;
         this.listener = listener;
     }
 
-    public QCQuestionBNVAdapter(Context context, List<Question> questions, OnQuestionClickListener listener, int selectedPosition) {
+    public QCQuestionBNVAdapter(Context context, List<QuestionCreate> questionCreates, OnQuestionClickListener listener, int selectedPosition) {
         this.context = context;
-        this.questions = questions;
+        this.questionCreates = questionCreates;
         this.listener = listener;
         this.selectedPosition = selectedPosition;
     }
 
     @Override
     public int getItemCount() {
-        return questions.size();
+        return questionCreates.size();
     }
 
     @Override
@@ -58,8 +58,8 @@ public class QCQuestionBNVAdapter extends RecyclerView.Adapter<QCQuestionBNVAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Question question = questions.get(position);
-        holder.bind(question, position, position == selectedPosition);
+        QuestionCreate questionCreate = questionCreates.get(position);
+        holder.bind(questionCreate, position, position == selectedPosition);
     }
 
     // Method to update selected position
@@ -86,10 +86,10 @@ public class QCQuestionBNVAdapter extends RecyclerView.Adapter<QCQuestionBNVAdap
 
         }
 
-        public void bind(final Question question, final int position, boolean isSelected) {
-            if(question.getImage() != null && !question.getImage().isEmpty()) {
+        public void bind(final QuestionCreate questionCreate, final int position, boolean isSelected) {
+            if(questionCreate.getImage() != null && !questionCreate.getImage().isEmpty()) {
                 Picasso.get()
-                        .load(question.getImage())
+                        .load(questionCreate.getImage())
                         .resize(1080, 720)
                         .centerCrop()
                         .into(questionImage);
@@ -111,7 +111,7 @@ public class QCQuestionBNVAdapter extends RecyclerView.Adapter<QCQuestionBNVAdap
             // Set click listener
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onQuestionClick(question, position);
+                    listener.onQuestionClick(questionCreate, position);
                     setSelectedPosition(position); // Update selected position when clicked
                 }
             });

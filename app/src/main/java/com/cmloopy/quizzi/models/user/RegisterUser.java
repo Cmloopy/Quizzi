@@ -5,7 +5,7 @@ public class RegisterUser {
     String password;
     String email;
 
-    public RegisterUser(String username, String password, String email) {
+    public RegisterUser(String username, String email, String password) {
         this.username = username;
         this.password = password;
         this.email = email;

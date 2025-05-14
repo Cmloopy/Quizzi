@@ -86,8 +86,8 @@ public class PlayGameActivity extends AppCompatActivity {
     }
 
     private void loadQuiz() {
-        currentQuiz = Quiz.CreateSampleData().get(0);
-        questions= currentQuiz.getQuestions();
+        //currentQuiz = Quiz.CreateSampleData().get(0);
+        //questions= currentQuiz.getQuestions();
     }
 
     private void loadQuestion(int index) {

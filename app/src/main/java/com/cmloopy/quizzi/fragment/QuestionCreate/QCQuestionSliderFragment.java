@@ -16,8 +16,8 @@ import androidx.annotation.Nullable;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuestionCreate.QCChoiceOptionAdapter;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSlider;
 import com.cmloopy.quizzi.utils.QuestionCreate.slider.QCCustomSlider;
 
 import java.util.Arrays;
@@ -25,12 +25,12 @@ import java.util.List;
 
 public class QCQuestionSliderFragment extends QCBaseQuestionFragment {
     private static final String ARG_RESPONSE_CHOICE = "response_slider";
-    private QuestionSlider questionSlider;
+    private QuestionCreateSlider questionSlider;
     private QCChoiceOptionAdapter answerAdapter;
     private QCCustomSlider customSlider;
     private EditText minValueEdit, maxValueEdit, answerEdit;
     private Spinner colorSpinner;
-    public static QCQuestionSliderFragment newInstance(QuestionSlider responseChoice) {
+    public static QCQuestionSliderFragment newInstance(QuestionCreateSlider responseChoice) {
         QCQuestionSliderFragment fragment = new QCQuestionSliderFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_RESPONSE_CHOICE, responseChoice);
@@ -42,12 +42,12 @@ public class QCQuestionSliderFragment extends QCBaseQuestionFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            questionSlider = (QuestionSlider) getArguments().getSerializable(ARG_RESPONSE_CHOICE);
+            questionSlider = (QuestionCreateSlider) getArguments().getSerializable(ARG_RESPONSE_CHOICE);
             if (questionSlider == null) {
-                questionSlider = new QuestionSlider();
+                questionSlider = new QuestionCreateSlider();
             }
         } else {
-            questionSlider = new QuestionSlider();
+            questionSlider = new QuestionCreateSlider();
         }
     }
 
@@ -166,7 +166,7 @@ public class QCQuestionSliderFragment extends QCBaseQuestionFragment {
     }
 
     @Override
-    public Question getCurrentQuestion() {
+    public QuestionCreate getCurrentQuestion() {
         return questionSlider;
     }
 }

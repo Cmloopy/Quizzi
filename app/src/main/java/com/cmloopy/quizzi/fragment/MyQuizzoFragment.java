@@ -72,7 +72,7 @@ public class MyQuizzoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_quizzo, container, false);
 
         // Khởi tạo API service
-        quizAPI = RetrofitClient.getQuizApi();
+        quizAPI = RetrofitClient.getMyQuizApi();
 
         RadioGroup radioGroup = view.findViewById(R.id.tabGroup1);
 
@@ -122,7 +122,7 @@ public class MyQuizzoFragment extends Fragment {
                     List<Quiz> quizzes = convertToQuizModel(quizResponses);
 
                     // Thiết lập RecyclerView với danh sách quiz
-                    QuizAdapter quizAdapter = new QuizAdapter(quizzes);
+                    QuizAdapter quizAdapter = new QuizAdapter(quizzes, userId);
                     recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
                     recyclerView.setAdapter(quizAdapter);
                 } else {
@@ -286,6 +286,7 @@ public class MyQuizzoFragment extends Fragment {
 
             // Tạo đối tượng Quiz từ dữ liệu API
             Quiz quiz = new Quiz(
+                    (long) response.getId(),
                     thumbnailResource,
                     title,
                     createdTime,
@@ -296,7 +297,7 @@ public class MyQuizzoFragment extends Fragment {
             );
 
             // Đặt id cho quiz
-            quiz.setId(response.getId());
+            quiz.setId((long)response.getId());
 
             // Log để debug
             Log.d(TAG, "Quiz ID: " + quiz.getId() + ", Title: " + quiz.getTitle());
@@ -361,42 +362,42 @@ public class MyQuizzoFragment extends Fragment {
         List<Quiz> items = new ArrayList<>();
 
         // Tạo quiz 1
-        Quiz quiz1 = new Quiz(R.drawable.ic_launcher_background, "Quiz 1", "2 days ago", "1.2K plays",
+        Quiz quiz1 = new Quiz(1L,R.drawable.ic_launcher_background, "Quiz 1", "2 days ago", "1.2K plays",
                 "User 1", R.drawable.ic_launcher_background, "Description for Quiz 1");
-        quiz1.setId(1);
+        quiz1.setId(1L);
         items.add(quiz1);
 
         // Tạo quiz 2
-        Quiz quiz2 = new Quiz(R.drawable.ic_launcher_background, "Quiz 2", "1 week ago", "3.5K plays",
+        Quiz quiz2 = new Quiz(1L, R.drawable.ic_launcher_background, "Quiz 2", "1 week ago", "3.5K plays",
                 "User 2", R.drawable.ic_launcher_background, "Description for Quiz 2");
-        quiz2.setId(2);
+        quiz2.setId(2L);
         items.add(quiz2);
 
         // Tạo quiz 3
-        Quiz quiz3 = new Quiz(R.drawable.ic_launcher_background, "Quiz 3", "2 months ago", "10K plays",
+        Quiz quiz3 = new Quiz(1L, R.drawable.ic_launcher_background, "Quiz 3", "2 months ago", "10K plays",
                 "User 3", R.drawable.ic_launcher_background, "Description for Quiz 3");
-        quiz3.setId(3);
+        quiz3.setId(3L);
         items.add(quiz3);
 
         // Tạo quiz 4
-        Quiz quiz4 = new Quiz(R.drawable.ic_launcher_background, "Quiz 4", "1 hour ago", "120 plays",
+        Quiz quiz4 = new Quiz(1L,R.drawable.ic_launcher_background, "Quiz 4", "1 hour ago", "120 plays",
                 "User 4", R.drawable.ic_launcher_background, "Description for Quiz 4");
-        quiz4.setId(4);
+        quiz4.setId(4L);
         items.add(quiz4);
 
         // Tạo quiz 5
-        Quiz quiz5 = new Quiz(R.drawable.ic_launcher_background, "Quiz 5", "3 weeks ago", "5.7K plays",
+        Quiz quiz5 = new Quiz(1L,R.drawable.ic_launcher_background, "Quiz 5", "3 weeks ago", "5.7K plays",
                 "User 5", R.drawable.ic_launcher_background, "Description for Quiz 5");
-        quiz5.setId(5);
+        quiz5.setId(5L);
         items.add(quiz5);
 
         // Tạo quiz 6
-        Quiz quiz6 = new Quiz(R.drawable.ic_launcher_background, "Quiz 6", "5 days ago", "850 plays",
+        Quiz quiz6 = new Quiz(1L,R.drawable.ic_launcher_background, "Quiz 6", "5 days ago", "850 plays",
                 "User 6", R.drawable.ic_launcher_background, "Description for Quiz 6");
-        quiz6.setId(6);
+        quiz6.setId(6L);
         items.add(quiz6);
 
-        return new QuizAdapter(items);
+        return new QuizAdapter(items, userId);
     }
 
     private TopCollectionsCategoryAdapter getCollectionAdapter() {

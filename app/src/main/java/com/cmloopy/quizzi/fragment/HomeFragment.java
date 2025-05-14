@@ -85,14 +85,9 @@ public class HomeFragment extends Fragment {
         // Khởi tạo API client
         userApi = RetrofitClient.getUserApi();
         collectionApi = RetrofitClient.getCollectionApi();
-        quizApi = RetrofitClient.getQuizAPI();
+        quizApi = RetrofitClient.getQuizApi();
+        int idUser = getActivity().getIntent().getIntExtra("userId", -1);
 
-        if (getActivity().getIntent() != null) {
-            int idUser = getActivity().getIntent().getIntExtra("userId", -1);
-            if (idUser != -1) {
-                // Sử dụng idUser khi cần
-            }
-        }
 
         // DISCOVER
         DiscoverRcl = view.findViewById(R.id.rcl_home_discover);
@@ -151,23 +146,27 @@ public class HomeFragment extends Fragment {
         });
         txt1.setOnClickListener(v ->{
             Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
+            intent.putExtra("userId",idUser);
             startActivity(intent);
         });
         txt2.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), RecommendAuthorActivity.class);
-            // KHÔNG cần truyền dữ liệu qua intent vì chúng ta đã lưu trong AuthorDataManager
+            intent.putExtra("userId",idUser);
             startActivity(intent);
         });
         txt3.setOnClickListener(v ->{
             Intent intent = new Intent(requireContext(), TopCollections.class);
+            intent.putExtra("userId",idUser);
             startActivity(intent);
         });
         txt4.setOnClickListener(v ->{
             Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
+            intent.putExtra("userId",idUser);
             startActivity(intent);
         });
         txt5.setOnClickListener(v ->{
             Intent intent = new Intent(requireContext(), DiscoveryActivity.class);
+            intent.putExtra("userId",idUser);
             startActivity(intent);
         });
 
@@ -268,7 +267,7 @@ public class HomeFragment extends Fragment {
                         Toast.makeText(getContext(), "Không có quiz nào hiển thị", Toast.LENGTH_SHORT).show();
 
                         // Sử dụng dữ liệu mẫu cho tất cả sections
-                        List<Quiz> sampleData = Quiz.CreateSampleData();
+                        List<Quiz> sampleData = Collections.emptyList();
 
                         discoverQuizzes.clear();
                         discoverQuizzes.addAll(sampleData);
@@ -295,7 +294,7 @@ public class HomeFragment extends Fragment {
                     Toast.makeText(getContext(), "Không thể tải dữ liệu quizzes", Toast.LENGTH_SHORT).show();
 
                     // Sử dụng dữ liệu mẫu
-                    List<Quiz> sampleData = Quiz.CreateSampleData();
+                    List<Quiz> sampleData = Collections.emptyList();
 
                     discoverQuizzes.clear();
                     discoverQuizzes.addAll(sampleData);
@@ -317,7 +316,7 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(), "Lỗi mạng: " + t.getMessage(), Toast.LENGTH_SHORT).show();
 
                 // Sử dụng dữ liệu mẫu khi có lỗi mạng
-                List<Quiz> sampleData = Quiz.CreateSampleData();
+                List<Quiz> sampleData = Collections.emptyList();
 
                 discoverQuizzes.clear();
                 discoverQuizzes.addAll(sampleData);

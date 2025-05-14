@@ -5,8 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -32,23 +30,17 @@ import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionSayWordFragment;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionSliderFragment;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionTrueFalseFragment;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionTypeTextFragment;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSayWord;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTrueFalse;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionType;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSayWord;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSlider;
 import com.cmloopy.quizzi.utils.QuestionCreate.sheet.QCQuestionTypeBottomSheetFragment;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.squareup.picasso.Transformation;
 
-import java.lang.reflect.Type;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -162,40 +154,40 @@ public class QCHelper {
     public static class QuestionTypeMapper {
 
 
-        public static Question createQuestionInstance(List<Question> questions, String type) {
-            Question question;
+        public static QuestionCreate createQuestionInstance(List<QuestionCreate> questionCreates, String type) {
+            QuestionCreate questionCreate;
 
             switch (type) {
                 case "SINGLE_CHOICE":
-                    question = new QuestionChoice();
+                    questionCreate = new QuestionCreateChoice();
                     break;
                 case "TRUE_FALSE":
-                    question = new QuestionTrueFalse();
+                    questionCreate = new QuestionCreateTrueFalse();
                     break;
                 case "PUZZLE":
-                    question = new QuestionPuzzle();
+                    questionCreate = new QuestionCreatePuzzle();
                     break;
                 case "TEXT":
-                    question = new QuestionTypeText();
+                    questionCreate = new QuestionCreateTypeText();
                     break;
                 case "AUDIO_SINGLE_CHOICE":
-                    question = new QuestionChoice();
+                    questionCreate = new QuestionCreateChoice();
                     break;
                 case "SLIDER":
-                    question = new QuestionSlider();
+                    questionCreate = new QuestionCreateSlider();
                     break;
                 case "MULTI_CHOICE":
-                    question = new QuestionChoice();
+                    questionCreate = new QuestionCreateChoice();
                     break;
                 case "SAY_WORD":
-                    question = new QuestionSayWord();
+                    questionCreate = new QuestionCreateSayWord();
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown question type: " + type);
             }
 
 
-            return question;
+            return questionCreate;
         }
 
         public static void main(String[] args) {}

@@ -41,8 +41,8 @@ public class QuizzDetails extends AppCompatActivity {
     private ImageView btnEdit;
     private PopupWindow popupWindow;
     private Button btn;
-    private int idUser = 1;
-    private int idQuizz = 4;
+    private int idUser = -1;
+    private long idQuizz = -1;
     UserApi userApi = RetrofitClient.getUserApi();
     QuizzApi quizzApi = RetrofitClient.getQuizzApi();
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
@@ -51,6 +51,10 @@ public class QuizzDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quizz_details_full_page);
+        idQuizz = getIntent().getLongExtra("quizId", -1);
+        idUser = getIntent().getIntExtra("userId", -1);
+        Log.e("QuizApi", idQuizz+"");
+        Log.e("UdUser", idUser+"");
 
         Call<QuizResponse> quizResponseCall = quizzApi.getQuizById(idQuizz);
         quizResponseCall.enqueue(new Callback<QuizResponse>() {

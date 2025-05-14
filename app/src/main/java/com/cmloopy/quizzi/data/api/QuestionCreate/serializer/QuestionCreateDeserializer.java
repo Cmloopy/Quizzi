@@ -5,37 +5,33 @@ import android.util.Log;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.PuzzleOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.TypeTextOption;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionChoice;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionPuzzle;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateChoice;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreatePuzzle;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateSlider;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTrueFalse;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionType;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.internal.bind.util.ISO8601Utils;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class QuestionDeserializer implements JsonDeserializer<Question> {
+public class QuestionCreateDeserializer implements JsonDeserializer<QuestionCreate> {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
 
     @Override
-    public Question deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public QuestionCreate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
         Long id = jsonObject.get("id").getAsLong();
@@ -59,7 +55,7 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
         JsonObject questionTypeObj = jsonObject.getAsJsonObject("questionType");
         QuestionType questionType = context.deserialize(questionTypeObj, QuestionType.class);
 
-        Question result;
+        QuestionCreate result;
 
         Log.d("Current Question Deserializer: ", questionType.getName());
         switch (questionType.getName()) {
@@ -92,11 +88,11 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
                         choiceOptions.add(choiceOption);
                     }
                 }
-                result = new QuestionChoice(position, id, content, imageUrl, audioUrl, point, timeLimit, description, choiceOptions);
+                result = new QuestionCreateChoice(position, id, content, imageUrl, audioUrl, point, timeLimit, description, choiceOptions);
                 break;
             case "TRUE_FALSE":
                 boolean _correctAnswer = jsonObject.get("correctAnswer").getAsBoolean();
-                result = new QuestionTrueFalse(position, id, content, imageUrl, audioUrl, point, timeLimit, description, _correctAnswer);
+                result = new QuestionCreateTrueFalse(position, id, content, imageUrl, audioUrl, point, timeLimit, description, _correctAnswer);
                 break;
             case "PUZZLE":
                 List<PuzzleOption> puzzleOptions = new ArrayList<>();
@@ -126,7 +122,7 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
                         puzzleOptions.add(puzzleOption);
                     }
                 }
-                result = new QuestionPuzzle(position, id, content, imageUrl, audioUrl, point, timeLimit, description, puzzleOptions);
+                result = new QuestionCreatePuzzle(position, id, content, imageUrl, audioUrl, point, timeLimit, description, puzzleOptions);
                 break;
 
             case "SLIDER":
@@ -135,7 +131,7 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
                 int defaultValue = jsonObject.has("defaultValue") ? jsonObject.get("defaultValue").getAsInt() : 50;
                 int correctAnswer = jsonObject.has("correctAnswer") ? jsonObject.get("correctAnswer").getAsInt() : 50;
                 String color = jsonObject.has("color") ? jsonObject.get("color").getAsString() : "Default";
-                result = new QuestionSlider(position, id, content, imageUrl, audioUrl, point, timeLimit, description,
+                result = new QuestionCreateSlider(position, id, content, imageUrl, audioUrl, point, timeLimit, description,
                         minValue, maxValue, defaultValue, correctAnswer, color);
                 break;
 
@@ -166,12 +162,12 @@ public class QuestionDeserializer implements JsonDeserializer<Question> {
                     }
                 }
                 boolean caseSensitive = jsonObject.has("caseSensitive") && jsonObject.get("caseSensitive").getAsBoolean();
-                result = new QuestionTypeText(position, id, content, imageUrl, audioUrl, point, timeLimit, description,
+                result = new QuestionCreateTypeText(position, id, content, imageUrl, audioUrl, point, timeLimit, description,
                         acceptedAnswers, caseSensitive);
                 break;
 
             default:
-                result = new Question();
+                result = new QuestionCreate();
                 result.setId(id);
                 result.setQuizId(quizId);
                 result.setPosition(position);

@@ -42,7 +42,7 @@ public interface UserApi {
     Call<LoginResponse> register(@Body RegisterUser registerUser);
 
     @GET("users/{userId}")
-    Call<User> getInfoUserById(@Part("userId") int userId);
+    Call<User> getInfoUserById(@Path("userId") int userId);
 
     @GET("users")
     Call<List<User>> getAllUsers();

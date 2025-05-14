@@ -22,9 +22,11 @@ import java.util.List;
 public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
     private static final String TAG = "QuizAdapter";
     private List<Quiz> items;
+    private int userId;
 
-    public QuizAdapter(List<Quiz> items) {
+    public QuizAdapter(List<Quiz> items, int userId) {
         this.items = items;
+        this.userId = userId;
     }
 
     @NonNull
@@ -78,7 +80,8 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, QuizzDetails.class);
-                intent.putExtra("quizId", position);
+                intent.putExtra("quizId", items.get(position).getId());
+                intent.putExtra("userId", userId);
                 context.startActivity(intent);
             }
         });

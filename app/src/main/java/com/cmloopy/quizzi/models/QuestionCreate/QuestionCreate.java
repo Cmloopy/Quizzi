@@ -5,9 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import retrofit2.http.Multipart;
-
-public class Question implements Serializable {
+public class QuestionCreate implements Serializable {
     private Long id;
     private int position;
     private int quizId;
@@ -47,7 +45,7 @@ public class Question implements Serializable {
 
 
     // Constructors
-    public Question() {
+    public QuestionCreate() {
         this.content = "";
         this.image = "";
         this.audio = "";
@@ -58,7 +56,7 @@ public class Question implements Serializable {
         this.updatedAt = new Date();
     }
 
-    public Question(
+    public QuestionCreate(
             int position,
             Long id,
 //                    Quiz quiz,
@@ -80,7 +78,7 @@ public class Question implements Serializable {
         this.updatedAt = new Date();
     }
 
-    public Question(
+    public QuestionCreate(
             int position,
 //                    Quiz quiz,
             String content,
@@ -98,7 +96,7 @@ public class Question implements Serializable {
         this.updatedAt = new Date();
     }
 
-    public Question(
+    public QuestionCreate(
             int position,
 //                    Quiz quiz,
             QuestionType questionType,
@@ -119,7 +117,7 @@ public class Question implements Serializable {
     }
 
 
-    public Question(
+    public QuestionCreate(
             int position,
             Long id,
 //                    Quiz quiz,
@@ -241,21 +239,21 @@ public class Question implements Serializable {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-    public void setQuestion(Question question) {
-        if (question == null) {
+    public void setQuestion(QuestionCreate questionCreate) {
+        if (questionCreate == null) {
             throw new IllegalArgumentException("Question cannot be null");
         }
 
-        this.id = question.getId();
-        this.position = question.getPosition();
-        this.questionType = question.getQuestionType();
-        this.content = question.getContent();
-        this.image = question.getImage();
-        this.audio = question.getAudio();
-        this.point = question.getPoint();
-        this.timeLimit = question.getTimeLimit();
-        this.description = question.getDescription();
-        this.createdAt = question.getCreatedAt();
+        this.id = questionCreate.getId();
+        this.position = questionCreate.getPosition();
+        this.questionType = questionCreate.getQuestionType();
+        this.content = questionCreate.getContent();
+        this.image = questionCreate.getImage();
+        this.audio = questionCreate.getAudio();
+        this.point = questionCreate.getPoint();
+        this.timeLimit = questionCreate.getTimeLimit();
+        this.description = questionCreate.getDescription();
+        this.createdAt = questionCreate.getCreatedAt();
         this.updatedAt = new Date();
     }
 

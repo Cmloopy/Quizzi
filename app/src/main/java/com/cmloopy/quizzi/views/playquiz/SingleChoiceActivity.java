@@ -35,7 +35,7 @@ public class SingleChoiceActivity extends AppCompatActivity {
     private ActivitySingleChoiceBinding binding;
     private int totalScore;
     private int userId;
-    private int quizId;
+    private long quizId;
     private int isChoose = -1;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
     @Override
@@ -49,7 +49,7 @@ public class SingleChoiceActivity extends AppCompatActivity {
         int[] listQuesId = getIntent().getIntArrayExtra("listIdQues");
         String []listQuesType = getIntent().getStringArrayExtra("listTypeQues");
         userId = getIntent().getIntExtra("userId",-1);
-        quizId = getIntent().getIntExtra("quizId",-1);
+        quizId = getIntent().getLongExtra("quizId",-1);
         binding.txtNumAnswerSingleChoice.setText(((questionId+1) + "") + "/" + (listQuesId.length + ""));
         binding.progressBarTimeSingleChoice.setProgress(100);
 

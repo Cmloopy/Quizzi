@@ -120,7 +120,7 @@ public class CreateAccountStep2Activity extends AppCompatActivity {
         String password = passwordInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
 
-        RegisterUser registerUser = new RegisterUser(username, password, email);
+        RegisterUser registerUser = new RegisterUser(username, email, password);
         UserApi userApi = RetrofitClient.getUserApi();
         Call<LoginResponse> call = userApi.register(registerUser);
         call.enqueue(new Callback<LoginResponse>() {

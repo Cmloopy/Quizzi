@@ -13,14 +13,14 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTrueFalse;
 import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 
 public class QCQuestionTrueFalseFragment extends QCBaseQuestionFragment {
 
     private static final String ARG_RESPONSE_TRUE_FALSE = "response_true_false";
-    private QuestionTrueFalse questionTrueFalse;
+    private QuestionCreateTrueFalse questionTrueFalse;
     private CardView trueAnswerButtonContainer;
     private CardView falseAnswerButtonContainer;
     private CardView trueCheckIconContainer;
@@ -32,7 +32,7 @@ public class QCQuestionTrueFalseFragment extends QCBaseQuestionFragment {
     private boolean trueAnswerSelected;
     private boolean falseAnswerSelected;
 
-    public static QCQuestionTrueFalseFragment newInstance(QuestionTrueFalse responseChoice) {
+    public static QCQuestionTrueFalseFragment newInstance(QuestionCreateTrueFalse responseChoice) {
         QCQuestionTrueFalseFragment fragment = new QCQuestionTrueFalseFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_RESPONSE_TRUE_FALSE, responseChoice);
@@ -44,12 +44,12 @@ public class QCQuestionTrueFalseFragment extends QCBaseQuestionFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            questionTrueFalse = (QuestionTrueFalse) getArguments().getSerializable(ARG_RESPONSE_TRUE_FALSE);
+            questionTrueFalse = (QuestionCreateTrueFalse) getArguments().getSerializable(ARG_RESPONSE_TRUE_FALSE);
             if (questionTrueFalse == null) {
-                questionTrueFalse = new QuestionTrueFalse();
+                questionTrueFalse = new QuestionCreateTrueFalse();
             }
         } else {
-            questionTrueFalse = new QuestionTrueFalse();
+            questionTrueFalse = new QuestionCreateTrueFalse();
         }
     }
 
@@ -128,7 +128,7 @@ public class QCQuestionTrueFalseFragment extends QCBaseQuestionFragment {
     }
 
     @Override
-    public Question getCurrentQuestion() {
+    public QuestionCreate getCurrentQuestion() {
         return questionTrueFalse;
     }
 

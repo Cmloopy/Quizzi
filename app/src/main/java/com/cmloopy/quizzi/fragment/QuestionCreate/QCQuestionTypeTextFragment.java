@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuestionCreate.QCTypeOptionAdapter;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.TypeTextOption;
-import com.cmloopy.quizzi.models.QuestionCreate.Question;
-import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreateTypeText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class QCQuestionTypeTextFragment extends QCBaseQuestionFragment
          QCQuestionTypeTextListFragment.OnAnotherAnswerAdded{
 
     private static final String ARG_RESPONSE_TYPE = "response_type";
-    private QuestionTypeText questionTypeText;
+    private QuestionCreateTypeText questionTypeText;
     private RecyclerView answersRecyclerView;
     private QCTypeOptionAdapter answerAdapter;
     private final List<TypeTextOption> tempAnswers = new ArrayList<>();
@@ -31,7 +31,7 @@ public class QCQuestionTypeTextFragment extends QCBaseQuestionFragment
     private QCQuestionTypeTextFieldFragment qcQuestionTypeTextFieldFragment;
     private QCQuestionTypeTextListFragment qcQuestionTypeTextListFragment;
 
-    public static QCQuestionTypeTextFragment newInstance(QuestionTypeText responseChoice) {
+    public static QCQuestionTypeTextFragment newInstance(QuestionCreateTypeText responseChoice) {
         QCQuestionTypeTextFragment fragment = new QCQuestionTypeTextFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_RESPONSE_TYPE, responseChoice);
@@ -43,13 +43,13 @@ public class QCQuestionTypeTextFragment extends QCBaseQuestionFragment
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            questionTypeText = (QuestionTypeText) getArguments().getSerializable(ARG_RESPONSE_TYPE);
+            questionTypeText = (QuestionCreateTypeText) getArguments().getSerializable(ARG_RESPONSE_TYPE);
             if (questionTypeText == null) {
-                questionTypeText = new QuestionTypeText();
+                questionTypeText = new QuestionCreateTypeText();
             }
             initializeTempAnswers();
         } else {
-            questionTypeText = new QuestionTypeText();
+            questionTypeText = new QuestionCreateTypeText();
             initializeTempAnswers();
         }
     }
@@ -105,7 +105,7 @@ public class QCQuestionTypeTextFragment extends QCBaseQuestionFragment
     }
 
     @Override
-    public Question getCurrentQuestion() {
+    public QuestionCreate getCurrentQuestion() {
         return questionTypeText;
     }
 
