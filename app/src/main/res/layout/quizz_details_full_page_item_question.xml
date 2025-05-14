@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="16dp"
+    android:padding="5dp"
     app:cardElevation="4dp">
 
     <LinearLayout
@@ -16,8 +17,8 @@
         <!-- Hình ảnh -->
         <ImageView
             android:id="@+id/questionImage"
-            android:layout_width="100dp"
-            android:layout_height="80dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:scaleType="centerCrop"
             android:src="@drawable/img_01_logo"
             android:layout_marginEnd="8dp"/>
@@ -34,6 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1 - Quiz"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"/>
@@ -42,6 +45,8 @@
                 android:id="@+id/questionDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:text="....... do you get to school?\nby bus?"
                 android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"/>

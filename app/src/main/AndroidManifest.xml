@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,7 +13,29 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Quizzi"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".views.playquiz.ReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.playquiz.SliderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.playquiz.SingleChoiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.playquiz.TextActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.playquiz.TrueFalseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.playquiz.PuzzleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.playquiz.MultiChoiceActivity"
+            android:exported="false" />
         <activity
             android:name=".views.QuizResultActivity"
             android:exported="false" />
@@ -24,18 +44,12 @@
             android:exported="false" />
         <activity
             android:name=".views.SplashActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".views.AboutQuizzoActivity"
             android:exported="false" />
         <activity
-            android:name=".views.AuthorDetailsAboutActivity"
+            android:name=".views.AuthorDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".views.AuthorDetailsCollections"
@@ -81,7 +95,13 @@
             android:exported="false" />
         <activity
             android:name=".views.QuizzDetails"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".views.RecommendAuthorActivity"
             android:exported="false" />
@@ -117,6 +137,12 @@
             android:exported="false" />
         <activity
             android:name=".views.QuizCreate.after.QuizCreateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".views.UI43"
+            android:exported="false" />
+        <activity
+            android:name=".views.playquiz.FinalScoreboardActivity"
             android:exported="false" />
     </application>
 

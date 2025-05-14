@@ -333,4 +333,10 @@ public class QCQuestionBNVFragment extends Fragment
             saveManager.initialize(this.questions);
         }
     }
+
+
+    public void notifyBottomFragment() {
+        questionBottomAdapter.notifyDataSetChanged();
+    }
+
 }

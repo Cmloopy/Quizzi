@@ -17,10 +17,10 @@ public class Question implements Serializable {
 
     private String content;
     private int point;
-    private int timeLimit;
-    private String description;
-    private Date createdAt;
-    private Date updatedAt;
+        private int timeLimit;
+        private String description;
+        private Date createdAt;
+        private Date updatedAt;
 
     public static final int TYPE_SLIDER = 1;
     public static final int TYPE_QUIZ = 2;

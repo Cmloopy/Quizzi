@@ -391,10 +391,26 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_quiz"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:backgroundTint="#6046CC"
+                app:cornerRadius="24dp"
+                android:text="Save Quiz"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
+
+            <View
+                android:layout_width="16dp"
+                android:layout_height="0dp" />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_question"
                 android:layout_width="0dp"
                 android:layout_height="56dp"
-                android:layout_marginStart="8dp"
                 android:layout_weight="1"
                 android:backgroundTint="#6046CC"
                 app:cornerRadius="24dp"

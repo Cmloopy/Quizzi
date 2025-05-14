@@ -74,123 +74,17 @@
         app:layout_constraintStart_toStartOf="@+id/quizCoverImage"
         android:padding="12dp"/>
 
-    <!-- Thông tin Quiz -->
-    <LinearLayout
-        android:id="@+id/quizInfoContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/quizTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:id="@+id/quizQuestionsCountContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/quizQuestionsCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Questions"
-                android:textStyle="bold"
-                android:textColor="@color/gray"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/quizPlayedCountContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/quizPlayedCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="20"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Played"
-                android:textStyle="bold"
-                android:textColor="@color/gray"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/quizFavoritedCountContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/quizFavoritedCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="81"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Favorited"
-                android:textStyle="bold"
-                android:textColor="@color/gray"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/quizSharedCountContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/quizSharedCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="8"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Shared"
-                android:textStyle="bold"
-                android:textColor="@color/gray"/>
-        </LinearLayout>
-
-    </LinearLayout>
 
     <!-- Thông tin người tạo -->
     <LinearLayout
         android:id="@+id/quizAccountContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/quizInfoContainer"
+        app:layout_constraintTop_toBottomOf="@+id/quizTitle"
         tools:layout_editor_absoluteX="0dp">
 
         <!-- Ảnh đại diện -->
@@ -236,7 +130,8 @@
             android:background="@drawable/detail_top_collections_rounded_background"
             android:paddingHorizontal="10dp"
             android:paddingVertical="4dp"
-            android:text="You"
+            android:text="Follow"
+            android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="14sp" />
     </LinearLayout>
@@ -253,7 +148,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Description"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black"
             app:layout_constraintTop_toBottomOf="@id/quizCoverImage"
@@ -293,24 +188,12 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
-            android:id="@+id/btnPlaySolo"
+            android:id="@+id/btn_play"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:minHeight="20dp"
             android:layout_weight="1"
-            android:background="@drawable/quizz_details_button_solo_background"
-            android:text="Play Solo"
-            android:textSize="12dp"
-            android:textColor="#7A48E3"
-            android:gravity="center"/>
-
-        <Button
-            android:id="@+id/btnPlayWithFriends"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:minHeight="20dp"
-            android:layout_weight="1"
-            android:text="Play with Friends"
+            android:text="Play Quizz"
             android:textSize="12dp"
             android:background="@drawable/quizz_details_button_friends_background"
             android:textColor="@color/white"

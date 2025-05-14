@@ -21,8 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         int idUser = getIntent().getIntExtra("userId", -1);
 
-        HomeFragment homeFragment = new HomeFragment();
-        replaceFragment(homeFragment);
+        replaceFragment(HomeFragment.newInstance(idUser));
 
         binding.bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();

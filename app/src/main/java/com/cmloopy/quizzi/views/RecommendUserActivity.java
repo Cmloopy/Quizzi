@@ -52,4 +52,5 @@ public class RecommendUserActivity extends AppCompatActivity {
         recommendedFriendsAdapter = new RecommendUserAdapter(friendsList);
         recommendedFriendsRecyclerView.setAdapter(recommendedFriendsAdapter);
     }
+
 }
