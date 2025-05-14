@@ -1,9 +1,10 @@
-package com.cmloopy.quizzi.data.api.QuestionCreate;
+package com.cmloopy.quizzi.data.api.QuestionCreate.service;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.cmloopy.quizzi.data.RetrofitClient;
+import com.cmloopy.quizzi.data.api.QuestionCreate.QuestionAPI;
 import com.cmloopy.quizzi.models.QuestionCreate.BatchQuestionDTO;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.ChoiceOption;
 import com.cmloopy.quizzi.models.QuestionCreate.Option.PuzzleOption;
@@ -26,228 +27,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.DELETE;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.PUT;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 
-public class QuestionSaveService {
+public class QuestionService {
     private static final String TAG = "QuestionSaveService";
     private final Context context;
     private final QCQuestionChangeTracker changeTracker;
 
-    public interface QuestionApiService {
-        @Multipart
-        @POST("questions/batch")
-        Call<List<Question>> createQuestionsBatch(
-                @Part("quizId") RequestBody quizId,
-                @Part("questionsJson") RequestBody questionsJson,
-                @Part List<MultipartBody.Part> files
-        );
-        @Multipart
-        @POST("questions")
-        Call<Question> createQuestion(
-                @Part("quizId") RequestBody quizId,
-                @Part("questionTypeId") RequestBody questionTypeId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
+    private QuestionAPI apiService;
 
-        @DELETE("questions/quiz/{quizId}")
-        Call<Void> deleteAllQuizQuestions(@Path("quizId") Long quizId);
-
-        @Multipart
-        @PUT("questions/{id}")
-        Call<Question> updateQuestion(
-                @Path("id") Long id,
-                @Part("quizId") RequestBody quizId,
-                @Part("questionTypeId") RequestBody questionTypeId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @DELETE("questions/{id}")
-        Call<Void> deleteQuestion(@Path("id") Long id);
-
-        @Multipart
-        @POST("questions/true-false")
-        Call<QuestionTrueFalse> createTrueFalseQuestion(
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part("correctAnswer") RequestBody correctAnswer,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @PUT("questions/true-false/{id}")
-        Call<QuestionTrueFalse> updateTrueFalseQuestion(
-                @Path("id") Long id,
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part("correctAnswer") RequestBody correctAnswer,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @POST("questions/choice")
-        Call<QuestionChoice> createChoiceQuestion(
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part List<MultipartBody.Part> choiceOptionsParts,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @PUT("questions/choice/{id}")
-        Call<QuestionChoice> updateChoiceQuestion(
-                @Path("id") Long id,
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part List<MultipartBody.Part> choiceOptionsParts,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @POST("questions/slider")
-        Call<QuestionSlider> createSliderQuestion(
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part("minValue") RequestBody minValue,
-                @Part("maxValue") RequestBody maxValue,
-                @Part("defaultValue") RequestBody defaultValue,
-                @Part("correctAnswer") RequestBody correctAnswer,
-                @Part("color") RequestBody color,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @PUT("questions/slider/{id}")
-        Call<QuestionSlider> updateSliderQuestion(
-                @Path("id") Long id,
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part("minValue") RequestBody minValue,
-                @Part("maxValue") RequestBody maxValue,
-                @Part("defaultValue") RequestBody defaultValue,
-                @Part("correctAnswer") RequestBody correctAnswer,
-                @Part("color") RequestBody color,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @POST("questions/puzzle")
-        Call<QuestionPuzzle> createPuzzleQuestion(
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part List<MultipartBody.Part> puzzlePieces,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @PUT("questions/puzzle/{id}")
-        Call<QuestionPuzzle> updatePuzzleQuestion(
-                @Path("id") Long id,
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part List<MultipartBody.Part> puzzlePieces,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @POST("questions/text")
-        Call<QuestionTypeText> createTextQuestion(
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part("caseSensitive") RequestBody caseSensitive,
-                @Part List<MultipartBody.Part> acceptedAnswersParts,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-
-        @Multipart
-        @PUT("questions/text/{id}")
-        Call<QuestionTypeText> updateTextQuestion(
-                @Path("id") Long id,
-                @Part("quizId") RequestBody quizId,
-                @Part("content") RequestBody content,
-                @Part("position") RequestBody position,
-                @Part("point") RequestBody point,
-                @Part("timeLimit") RequestBody timeLimit,
-                @Part("description") RequestBody description,
-                @Part("caseSensitive") RequestBody caseSensitive,
-                @Part List<MultipartBody.Part> acceptedAnswersParts,
-                @Part MultipartBody.Part imageFile,
-                @Part MultipartBody.Part audioFile
-        );
-    }
-
-    private QuestionApiService apiService;
-
-    public QuestionSaveService(Context context) {
+    public QuestionService(Context context) {
         this.context = context;
         this.changeTracker = new QCQuestionChangeTracker();
-        this.apiService = RetrofitClient.getRetrofit().create(QuestionApiService.class);
+        this.apiService = RetrofitClient.getQuestionApi();
     }
 
     public void initializeChangeTracker(List<Question> questions) {
@@ -412,6 +207,29 @@ public class QuestionSaveService {
             // Generic question
             updateGenericQuestion(question, quizId, callback);
         }
+    }
+
+    public void deleteQuestionById(Long questionId, final SaveOperationListener listener) {
+        if (questionId == null || questionId < 1) {
+            listener.onSaveComplete(false, "Invalid question ID");
+            return;
+        }
+
+        apiService.deleteQuestion(questionId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    listener.onSaveComplete(true, "Question deleted successfully");
+                } else {
+                    listener.onSaveComplete(false, "Failed to delete question: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                listener.onSaveComplete(false, "Network error: " + t.getMessage());
+            }
+        });
     }
 
     private void deleteQuestion(Long questionId, final OperationCallback callback) {
@@ -1259,47 +1077,48 @@ public class QuestionSaveService {
     }
 
     public void saveAllQuestionsWithFullReset(List<Question> questions, Long quizId, final SaveOperationListener listener) {
-        if (questions == null || questions.isEmpty()) {
-            listener.onSaveComplete(true, "No questions to save");
-            return;
-        }
+//        if (questions == null || questions.isEmpty()) {
+//            listener.onSaveComplete(true, "No questions to save");
+//            return;
+//        }
 
         final AtomicBoolean success = new AtomicBoolean(true);
         final List<String> errors = new ArrayList<>();
         final AtomicInteger remainingOperations = new AtomicInteger(0);
+        if(!questions.isEmpty()) {
+            boolean needDelete = false;
+            for(Question question : questions) {
+                if (question.getId() != null && question.getId() >= 1)
+                    needDelete = true;
+            }
 
-        boolean needDelete = false;
-        for(Question question : questions) {
-            if (question.getId() != null && question.getId() >= 1)
-                needDelete = true;
-        }
+            if (!needDelete) {
+                remainingOperations.set(questions.size());
+                for (Question question : questions) {
+                    createQuestion(question, quizId, new OperationCallback() {
+                        @Override
+                        public void onComplete(boolean isSuccessful, String message) {
+                            if (!isSuccessful) {
+                                success.set(false);
+                                errors.add("Failed to create question: " + message);
+                            }
 
-        if (!needDelete) {
-            remainingOperations.set(questions.size());
-            for (Question question : questions) {
-                createQuestion(question, quizId, new OperationCallback() {
-                    @Override
-                    public void onComplete(boolean isSuccessful, String message) {
-                        if (!isSuccessful) {
-                            success.set(false);
-                            errors.add("Failed to create question: " + message);
-                        }
-
-                        if (remainingOperations.decrementAndGet() == 0) {
-                            if (success.get()) {
-                                listener.onSaveComplete(true, "All questions created successfully");
-                            } else {
-                                StringBuilder errorMessage = new StringBuilder("Some questions failed to create: ");
-                                for (String error : errors) {
-                                    errorMessage.append(error).append("; ");
+                            if (remainingOperations.decrementAndGet() == 0) {
+                                if (success.get()) {
+                                    listener.onSaveComplete(true, "All questions created successfully");
+                                } else {
+                                    StringBuilder errorMessage = new StringBuilder("Some questions failed to create: ");
+                                    for (String error : errors) {
+                                        errorMessage.append(error).append("; ");
+                                    }
+                                    listener.onSaveComplete(false, errorMessage.toString());
                                 }
-                                listener.onSaveComplete(false, errorMessage.toString());
                             }
                         }
-                    }
-                });
+                    });
+                }
+                return;
             }
-            return;
         }
 
         deleteAllQuizQuestions(quizId, true, new OperationCallback() {

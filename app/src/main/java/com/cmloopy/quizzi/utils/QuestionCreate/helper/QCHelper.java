@@ -41,9 +41,19 @@ import com.cmloopy.quizzi.models.QuestionCreate.QuestionSlider;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTrueFalse;
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
 import com.cmloopy.quizzi.utils.QuestionCreate.sheet.QCQuestionTypeBottomSheetFragment;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.squareup.picasso.Transformation;
 
+import java.lang.reflect.Type;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class QCHelper {
@@ -256,5 +266,24 @@ public class QCHelper {
             return "smooth_rounded(radius=" + radius + ", margin=" + margin + ")";
         }
     }
+
+    public static Date parseIsoDate(String dateStr) {
+        try {
+            if (dateStr.contains(".")) {
+                int dotIndex = dateStr.indexOf(".");
+                int endIndex = Math.min(dateStr.length(), dotIndex + 7); // dot + 6
+                dateStr = dateStr.substring(0, endIndex);
+                LocalDateTime dateTime = LocalDateTime.parse(dateStr, DateTimeFormatter.ISO_DATE_TIME);
+                return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+            } else {
+                LocalDateTime dateTime = LocalDateTime.parse(dateStr);
+                return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to parse date: " + dateStr);
+            return new Date();
+        }
+    }
+
 
 }

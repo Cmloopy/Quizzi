@@ -9,7 +9,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface QuizAPI {
     @Multipart
@@ -26,7 +28,23 @@ public interface QuizAPI {
             @Part MultipartBody.Part coverPhotoFile
     );
 
-    // Thêm phương thức GET để lấy tất cả các quizzes
+
     @GET("quizzes")
     Call<List<QuizResponse>> getAllQuizzes();
+
+    @Multipart
+    @PUT("quizzes/{quizId}")
+    Call<QuizResponse> updateQuiz(
+            @Path("quizId") Long quizId,
+            @Part("userId") RequestBody userId,
+            @Part("quizCollectionId") RequestBody quizCollectionId,
+            @Part("title") RequestBody title,
+            @Part("description") RequestBody description,
+            @Part("keyword") RequestBody keyword,
+            @Part("visible") RequestBody visible,
+            @Part("visibleQuizQuestion") RequestBody visibleQuizQuestion,
+            @Part("shuffle") RequestBody shuffle,
+            @Part MultipartBody.Part coverPhotoFile
+    );
 }
+

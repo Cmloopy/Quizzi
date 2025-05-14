@@ -19,6 +19,7 @@ import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,7 @@ import com.cmloopy.quizzi.adapter.QuestionCreate.QCMenuItem;
 import com.cmloopy.quizzi.adapter.QuestionCreate.QCQuestionBNVAdapter;
 import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.QuestionCreate.QuestionAPI;
+import com.cmloopy.quizzi.data.api.QuestionCreate.service.QuestionService;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCBaseQuestionFragment;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionBNVFragment;
 import com.cmloopy.quizzi.fragment.QuestionCreate.QCQuestionEmptyPlaceHolder;
@@ -45,6 +47,7 @@ import com.cmloopy.quizzi.models.QuestionCreate.QuestionTypeText;
 import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 import com.cmloopy.quizzi.utils.QuestionCreate.manager.QCQuestionSaveManager;
 import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,7 +71,9 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
 
     private static final String TAG = "QuestionCreateActivity";
     private ImageButton clearButton;
-    private ImageButton menuButton;
+//    private ImageButton menuButton;
+    private ImageButton saveButton;
+    private ImageButton deleteButton;
     private QCQuestionBNVFragment bottomFragment;
     private List<Question> questions;
     private QuestionAPI questionAPI;
@@ -77,13 +82,14 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     private QCQuestionSaveManager saveManager;
     private boolean updatingQuestion = false;
     private Long quizId;
+    private QuestionService saveService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_quiz_create);
+        setContentView(R.layout.activity_question_create);
         initializeQuizId();
-
+        saveService = new QuestionService(this);
 
         questionAPI = RetrofitClient.getQuestionApi();
         saveManager = new QCQuestionSaveManager(this, quizId);
@@ -102,7 +108,9 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
         loadQuizQuestions();
 
         clearButton = findViewById(R.id.clearButton);
-        menuButton = findViewById(R.id.menuButton);
+//        menuButton = findViewById(R.id.menuButton);
+        saveButton = findViewById(R.id.saveButton);
+        deleteButton = findViewById(R.id.deleteButton);
 
         loadBottomNavigationFrame();
         if (questions.isEmpty()) {
@@ -114,47 +122,62 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
             handleBackButton();
         });
 
-        menuButton.setOnClickListener(this::showPopupMenu);
+        saveButton.setOnClickListener(v -> {
+            handleSave();
+        });
+
+        deleteButton.setOnClickListener(v -> {
+            handleDelete();
+        });
+
+//        menuButton.setOnClickListener(this::showPopupMenu);
     }
 
     void initializeQuizId() {
         Intent intent = getIntent();
         quizId = intent.getLongExtra("quizId", -1);
+        Log.d(TAG, "Initialize Quiz Id");
+
         if (quizId == -1) {
-            Log.e(TAG, "Quiz ID not provided!");
+            Log.d(TAG, "Quiz ID not provided!");
             finish();
         }
         else {
-            Log.e(TAG, "Provide Quiz ID successfully with quizId = " + quizId);
+            Log.d(TAG, "Provide Quiz ID successfully with quizId = " + quizId);
         }
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        handleBackButton();
     }
 
     private void handleBackButton() {
-        saveManager.showBackConfirmationDialog(
-                questions,
-                () -> {
-                    super.onBackPressed();
-                },
-                (isSuccessful, message) -> {
-                    if (isSuccessful) {
-                        Toast.makeText(this, "Changes saved successfully", Toast.LENGTH_SHORT).show();
-                        super.onBackPressed();
-                    } else {
-                        // Show error and stay on screen
-                        new AlertDialog.Builder(this)
-                                .setTitle("Save Error")
-                                .setMessage(message)
-                                .setPositiveButton("OK", null)
-                                .show();
-                    }
-                }
-        );
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Save your dialog before leaving ?")
+                .setNegativeButton("No", (dialog, which) -> onBackPressed())
+                .setPositiveButton("Save", (dialog, which) -> {
+                    ProgressDialog progressDialog = new ProgressDialog(this);
+                    progressDialog.setTitle("Saving");
+                    progressDialog.setMessage("Saving your works...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+
+                    saveService.saveAllQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
+                        progressDialog.dismiss();
+                        if (isSuccessful) {
+                            Toast.makeText(this, "Questions saved successfully", Toast.LENGTH_SHORT).show();
+                            runOnUiThread(this::onBackPressed);
+                        } else {
+                            runOnUiThread(() -> new AlertDialog.Builder(this)
+                                    .setTitle("Save Error")
+                                    .setMessage(message)
+                                    .setPositiveButton("OK", null)
+                                    .show());
+                        }
+                    });
+                })
+                .show();
     }
 
     private void loadQuizQuestions() {
@@ -166,7 +189,25 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
         final int MAX_RETRIES = 3;
         final AtomicInteger retryCount = new AtomicInteger(0);
 
-        final Call<List<Question>>[] call = new Call[1];
+        final Runnable onLoadingComplete = () -> {
+            if (loadingDialog.isShowing()) {
+                loadingDialog.dismiss();
+            }
+
+            saveManager.initialize(questions);
+
+            if (bottomFragment != null) {
+                bottomFragment.setQuestions(questions);
+                bottomFragment.notifyBottomFragment();
+            }
+
+            if (questions.isEmpty()) {
+                Fragment emptyFragment = new QCQuestionEmptyPlaceHolder();
+                loadQuestionTypeFrame(getSupportFragmentManager(), emptyFragment);
+            } else {
+            }
+        };
+
         final Callback<List<Question>> callback = new Callback<List<Question>>() {
             @Override
             public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
@@ -177,11 +218,11 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                     List<Question> questionsList = response.body();
                     Log.d(TAG, "Successfully parsed questions. Count: " + questionsList.size());
 
-                    List<Question> allQuestions = new ArrayList<>(questionsList);
-
-                    for (Question question : allQuestions) {
+                    for (Question question : questionsList) {
+                        Log.d(TAG, "Before Question class: " + question.getClass().getName());
+                        Log.d(TAG, "Before Question type: " + question.getQuestionType().getName());
                         if (question instanceof QuestionChoice) {
-                            QuestionChoice choiceQuestion = (QuestionChoice) question;
+                        QuestionChoice choiceQuestion = (QuestionChoice) question;
                             Log.d(TAG, "Choice question: " + choiceQuestion.getContent() +
                                     ", Options: " + choiceQuestion.getChoiceOptions().size());
                         } else if (question instanceof QuestionPuzzle) {
@@ -197,26 +238,22 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                             Log.d(TAG, "Text question: " + textQuestion.getContent() +
                                     ", Accepted answers: " + textQuestion.getAcceptedAnswers().size());
                         }
+
+                        Log.d(TAG, "After Question class: " + question.getClass().getName());
+                        Log.d(TAG, "Question type: " + question.getQuestionType());
                     }
 
-                    questions = new ArrayList<>(allQuestions);
-
-                    saveManager.initialize(questions);
+                    // Update the questions list
+                    questions = new ArrayList<>(questionsList);
 
                     runOnUiThread(() -> {
-                        if (bottomFragment != null) {
-                            bottomFragment.setQuestions(questions);
-                        }
-
-                        if (loadingDialog.isShowing()) {
-                            loadingDialog.dismiss();
-                        }
-
                         Toast.makeText(QuestionCreateActivity.this,
                                 "Loaded " + questions.size() + " questions",
                                 Toast.LENGTH_SHORT).show();
-                    });
 
+                        // Call the completion callback
+                        onLoadingComplete.run();
+                    });
                 } else {
                     Log.e(TAG, "Error response: " + response.code());
                     try {
@@ -236,16 +273,13 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                         return;
                     }
 
-                    if (loadingDialog.isShowing()) {
-                        loadingDialog.dismiss();
-                    }
-
                     runOnUiThread(() -> {
                         Toast.makeText(QuestionCreateActivity.this,
                                 "Failed to load questions: " + response.code() + " " + response.message(),
                                 Toast.LENGTH_LONG).show();
 
-                        saveManager.initialize(questions);
+                        // Even on failure, we need to proceed with empty questions list
+                        onLoadingComplete.run();
                     });
                 }
             }
@@ -262,35 +296,29 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
                     return;
                 }
 
-                if (loadingDialog.isShowing()) {
-                    loadingDialog.dismiss();
-                }
-
                 runOnUiThread(() -> {
-                    Toast.makeText(QuestionCreateActivity.this,
-                            "Network error: " + t.getMessage(),
-                            Toast.LENGTH_LONG).show();
-
-                    showRetryDialog(t.getMessage());
-
-                    saveManager.initialize(questions);
+                    showRetryDialog(t.getMessage(), () -> {
+                        loadQuizQuestions();
+                    }, () -> {
+                        onLoadingComplete.run();
+                    });
                 });
             }
         };
 
-        call[0] = questionAPI.getQuizQuestions(quizId);
-        call[0].enqueue(callback);
+        questionAPI.getQuizQuestions(quizId).enqueue(callback);
     }
 
-    private void showRetryDialog(String errorMessage) {
+    private void showRetryDialog(String errorMessage, Runnable onRetry, Runnable onCancel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Connection Error")
                 .setMessage("Failed to load questions: " + errorMessage)
                 .setPositiveButton("Retry", (dialog, which) -> {
-                    loadQuizQuestions();
+                    if (onRetry != null) onRetry.run();
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {
                     dialog.dismiss();
+                    if (onCancel != null) onCancel.run();
                 })
                 .setCancelable(false)
                 .show();
@@ -397,8 +425,27 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
     }
 
     private void handleSave() {
-        Log.d(TAG,  "Save hehehe: "  + String.valueOf(questions.size()));
-        saveManager.showSaveConfirmationDialog2(questions);
+//        saveManager.showSaveConfirmationDialog2(questions);
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Saving");
+        progressDialog.setMessage("Saving your works...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        saveService.saveAllQuestionsWithFullReset(questions, quizId, (isSuccessful, message) -> {
+            progressDialog.dismiss();
+//
+            if (isSuccessful) {
+                Toast.makeText(this, "Questions saved successfully", Toast.LENGTH_SHORT).show();
+                saveService.initializeChangeTracker(questions);
+            } else {
+                new AlertDialog.Builder(this)
+                        .setTitle("Save Error")
+                        .setMessage(message)
+                        .setPositiveButton("OK", null)
+                        .show();
+            }
+        });
     }
 
     private void handleDelete() {
@@ -410,15 +457,45 @@ public class QuestionCreateActivity extends AppCompatActivity implements QCQuest
 
             saveManager.showDeleteConfirmationDialog(
                     () -> {
-                        questions.remove(currentQuestion.getPosition());
-                        if (bottomFragment != null) {
-                            bottomFragment.onDeleteQuestion(currentQuestion.getPosition(), currentQuestion);
-                        }
+                        ProgressDialog progressDialog = new ProgressDialog(this);
+                        progressDialog.setMessage("Deleting question...");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+
+
+                        saveService.deleteQuestionById(currentQuestion.getId(), new QuestionService.SaveOperationListener() {
+                            @Override
+                            public void onSaveComplete(boolean isSuccessful, String message) {
+                                if (progressDialog != null && progressDialog.isShowing()) {
+                                    progressDialog.dismiss();
+                                }
+
+                                if (isSuccessful) {
+
+                                } else {
+//                                    // Show error message
+//                                    runOnUiThread(() -> {
+//                                        Toast.makeText(QuestionCreateActivity.this,
+//                                                "Failed to delete question: " + message,
+//                                                Toast.LENGTH_LONG).show();
+//                                    });
+                                }
+
+
+                                questions.remove(currentQuestion.getPosition());
+                                if (bottomFragment != null) {
+                                    bottomFragment.onDeleteQuestion(currentQuestion.getPosition(), currentQuestion);
+                                }
+                            }
+                        });
+
+
                     }
             );
         } else {
             Toast.makeText(this, "No question selected to delete", Toast.LENGTH_SHORT).show();
-        }    }
+        }
+    }
 
     @Override
     public void onClickListener(Question question) {

@@ -21,8 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
         int idUser = getIntent().getIntExtra("userId", -1);
 
-        HomeFragment homeFragment = new HomeFragment();
-        replaceFragment(homeFragment);
+        replaceFragment(HomeFragment.newInstance(idUser));
 
         binding.bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -35,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(ProfileFragment.newInstance(idUser));
             } else if (itemId == R.id.ic_create) {
                 Intent intent = new Intent(this, CreateQuizActivity.class);
-                intent.putExtra("idUser", idUser);
+                intent.putExtra("userId", idUser);
                 startActivity(intent);
             } else if (itemId == R.id.ic_join) {
                 Intent intent = new Intent(this, UI65.class);
-                intent.putExtra("idUser", idUser);
+                intent.putExtra("userId", idUser);
                 startActivity(intent);
             } else {
                 return false;
