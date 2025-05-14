@@ -154,4 +154,22 @@ public class QCLocalStorageUtils {
         editor.commit();
     }
 
+    public static boolean storeCurrentUserId(Context context, int userId) {
+        try {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("current_userId", userId);
+            editor.apply();
+            return true;
+        } catch (Exception e) {
+            Log.e("QCLocalStorage", "Error storing current_userId: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static int getCurrentUserId(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("current_userId", -1); // -1 là giá trị mặc định nếu không tìm thấy
+    }
+
 }

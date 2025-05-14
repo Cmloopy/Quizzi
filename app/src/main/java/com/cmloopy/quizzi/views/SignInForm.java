@@ -23,7 +23,9 @@ import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.UserApi;
 import com.cmloopy.quizzi.models.user.CheckLoginUser;
 import com.cmloopy.quizzi.models.user.LoginResponse;
+import com.cmloopy.quizzi.models.user.User;
 import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
+import com.google.gson.Gson;
 
 import android.content.SharedPreferences;
 
@@ -44,6 +46,7 @@ public class SignInForm extends AppCompatActivity {
     private static final String PREF_NAME = "SignInPrefs";
     private static final String EMAIL_KEY = "email";
     private static final String REMEMBER_KEY = "remember";
+    private static final String PASSWORD_KEY = "password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,7 @@ public class SignInForm extends AppCompatActivity {
         // Restore saved email if remember me was checked
         if (sharedPreferences.getBoolean(REMEMBER_KEY, false)) {
             emailEditText.setText(sharedPreferences.getString(EMAIL_KEY, ""));
+            passwordEditText.setText(sharedPreferences.getString(PASSWORD_KEY, "")); // Thêm dòng này để điền mật khẩu
             rememberMeCheckbox.setChecked(true);
         }
 
@@ -125,6 +129,7 @@ public class SignInForm extends AppCompatActivity {
         if (rememberMeCheckbox.isChecked()) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(EMAIL_KEY, email);
+            editor.putString(PASSWORD_KEY, password); // Thêm dòng này để lưu mật khẩu
             editor.putBoolean(REMEMBER_KEY, true);
             editor.apply();
         } else {
@@ -218,6 +223,8 @@ public class SignInForm extends AppCompatActivity {
 
     private void storeLoginSuccess(LoginResponse loginResponse) {
         String email = emailEditText.getText().toString().trim();
+
+        // Lưu thông tin cơ bản từ LoginResponse
         boolean stored = QCLocalStorageUtils.storeUserLoginSuccess(
                 SignInForm.this,
                 loginResponse.getUserId(),
@@ -225,11 +232,49 @@ public class SignInForm extends AppCompatActivity {
                 loginResponse.getAccessToken()
         );
 
+        // Lưu trữ current_userId vào SharedPreferences
+        SharedPreferences userPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = userPrefs.edit();
+        editor.putInt("current_userId", loginResponse.getUserId());
+        editor.apply();
+
         if (stored) {
-            Log.d("LOGIN", "Login data stored successfully");
+            Log.d("LOGIN", "Basic login data stored successfully");
         } else {
-            Log.w("LOGIN", "Failed to store login data");
+            Log.w("LOGIN", "Failed to store basic login data");
         }
+
+        // Gọi API để lấy thông tin đầy đủ của user
+        UserApi userApi = RetrofitClient.getUserApi();
+        Call<User> call = userApi.getInfoUserById(loginResponse.getUserId());
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    User currentUser = response.body();
+                    // Lưu thông tin đầy đủ của user vào SharedPreferences
+                    storeUserDetails(currentUser);
+                    Log.d("LOGIN", "Full user details stored successfully");
+                } else {
+                    Log.e("LOGIN", "Failed to get user details: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e("LOGIN", "Error fetching user details: " + t.getMessage());
+            }
+        });
+    }
+
+    private void storeUserDetails(User user) {
+        SharedPreferences userPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = userPrefs.edit();
+
+        Gson gson = new Gson();
+        String userJson = gson.toJson(user);
+        editor.putString("currentUserJson", userJson);
+        editor.apply();
     }
 
     private void handleForgotPassword() {

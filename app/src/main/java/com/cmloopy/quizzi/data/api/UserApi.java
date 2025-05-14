@@ -16,6 +16,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface UserApi {
     @POST("auth/login")
@@ -39,5 +40,5 @@ public interface UserApi {
     Call<LoginResponse> register(@Body RegisterUser registerUser);
 
     @GET("users/{userId}")
-    Call<User> getInfoUserById(@Part("userId") int userId);
+    Call<User> getInfoUserById(@Path("userId") int userId);
 }
