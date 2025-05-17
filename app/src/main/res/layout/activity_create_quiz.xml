@@ -38,7 +38,7 @@
                 android:layout_centerInParent="true"
                 android:text="Create Quizzo"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
+                android:textSize="18dp"
                 android:textStyle="bold" />
 
             <ImageButton
@@ -298,7 +298,6 @@
             android:layout_height="1dp"
             android:background="#6046CC" />
 
-        <!-- Visibility of Quiz Questions -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
