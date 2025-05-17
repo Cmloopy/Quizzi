@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.LibTablayoutAdapter;
+import com.cmloopy.quizzi.views.CreateCollectionActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -20,6 +23,7 @@ public class LibraryFragment extends Fragment {
     private LibTablayoutAdapter libTablayoutAdapter;
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
+    private FloatingActionButton fab;
     private final String[] tabTitles = {"My Quizzo", "Favorites"};
     private int userId = -1;
 
@@ -44,9 +48,11 @@ public class LibraryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_library, container, false);
 
         // Lấy userId từ arguments
-        int userId = -1;
+        int userId;
         if (getArguments() != null) {
             userId = getArguments().getInt("userId", -1);
+        } else {
+            userId = -1;
         }
 
         // Tạo adapter với userId
@@ -59,6 +65,13 @@ public class LibraryFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             tab.setText(tabTitles[position]);
         }).attach();
+
+        fab = view.findViewById(R.id.fab_add_collection);
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), CreateCollectionActivity.class);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        });
 
         return view;
     }

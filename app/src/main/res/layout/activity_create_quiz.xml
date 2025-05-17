@@ -1,424 +1,431 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <!-- Nội dung có thể cuộn -->
+    <ScrollView
+        android:id="@+id/scroll_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="40dp"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="24dp">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layout_bottom_buttons"
+        android:background="@android:color/white">
 
-        <!-- Toolbar -->
-        <RelativeLayout
+        <!-- Nội dung như bạn đã có -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginBottom="16dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="40dp"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="24dp">
 
-            <ImageButton
-                android:id="@+id/btn_close"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Close"
-                android:src="@drawable/ic_close_x"
-                app:tint="#000000"
-                tools:ignore="TouchTargetSizeCheck" />
+            <!-- Toolbar -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="16dp">
 
+                <ImageButton
+                    android:id="@+id/btn_close"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Close"
+                    android:src="@drawable/ic_close_x"
+                    app:tint="#000000"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Create Quizzo"
+                    android:textColor="@android:color/black"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+
+                <ImageButton
+                    android:id="@+id/btn_more"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/ic_22_more_options"
+                    android:contentDescription="More Options"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </RelativeLayout>
+
+            <!-- Add Cover Image -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_cover_image"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="#F8F5FF"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#6046CC">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Default placeholder content -->
+                    <LinearLayout
+                        android:id="@+id/layout_cover_placeholder"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_cover_icon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_image_placeholder"
+                            app:tint="#6046CC" />
+
+                        <TextView
+                            android:id="@+id/tv_add_cover"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Add Cover Image"
+                            android:textColor="#6046CC"
+                            android:textStyle="normal" />
+                    </LinearLayout>
+
+                    <!-- Selected image view (initially hidden) -->
+                    <ImageView
+                        android:id="@+id/iv_selected_cover"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        android:contentDescription="Selected Cover Image" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Form Fields -->
+            <!-- Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Create Quizzo"
+                android:text="Title"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="14sp"
+                android:textStyle="bold"/>
 
-            <ImageButton
-                android:id="@+id/btn_more"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_22_more_options"
-                android:contentDescription="More Options"
-                tools:ignore="TouchTargetSizeCheck" />
-        </RelativeLayout>
-
-        <!-- Add Cover Image -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_cover_image"
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:layout_marginBottom="24dp"
-            app:cardBackgroundColor="#F8F5FF"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="#6046CC">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <!-- Default placeholder content -->
-                <LinearLayout
-                    android:id="@+id/layout_cover_placeholder"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/iv_cover_icon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:src="@drawable/ic_image_placeholder"
-                        app:tint="#6046CC" />
-
-                    <TextView
-                        android:id="@+id/tv_add_cover"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Add Cover Image"
-                        android:textColor="#6046CC"
-                        android:textStyle="normal" />
-                </LinearLayout>
-
-                <!-- Selected image view (initially hidden) -->
-                <ImageView
-                    android:id="@+id/iv_selected_cover"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone"
-                    android:contentDescription="Selected Cover Image" />
-            </FrameLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Form Fields -->
-        <!-- Title -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <EditText
-            android:id="@+id/et_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="Enter Title"
-            android:inputType="text"
-            android:minHeight="48dp"
-            android:padding="4dp"
-            android:textColorHint="#AAAAAA"
-            android:textSize="14sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#6046CC" />
-
-        <!-- Description -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Description"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <EditText
-            android:id="@+id/et_desc_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="Enter Description"
-            android:inputType="text"
-            android:minHeight="48dp"
-            android:padding="4dp"
-            android:textColorHint="#AAAAAA"
-            android:textSize="14sp"
-            tools:ignore="DuplicateIds" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#6046CC" />
-
-        <!-- Select Collection -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Select Collection"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:background="@null"
-            android:gravity="center_vertical">
-
-            <Spinner
-                android:id="@+id/spinner_collection"
+            <EditText
+                android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:background="@null"
-                android:minHeight="40dp"
-                android:paddingStart="4dp"
-                android:paddingEnd="30dp"
-                android:popupBackground="@android:color/white"
-                android:spinnerMode="dropdown"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_dropdown"
-                app:tint="#6046CC"
-                android:contentDescription="Select Collection" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#6046CC" />
-
-        <!-- Các phần còn lại của XML giữ nguyên -->
-        <!-- Select Theme -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Select Theme"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:background="@null"
-            android:gravity="center_vertical">
-
-            <Spinner
-                android:id="@+id/spinner_theme"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@null"
-                android:minHeight="40dp"
-                android:paddingStart="4dp"
-                android:paddingEnd="30dp"
-                android:popupBackground="@android:color/white"
-                android:spinnerMode="dropdown"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_dropdown"
-                app:tint="#6046CC"
-                android:contentDescription="Select Theme" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#6046CC" />
-
-        <!-- Visible to -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Visible to"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:background="@null"
-            android:gravity="center_vertical">
-
-            <Spinner
-                android:id="@+id/spinner_visibility"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@null"
-                android:minHeight="40dp"
-                android:paddingStart="4dp"
-                android:paddingEnd="30dp"
-                android:popupBackground="@android:color/white"
-                android:spinnerMode="dropdown"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_dropdown"
-                app:tint="#6046CC"
-                android:contentDescription="Select Visibility" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#6046CC" />
-
-        <!-- Visibility of Quiz Questions -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Visibility of Quiz Questions"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:background="@null"
-            android:gravity="center_vertical">
-
-            <Spinner
-                android:id="@+id/spinner_question_visibility"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:background="@null"
-                android:minHeight="40dp"
-                android:paddingStart="4dp"
-                android:paddingEnd="30dp"
-                android:popupBackground="@android:color/white"
-                android:spinnerMode="dropdown"
-                tools:ignore="TouchTargetSizeCheck" />
-
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_dropdown"
-                app:tint="#6046CC"
-                android:contentDescription="Select Question Visibility" />
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#6046CC" />
-
-        <!-- Keyword -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Keyword"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
-
-        <EditText
-            android:id="@+id/et_keyword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="Type keyword and enter"
-            android:inputType="text"
-            android:imeOptions="actionDone"
-            android:minHeight="48dp"
-            android:padding="4dp"
-            android:textColorHint="#AAAAAA"
-            android:textSize="14sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#6046CC" />
-
-        <!-- Chips container for keywords -->
-        <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/chipContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:flexWrap="wrap"
-            app:alignItems="flex_start"
-            app:flexDirection="row" />
-
-        <!-- Buttons -->
-        <LinearLayout
-            android:layout_marginBottom="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_save_quiz"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
-                android:backgroundTint="#6046CC"
-                app:cornerRadius="24dp"
-                android:text="Save Quiz"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp" />
+                android:hint="Enter Title"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:padding="4dp"
+                android:textColorHint="#AAAAAA"
+                android:textSize="14sp" />
 
             <View
-                android:layout_width="16dp"
-                android:layout_height="0dp" />
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6046CC" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_question"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_weight="1"
-                android:backgroundTint="#6046CC"
-                app:cornerRadius="24dp"
-                android:text="Add Question"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp" />
+            <!-- Description -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Description"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/et_desc_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="Enter Description"
+                android:inputType="text"
+                android:minHeight="48dp"
+                android:padding="4dp"
+                android:textColorHint="#AAAAAA"
+                android:textSize="14sp"
+                tools:ignore="DuplicateIds" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6046CC" />
+
+            <!-- Select Collection -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Select Collection"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:background="@null"
+                android:gravity="center_vertical">
+
+                <Spinner
+                    android:id="@+id/spinner_collection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:minHeight="40dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="30dp"
+                    android:popupBackground="@android:color/white"
+                    android:spinnerMode="dropdown"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_dropdown"
+                    app:tint="#6046CC"
+                    android:contentDescription="Select Collection" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6046CC" />
+
+            <!-- Các phần còn lại của XML giữ nguyên -->
+            <!-- Select Theme -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Select Theme"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:background="@null"
+                android:gravity="center_vertical">
+
+                <Spinner
+                    android:id="@+id/spinner_theme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:minHeight="40dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="30dp"
+                    android:popupBackground="@android:color/white"
+                    android:spinnerMode="dropdown"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_dropdown"
+                    app:tint="#6046CC"
+                    android:contentDescription="Select Theme" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6046CC" />
+
+            <!-- Visible to -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Visible"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:background="@null"
+                android:gravity="center_vertical">
+
+                <Spinner
+                    android:id="@+id/spinner_visibility"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:minHeight="40dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="30dp"
+                    android:popupBackground="@android:color/white"
+                    android:spinnerMode="dropdown"
+                    tools:ignore="TouchTargetSizeCheck" />
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_dropdown"
+                    app:tint="#6046CC"
+                    android:contentDescription="Select Visibility" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6046CC" />
+
+            <!--        <TextView-->
+            <!--            android:layout_width="wrap_content"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:layout_marginTop="16dp"-->
+            <!--            android:text="Visibility of Quiz Questions"-->
+            <!--            android:textColor="@android:color/black"-->
+            <!--            android:textSize="14sp"-->
+            <!--            android:textStyle="bold"/>-->
+
+            <!--        <RelativeLayout-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:minHeight="40dp"-->
+            <!--            android:background="@null"-->
+            <!--            android:gravity="center_vertical">-->
+
+            <!--            <Spinner-->
+            <!--                android:id="@+id/spinner_question_visibility"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_centerVertical="true"-->
+            <!--                android:background="@null"-->
+            <!--                android:minHeight="40dp"-->
+            <!--                android:paddingStart="4dp"-->
+            <!--                android:paddingEnd="30dp"-->
+            <!--                android:popupBackground="@android:color/white"-->
+            <!--                android:spinnerMode="dropdown"-->
+            <!--                tools:ignore="TouchTargetSizeCheck" />-->
+
+            <!--            <ImageView-->
+            <!--                android:layout_width="18dp"-->
+            <!--                android:layout_height="18dp"-->
+            <!--                android:layout_alignParentEnd="true"-->
+            <!--                android:layout_centerVertical="true"-->
+            <!--                android:layout_marginEnd="4dp"-->
+            <!--                android:src="@drawable/ic_dropdown"-->
+            <!--                app:tint="#6046CC"-->
+            <!--                android:contentDescription="Select Question Visibility" />-->
+            <!--        </RelativeLayout>-->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6046CC" />
+
+            <!-- Keyword -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Keyword"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/et_keyword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="Type keyword and enter"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+                android:minHeight="48dp"
+                android:padding="4dp"
+                android:textColorHint="#AAAAAA"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#6046CC" />
+
+            <!-- Chips container for keywords -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/chipContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:flexWrap="wrap"
+                app:alignItems="flex_start"
+                app:flexDirection="row" />
         </LinearLayout>
+    </ScrollView>
+
+    <!-- Phần nút luôn ở dưới cùng -->
+    <LinearLayout
+        android:id="@+id/layout_bottom_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="16dp"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:elevation="4dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_save_quiz"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:backgroundTint="#6046CC"
+            app:cornerRadius="24dp"
+            android:text="Save Quiz"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+
+        <View
+            android:layout_width="16dp"
+            android:layout_height="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_add_question"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:backgroundTint="#6046CC"
+            app:cornerRadius="24dp"
+            android:text="Add Question"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
     </LinearLayout>
-</ScrollView>
+</RelativeLayout>

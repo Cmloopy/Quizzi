@@ -1,5 +1,6 @@
 package com.cmloopy.quizzi.data.api.QuestionCreate;
 
+import com.cmloopy.quizzi.models.quiz.QuizCollectionResponse;
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
 
 import java.util.List;
@@ -14,6 +15,12 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface QuizAPI {
+    @GET("quizzes")
+    Call<List<QuizResponse>> getAllQuizzes();
+
+    @GET("quizzes/{quizId}")
+    Call<QuizResponse> getQuizById(@Path("quizId") Long quizId);
+
     @Multipart
     @POST("quizzes")
     Call<QuizResponse> uploadQuiz(
@@ -27,10 +34,6 @@ public interface QuizAPI {
             @Part("shuffle") RequestBody shuffle,
             @Part MultipartBody.Part coverPhotoFile
     );
-
-
-    @GET("quizzes")
-    Call<List<QuizResponse>> getAllQuizzes();
 
     @Multipart
     @PUT("quizzes/{quizId}")
@@ -46,5 +49,29 @@ public interface QuizAPI {
             @Part("shuffle") RequestBody shuffle,
             @Part MultipartBody.Part coverPhotoFile
     );
+
+    @GET("quiz-collections")
+    Call<List<QuizCollectionResponse>> getAllQuizCollections();
+
+    @Multipart
+    @POST("quiz-collections")
+    Call<QuizCollectionResponse> uploadQuizCollection(
+            @Part("authorId") RequestBody userId,
+            @Part("category") RequestBody title,
+            @Part("visibleTo") RequestBody visible,
+            @Part MultipartBody.Part coverPhotoFile
+    );
+
+    @Multipart
+    @PUT("quiz-collections/{quizCollectionId}")
+    Call<QuizCollectionResponse> updateQuizCollection(
+            @Path("quizCollectionId") Long quizCollectionId,
+            @Part("authorId") RequestBody userId,
+            @Part("category") RequestBody title,
+            @Part("visibleTo") RequestBody visible,
+            @Part MultipartBody.Part coverPhotoFile
+    );
+
+
 }
 
