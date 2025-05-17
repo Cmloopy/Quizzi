@@ -18,6 +18,9 @@ public interface QuizAPI {
     @GET("quizzes")
     Call<List<QuizResponse>> getAllQuizzes();
 
+    @GET("quizzes/{quizId}")
+    Call<QuizResponse> getQuizById(@Path("quizId") Long quizId);
+
     @Multipart
     @POST("quizzes")
     Call<QuizResponse> uploadQuiz(
@@ -47,12 +50,15 @@ public interface QuizAPI {
             @Part MultipartBody.Part coverPhotoFile
     );
 
+    @GET("quiz-collections")
+    Call<List<QuizCollectionResponse>> getAllQuizCollections();
+
     @Multipart
     @POST("quiz-collections")
     Call<QuizCollectionResponse> uploadQuizCollection(
             @Part("authorId") RequestBody userId,
             @Part("category") RequestBody title,
-            @Part("visible") RequestBody visible,
+            @Part("visibleTo") RequestBody visible,
             @Part MultipartBody.Part coverPhotoFile
     );
 
@@ -62,7 +68,7 @@ public interface QuizAPI {
             @Path("quizCollectionId") Long quizCollectionId,
             @Part("authorId") RequestBody userId,
             @Part("category") RequestBody title,
-            @Part("visible") RequestBody visible,
+            @Part("visibleTo") RequestBody visible,
             @Part MultipartBody.Part coverPhotoFile
     );
 

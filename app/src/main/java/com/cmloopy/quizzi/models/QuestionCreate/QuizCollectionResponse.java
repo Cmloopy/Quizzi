@@ -1,4 +1,4 @@
-package com.cmloopy.quizzi.models.quiz;
+package com.cmloopy.quizzi.models.QuestionCreate;
 
 public class QuizCollectionResponse {
     private Long id;

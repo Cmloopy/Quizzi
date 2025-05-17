@@ -1,5 +1,7 @@
 package com.cmloopy.quizzi.data;
 
+import android.util.Log;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -10,6 +12,7 @@ import com.cmloopy.quizzi.data.api.QuestionCreate.serializer.QuestionCreateDeser
 import com.cmloopy.quizzi.data.api.Topcollection.CollectionService;
 import com.cmloopy.quizzi.data.api.Library.MyQuizAPI;
 
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
 import com.cmloopy.quizzi.models.question.Question;
 import com.cmloopy.quizzi.models.question.QuestionDeserializer;
 
@@ -27,10 +30,12 @@ public class RetrofitClient {
     private static Retrofit customRetrofit;
 
     private static Retrofit getCustomRetrofit() {
-        if (customRetrofit == null) {
+
+
+        if(customRetrofit == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new DateDeserializer())
-                    .registerTypeAdapter(Question.class, new QuestionCreateDeserializer())
+                    .registerTypeAdapter(QuestionCreate.class, new QuestionCreateDeserializer())
                     .create();
 
             customRetrofit = new Retrofit.Builder()

@@ -1,6 +1,5 @@
 package com.cmloopy.quizzi.views;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,9 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,8 +26,6 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,17 +33,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.data.api.QuestionCreate.QuizAPI;
-import com.cmloopy.quizzi.data.api.QuizzApi;
 import com.cmloopy.quizzi.models.quiz.QuizCollectionResponse;
 import com.cmloopy.quizzi.utils.QuestionCreate.storage.QCLocalStorageUtils;
 import com.cmloopy.quizzi.views.QuestionCreate.QuestionCreateActivity;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,7 +58,6 @@ import retrofit2.Response;
 
 public class CreateCollectionActivity extends AppCompatActivity {
 
-    // UI Components
     private MaterialCardView cardCoverImage;
     private LinearLayout layoutCoverPlaceholder;
     private ImageView ivCoverIcon, ivSelectedCover;
@@ -81,6 +70,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
     private Long currentQuizCollectionId = null;
     private static final String TAG = "CreateQuizCollectionActivity";
     private ProgressDialog progressDialog;
+    private String visibility = "true";
 
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int IMAGE_PICK_CODE = 1000;
@@ -184,12 +174,8 @@ public class CreateCollectionActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        String[] collections = {"Select Collection", "My Collection", "Public Collection", "Work", "School"};
-        ArrayAdapter<String> collectionAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, collections);
-        collectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        String[] visibilities = {"Only Me", "Friends", "Public"};
+        // Visibility Spinner
+        String[] visibilities = {"Public", "Private"};
         ArrayAdapter<String> visibilityAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, visibilities);
         visibilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -197,20 +183,16 @@ public class CreateCollectionActivity extends AppCompatActivity {
         spinnerVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Handle visibility selection
+                // Set visibility based on selection (Public = true, Private = false)
+                visibility = position == 0 ? "true" : "false";
+                Log.d(TAG, "Collection visibility set to: " + visibility);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
+                visibility = "true";
             }
         });
-
-        String[] questionVisibilities = {"Only Me", "Friends", "Public"};
-        ArrayAdapter<String> questionVisibilityAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, questionVisibilities);
-        questionVisibilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
     }
 
     public void storeQuizCollectionSuccess(Long quizCollectionId, String quizCollectionTitle) {
@@ -367,7 +349,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
         QuizAPI quizCollectionApi = RetrofitClient.getQuizApi();
 
         String titles = etTitle.getText().toString().trim();
-        String visiblee = "true";
+        String visiblee = visibility; // Use the value from spinner
 
         File file = null;
         if (selectedImageUri != null) {
@@ -395,7 +377,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<QuizCollectionResponse> call, Response<QuizCollectionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    storeQuizCollectionSuccess(response.body().getId(), response.body().getTitle());
+                    storeQuizCollectionSuccess(response.body().getId(), response.body().getCategory());
 
                     if (navigateToQuestions) {
                         navigateToQuestionCreate(response.body().getId());
@@ -424,7 +406,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
         QuizAPI quizCollectionApi = RetrofitClient.getQuizApi();
 
         String titles = etTitle.getText().toString().trim();
-        String visiblee = "true";
+        String visiblee = visibility; // Use the value from spinner
 
         File file = null;
         if (selectedImageUri != null) {
@@ -453,7 +435,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
             public void onResponse(Call<QuizCollectionResponse> call, Response<QuizCollectionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     // Update stored quizCollection details
-                    storeQuizCollectionSuccess(response.body().getId(), response.body().getTitle());
+                    storeQuizCollectionSuccess(response.body().getId(), response.body().getCategory());
                     Toast.makeText(CreateCollectionActivity.this, "QuizCollection updated successfully!", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "QuizCollection updated with ID: " + currentQuizCollectionId);
                 } else {
