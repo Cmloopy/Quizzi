@@ -165,7 +165,9 @@ public class CreateCollectionActivity extends AppCompatActivity {
         });
 
         btnClose.setOnClickListener(v -> {
-            showExitConfirmationDialog();
+            clearQuizCollectionCreationState();
+            finish();
+//            showExitConfirmationDialog();
         });
 
         btnMore.setOnClickListener(v -> {
@@ -175,6 +177,8 @@ public class CreateCollectionActivity extends AppCompatActivity {
 
         btnSaveQuizCollection.setOnClickListener(v -> {
             saveQuizCollectionOnly(idUser);
+            clearQuizCollectionCreationState();
+            finish();
         });
 
     }
