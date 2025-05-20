@@ -306,45 +306,45 @@
                 android:layout_height="1dp"
                 android:background="#6046CC" />
 
-            <!--        <TextView-->
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginTop="16dp"-->
-            <!--            android:text="Visibility of Quiz Questions"-->
-            <!--            android:textColor="@android:color/black"-->
-            <!--            android:textSize="14sp"-->
-            <!--            android:textStyle="bold"/>-->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Visibility of Quiz Questions"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
 
-            <!--        <RelativeLayout-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:minHeight="40dp"-->
-            <!--            android:background="@null"-->
-            <!--            android:gravity="center_vertical">-->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="40dp"
+                        android:background="@null"
+                        android:gravity="center_vertical">
 
-            <!--            <Spinner-->
-            <!--                android:id="@+id/spinner_question_visibility"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_centerVertical="true"-->
-            <!--                android:background="@null"-->
-            <!--                android:minHeight="40dp"-->
-            <!--                android:paddingStart="4dp"-->
-            <!--                android:paddingEnd="30dp"-->
-            <!--                android:popupBackground="@android:color/white"-->
-            <!--                android:spinnerMode="dropdown"-->
-            <!--                tools:ignore="TouchTargetSizeCheck" />-->
+                        <Spinner
+                            android:id="@+id/spinner_question_visibility"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:background="@null"
+                            android:minHeight="40dp"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="30dp"
+                            android:popupBackground="@android:color/white"
+                            android:spinnerMode="dropdown"
+                            tools:ignore="TouchTargetSizeCheck" />
 
-            <!--            <ImageView-->
-            <!--                android:layout_width="18dp"-->
-            <!--                android:layout_height="18dp"-->
-            <!--                android:layout_alignParentEnd="true"-->
-            <!--                android:layout_centerVertical="true"-->
-            <!--                android:layout_marginEnd="4dp"-->
-            <!--                android:src="@drawable/ic_dropdown"-->
-            <!--                app:tint="#6046CC"-->
-            <!--                android:contentDescription="Select Question Visibility" />-->
-            <!--        </RelativeLayout>-->
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_dropdown"
+                            app:tint="#6046CC"
+                            android:contentDescription="Select Question Visibility" />
+                    </RelativeLayout>
 
             <View
                 android:layout_width="match_parent"
