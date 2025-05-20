@@ -73,7 +73,7 @@ public class CreateQuizActivity extends AppCompatActivity {
     private LinearLayout layoutCoverPlaceholder;
     private ImageView ivCoverIcon, ivSelectedCover;
     private EditText etTitle, etDescription, etKeyword;
-    private Spinner spinnerCollection, spinnerTheme, spinnerVisibility;
+    private Spinner spinnerCollection, spinnerTheme, spinnerVisibility, spinnerQuestionVisibility;
     private Button btnAddQuestion, btnSaveQuiz;
     private ImageButton btnClose, btnMore;
     private FlexboxLayout chipContainer;
@@ -90,6 +90,7 @@ public class CreateQuizActivity extends AppCompatActivity {
     private Map<String, Object> user;
     int idUser = -1;
     private String visibility = "true";
+    private String questionVisibility = "true";
     private QuizAPI quizApi; // Changed from QuizzApi to QuizAPI
     private List<QuizCollectionResponse> quizCollectionResponses;
     private ArrayList<String> collections;
@@ -161,6 +162,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerCollection = findViewById(R.id.spinner_collection);
         spinnerTheme = findViewById(R.id.spinner_theme);
         spinnerVisibility = findViewById(R.id.spinner_visibility);
+        spinnerQuestionVisibility = findViewById(R.id.spinner_question_visibility);
 
         btnAddQuestion = findViewById(R.id.btn_add_question);
         btnSaveQuiz = findViewById(R.id.btn_save_quiz);
@@ -297,15 +299,33 @@ public class CreateQuizActivity extends AppCompatActivity {
         spinnerVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Set visibility based on selection (Public = true, Private = false)
                 visibility = position == 0 ? "true" : "false";
                 Log.d(TAG, "Quiz visibility set to: " + visibility);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Default to public (true)
                 visibility = "true";
+            }
+        });
+
+        String[] questionVisibilities = {"Public", "Private"};
+        ArrayAdapter<String> questionVisibilityAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                questionVisibilities);
+        questionVisibilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerQuestionVisibility.setAdapter(questionVisibilityAdapter);
+        spinnerQuestionVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                questionVisibility = position == 0 ? "true" : "false";
+                Log.d(TAG, "Quiz questionVisibility set to: " + questionVisibility);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                questionVisibility = "true";
             }
         });
     }
@@ -506,7 +526,7 @@ public class CreateQuizActivity extends AppCompatActivity {
         String des = etDescription.getText().toString().trim();
         String key = etKeyword.getText().toString().trim();
         String visiblee = visibility;
-        String visibleQues = "true"; // Default to true
+        String visibleQues = questionVisibility;
         String shuffer = "false";
 
         int selectedPosition = spinnerCollection.getSelectedItemPosition();
@@ -602,9 +622,9 @@ public class CreateQuizActivity extends AppCompatActivity {
         String titles = etTitle.getText().toString().trim();
         String des = etDescription.getText().toString().trim();
         String key = etKeyword.getText().toString().trim();
-        String visiblee = visibility; // Use the visibility value from spinner
-        String visibleQues = "true"; // Default to true
-        String shuffer = "false";  // Default shuffle setting
+        String visiblee = visibility;
+        String visibleQues = questionVisibility;
+        String shuffer = "false";
 
         // Get collection ID from selected position
         int selectedPosition = spinnerCollection.getSelectedItemPosition();
