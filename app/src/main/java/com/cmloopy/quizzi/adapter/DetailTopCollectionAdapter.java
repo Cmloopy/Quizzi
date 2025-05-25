@@ -15,16 +15,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.models.DetailTopCollectionItem;
+import com.cmloopy.quizzi.models.quiz.QuizResponse;
 import com.cmloopy.quizzi.views.QuizzDetails;
 
 import java.util.List;
 
 public class DetailTopCollectionAdapter extends RecyclerView.Adapter<DetailTopCollectionAdapter.QuizViewHolder> {
     private static final String TAG = "DetailTopCollectionAdapter";
-    private List<DetailTopCollectionItem> quizList;
+    private List<QuizResponse> quizList;
+    private int userId;
 
-    public DetailTopCollectionAdapter(List<DetailTopCollectionItem> quizList) {
+    public DetailTopCollectionAdapter(List<QuizResponse> quizList, int userId) {
         this.quizList = quizList;
+        this.userId = userId;
     }
 
     @NonNull
@@ -36,30 +39,17 @@ public class DetailTopCollectionAdapter extends RecyclerView.Adapter<DetailTopCo
 
     @Override
     public void onBindViewHolder(@NonNull QuizViewHolder holder, int position) {
-        DetailTopCollectionItem quiz = quizList.get(position);
+        QuizResponse quiz = quizList.get(position);
 
-        // Debug log
-        Log.d(TAG, "Binding quiz: " + quiz.getTitle() + " with ID: " + quiz.getQuizId());
-
-        holder.imgQuizThumbnail.setImageResource(quiz.getImageResId());
         holder.txtQuizTitle.setText(quiz.getTitle());
-        holder.txtQuizAuthor.setText(quiz.getAuthor());
-        holder.txtQuizTime.setText(quiz.getTimeAgo());
-        holder.txtQuizPlays.setText(quiz.getPlayCount());
 
-        // Xử lý sự kiện click
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, QuizzDetails.class);
-
-                // Truyền quizId qua Intent
-                intent.putExtra("quizId", quiz.getQuizId());
-
-                // Debug log
-                Log.d(TAG, "Clicked on quiz: " + quiz.getTitle() + " with ID: " + quiz.getQuizId());
-
+                intent.putExtra("quizId", quiz.getId());
+                intent.putExtra("userId", userId);
                 context.startActivity(intent);
             }
         });

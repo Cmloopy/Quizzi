@@ -1,6 +1,6 @@
-// File: com/cmloopy/quizzi/models/QuizCollection.java
 package com.cmloopy.quizzi.models.TopCollections;
 
+import com.cmloopy.quizzi.models.quiz.QuizResponse;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class QuizCollection {
     private String coverPhoto;
 
     @SerializedName("quizzes")
-    private List<Object> quizzes;
+    private List<QuizResponse> quizzes;
 
     // Getters and setters
     public int getId() {
@@ -86,11 +86,11 @@ public class QuizCollection {
         this.coverPhoto = coverPhoto;
     }
 
-    public List<Object> getQuizzes() {
+    public List<QuizResponse> getQuizzes() {
         return quizzes;
     }
 
-    public void setQuizzes(List<Object> quizzes) {
+    public void setQuizzes(List<QuizResponse> quizzes) {
         this.quizzes = quizzes;
     }
 }

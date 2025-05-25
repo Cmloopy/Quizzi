@@ -13,19 +13,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
+import com.cmloopy.quizzi.models.TopCollections.QuizCollection;
 import com.cmloopy.quizzi.models.TopCollectionsCategory;
 import com.cmloopy.quizzi.views.DetailTopCollections;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class TopCollectionsCategoryAdapter extends RecyclerView.Adapter<TopCollectionsCategoryAdapter.ViewHolder> {
     private static final String TAG = "TopCollectionsCategoryAdapter";
-    private List<TopCollectionsCategory> categories;
+    private List<QuizCollection> categories;
     private Context context;
+    private int userId;
 
-    public TopCollectionsCategoryAdapter(Context context, List<TopCollectionsCategory> categories) {
+    public TopCollectionsCategoryAdapter(Context context, List<QuizCollection> categories, int userId) {
         this.context = context;
         this.categories = categories;
+        this.userId = userId;
     }
 
     @NonNull
@@ -37,14 +41,12 @@ public class TopCollectionsCategoryAdapter extends RecyclerView.Adapter<TopColle
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TopCollectionsCategory category = categories.get(position);
-        holder.categoryName.setText(category.getName());
-        holder.categoryImage.setImageResource(category.getImageResource());
+        QuizCollection category = categories.get(position);
+        holder.categoryName.setText(category.getCategory());
+        if(category.getCoverPhoto() != null) {
+            Picasso.get().load(category.getCoverPhoto()).into(holder.categoryImage);
+        }
 
-        // Debug log
-        Log.d(TAG, "Binding category: " + category.getName() + " with ID: " + category.getCollectionId());
-
-        // Xử lý sự kiện click - OneClick để mở chi tiết ngay lập tức
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,24 +56,15 @@ public class TopCollectionsCategoryAdapter extends RecyclerView.Adapter<TopColle
     }
 
     // Phương thức riêng để mở màn hình chi tiết với dữ liệu collection
-    private void openDetailScreen(TopCollectionsCategory category) {
+    private void openDetailScreen(QuizCollection category) {
         Intent intent = new Intent(context, DetailTopCollections.class);
 
-        // Truyền collectionId qua Intent
-        intent.putExtra("collectionId", category.getCollectionId());
+        intent.putExtra("collectionId", category.getId());
 
-        // Truyền thêm tên danh mục để hiển thị ngay lập tức
-        intent.putExtra("categoryName", category.getName());
-
-        // Debug log
-        Log.d(TAG, "Opening detail for category: " + category.getName() + " with ID: " + category.getCollectionId());
+        intent.putExtra("userId",userId);
 
         // Bắt đầu Activity mới ngay lập tức
         context.startActivity(intent);
-    }
-
-    public List<TopCollectionsCategory> getCategoryList() {
-        return categories;
     }
 
     @Override

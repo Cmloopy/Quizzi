@@ -31,7 +31,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuizCollection cl = cls.get(position);
         Picasso.get().load(cl.getCoverPhoto()).into(holder.img_collection);
-        holder.txt_collection.setText(cl.getDescription());
+        holder.txt_collection.setText(cl.getCategory());
         holder.itemView.setOnClickListener(v->
         {
             Intent intent = new Intent(v.getContext(), TopCollections.class);

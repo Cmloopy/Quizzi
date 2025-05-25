@@ -14,15 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.DetailTopCollectionAdapter;
 import com.cmloopy.quizzi.models.DetailTopCollectionItem;
+import com.cmloopy.quizzi.models.quiz.QuizResponse;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AuthorCollectionsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private DetailTopCollectionAdapter adapter;
-    private List<DetailTopCollectionItem> collectionList;
     private TextView collectionsCountText;
 
     private String authorId;
@@ -56,62 +57,10 @@ public class AuthorCollectionsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_collections);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
-        // Khởi tạo dữ liệu bộ sưu tập
-        collectionList = new ArrayList<>();
-        loadCollectionData();
-
-        // Cập nhật số lượng bộ sưu tập từ dữ liệu truyền vào
-        int totalCollections = 0;
-        if (getArguments() != null) {
-            totalCollections = getArguments().getInt("AUTHOR_TOTAL_COLLECTIONS", 0);
-        }
-        collectionsCountText.setText(totalCollections + " Collections");
-
-        // Thiết lập adapter
-        adapter = new DetailTopCollectionAdapter(collectionList);
+        adapter = new DetailTopCollectionAdapter(Collections.emptyList(), -1);
         recyclerView.setAdapter(adapter);
 
         return view;
     }
 
-    private void loadCollectionData() {
-        // Sử dụng drawable mặc định từ Android thay vì các drawable tùy chỉnh
-        int defaultDrawable = android.R.drawable.ic_menu_gallery; // Hoặc bất kỳ drawable mặc định nào
-
-        // Sử dụng tên tác giả thực tế nếu có
-        String creatorName = (authorName != null) ? authorName : "Rayford Eddings";
-
-        // Thêm các mục bộ sưu tập sử dụng drawable mặc định
-        collectionList.add(new DetailTopCollectionItem(
-                defaultDrawable,
-                "Education",
-                creatorName,
-                "Updated 2 days ago",
-                "1.2M plays"
-        ));
-
-        collectionList.add(new DetailTopCollectionItem(
-                defaultDrawable,
-                "Technology",
-                creatorName,
-                "Updated 3 days ago",
-                "890K plays"
-        ));
-
-        collectionList.add(new DetailTopCollectionItem(
-                defaultDrawable,
-                "Business",
-                creatorName,
-                "Updated 5 days ago",
-                "720K plays"
-        ));
-
-        collectionList.add(new DetailTopCollectionItem(
-                defaultDrawable,
-                "Fashion",
-                creatorName,
-                "Updated 1 week ago",
-                "540K plays"
-        ));
-    }
 }
