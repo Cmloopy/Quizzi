@@ -135,6 +135,9 @@
         <activity
             android:name=".views.playquiz.FinalScoreboardActivity"
             android:exported="false" />
+        <activity
+            android:name=".views.QuestionCreate.QuestionCreateActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

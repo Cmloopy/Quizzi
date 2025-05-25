@@ -11,17 +11,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.cmloopy.quizzi.R;
+import com.cmloopy.quizzi.data.RetrofitClient;
 import com.cmloopy.quizzi.models.Quiz;
+import com.cmloopy.quizzi.models.quiz.QuizResponse;
+import com.cmloopy.quizzi.models.user.User;
 import com.cmloopy.quizzi.views.QuizzDetails;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.util.Collections;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class HomeDiscoverAdapter extends RecyclerView.Adapter<HomeDiscoverAdapter.ViewHolder> {
-    private List<Quiz> items;
-    public HomeDiscoverAdapter(List<Quiz> items) {this.items = items;}
+    private List<QuizResponse> items;
+    private int userId;
+    private Context context;
+    public HomeDiscoverAdapter(List<QuizResponse> items, Context context, int userId) {this.items = items; this.context = context; this.userId = userId;}
 
     @NonNull
     @Override
@@ -33,17 +44,31 @@ public class HomeDiscoverAdapter extends RecyclerView.Adapter<HomeDiscoverAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Quiz item = items.get(position);
-        holder.podcastImage.setImageResource(item.getImageResource());
-        holder.questionsText.setText(item.getQuestions().size()+" Qs");
+        QuizResponse item = items.get(position);
+        Glide.with(context).load(item.getCoverPhoto()).into(holder.podcastImage);
+        holder.questionsText.setText("8 Qs");
         holder.titleText.setText(item.getTitle());
-        holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
-        holder.authorName.setText(item.getAuthor());
+        Call<User> call = RetrofitClient.getUserApi().getInfoUserById(item.getUserId());
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                User user = response.body();
+                if(user != null) {
+                    holder.authorName.setText(user.getFullName());
+                    Glide.with(context).load(user.getAvatar()).placeholder(R.drawable.bus).into(holder.authorAvatar);
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+            }
+        });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
                 Intent intent = new Intent(context, QuizzDetails.class);
+                intent.putExtra("quizId", item.getId());
+                intent.putExtra("userId", userId);
                 context.startActivity(intent);
             }
         });
@@ -69,5 +94,9 @@ public class HomeDiscoverAdapter extends RecyclerView.Adapter<HomeDiscoverAdapte
             authorName = itemView.findViewById(R.id.txt_name_author);
             questionsText = itemView.findViewById(R.id.txt_ques);
         }
+    }
+    public void setData(List<QuizResponse> quizResponses){
+        items = quizResponses;
+        notifyDataSetChanged();
     }
 }

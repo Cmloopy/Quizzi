@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
-import com.cmloopy.quizzi.models.QuizzDetailsQuestion;
 import com.cmloopy.quizzi.models.question.Question;
 
 import java.util.List;

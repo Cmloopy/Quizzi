@@ -1,7 +1,5 @@
 package com.cmloopy.quizzi.data;
 
-import android.util.Log;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -9,8 +7,7 @@ import com.cmloopy.quizzi.data.api.*;
 import com.cmloopy.quizzi.data.api.QuestionCreate.*;
 import com.cmloopy.quizzi.data.api.QuestionCreate.deserializer.DateDeserializer;
 import com.cmloopy.quizzi.data.api.QuestionCreate.serializer.QuestionCreateDeserializer;
-import com.cmloopy.quizzi.data.api.Topcollection.CollectionService;
-import com.cmloopy.quizzi.data.api.Library.MyQuizAPI;
+import com.cmloopy.quizzi.data.api.CollectionService;
 
 import com.cmloopy.quizzi.models.QuestionCreate.QuestionCreate;
 import com.cmloopy.quizzi.models.question.Question;
@@ -23,8 +20,9 @@ import java.util.Date;
 
 public class RetrofitClient {
 
-//    private static final String BASE_URL = "http://192.168.101.69:8080/api/";
-    private static final String BASE_URL = "https://8080-mduc2610-temp-txa6cej4fdy.ws-us118.gitpod.io/api/";
+    //private static final String BASE_URL = "http://192.168.101.69:8080/api/";
+    private static final String BASE_URL = "https://8080-mduc2610-backendquizz-7ryy7m9pza7.ws-us119.gitpod.io/api/";
+    //private static final String BASE_URL = "https://8080-mduc2610-temp-hkcy2vuxuvn.ws-us119.gitpod.io/api/";
 
     private static Retrofit retrofit;
     private static Retrofit customRetrofit;
@@ -78,10 +76,6 @@ public class RetrofitClient {
 
     public static CollectionService getCollectionService() {
         return getCustomRetrofit().create(CollectionService.class);
-    }
-
-    public static MyQuizAPI getMyQuizApi() {
-        return getCustomRetrofit().create(MyQuizAPI.class);
     }
     public static QuizAPI getQuizApi(){
         return getCustomRetrofit().create(QuizAPI.class);

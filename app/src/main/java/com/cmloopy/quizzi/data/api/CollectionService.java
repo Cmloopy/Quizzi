@@ -1,5 +1,5 @@
 // File: com/cmloopy/quizzi/data/api/CollectionService.java
-package com.cmloopy.quizzi.data.api.Topcollection;
+package com.cmloopy.quizzi.data.api;
 
 import com.cmloopy.quizzi.models.TopCollections.QuizCollection;
 

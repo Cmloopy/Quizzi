@@ -14,11 +14,10 @@ import com.bumptech.glide.Glide;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.DetailTopCollectionAdapter;
 import com.cmloopy.quizzi.data.RetrofitClient;
-import com.cmloopy.quizzi.data.api.Topcollection.CollectionService;
+import com.cmloopy.quizzi.data.api.CollectionService;
 import com.cmloopy.quizzi.models.DetailTopCollectionItem;
 import com.cmloopy.quizzi.models.TopCollections.QuizCollection;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;

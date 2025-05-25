@@ -15,6 +15,7 @@ import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuizAdapter;
 import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.Question;
+import com.cmloopy.quizzi.models.quiz.QuizResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class AuthorQuizzoFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private QuizAdapter adapter;
-    private List<Quiz> quizList;
+    private List<QuizResponse> quizList;
     private TextView quizzoCountText;
 
     private String authorId;

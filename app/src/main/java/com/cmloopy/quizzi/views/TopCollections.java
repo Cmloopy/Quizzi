@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.TopCollectionsCategoryAdapter;
 import com.cmloopy.quizzi.data.RetrofitClient;
-import com.cmloopy.quizzi.data.api.Topcollection.CollectionService;
+import com.cmloopy.quizzi.data.api.CollectionService;
 import com.cmloopy.quizzi.models.TopCollections.QuizCollection;
 import com.cmloopy.quizzi.models.TopCollectionsCategory;
 
