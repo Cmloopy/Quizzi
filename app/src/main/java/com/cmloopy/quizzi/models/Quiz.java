@@ -1,6 +1,7 @@
 package com.cmloopy.quizzi.models;
 
 import com.cmloopy.quizzi.R;
+import com.cmloopy.quizzi.models.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,12 @@ public class Quiz {
     private int authorAvatarResource;
     private String description;
     private List<Question> questions;
+    private String coverPhoto;
+    private User user;
+    private int numberQuestion;
+    private String createdAt;
+    private String updatedAt;
+
 
     public Quiz(Long id, int imageResource, String title, String date, String plays, String author, int authorAvatarResource, String description) {
         this.id = id;
@@ -30,6 +37,47 @@ public class Quiz {
         questions.addAll(TrueFalseQuestion.createSampleData());
 //        questions.addAll(SingleChoiceQuestion.createSampleData());
     }
+
+    public Quiz(Long id, int imageResource, String title, String date, String plays, String author, int authorAvatarResource, String description, String coverPhoto, String createdAt, String updatedAt, int numberQuestion) {
+        this.id = id;
+        this.imageResource = imageResource;
+        this.title = title;
+        this.date = date;
+        this.plays = plays;
+        this.author = author;
+        this.authorAvatarResource = authorAvatarResource;
+        this.description = description;
+        this.questions = new ArrayList<>();
+        questions.addAll(MultiChoiceQuestion.createSampleData());
+        questions.addAll(TrueFalseQuestion.createSampleData());
+        this.coverPhoto = coverPhoto;
+        this.numberQuestion = numberQuestion;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+//        questions.addAll(SingleChoiceQuestion.createSampleData());
+    }
+
+    public Quiz(Long id, int imageResource, String title, String date, String plays, String author, int authorAvatarResource, String description, String coverPhoto, int numberQuestion, String createdAt, String updatedAt, User user) {
+        this.id = id;
+        this.imageResource = imageResource;
+        this.title = title;
+        this.date = date;
+        this.plays = plays;
+        this.author = author;
+        this.authorAvatarResource = authorAvatarResource;
+        this.description = description;
+        this.questions = new ArrayList<>();
+        questions.addAll(MultiChoiceQuestion.createSampleData());
+        questions.addAll(TrueFalseQuestion.createSampleData());
+        this.coverPhoto = coverPhoto;
+        this.numberQuestion = numberQuestion;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.user = user;
+//        questions.addAll(SingleChoiceQuestion.createSampleData());
+    }
+
+
 
 
     @Override
@@ -116,5 +164,45 @@ public class Quiz {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public String getCoverPhoto() {
+        return coverPhoto;
+    }
+
+    public void setCoverPhoto(String coverPhoto) {
+        this.coverPhoto = coverPhoto;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public int getNumberQuestion() {
+        return numberQuestion;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setNumberQuestion(int numberQuestion) {
+        this.numberQuestion = numberQuestion;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -16,16 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Nút Search -->
-    <ImageView
-        android:id="@+id/detailCollectionBtnSearch"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/ic_15_find"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="16dp"/>
-
     <!-- Tiêu đề Education -->
     <TextView
         android:id="@+id/detailCollectionTextTitle"
@@ -55,31 +45,99 @@
         android:background="@drawable/top_collections_rounded_background"
         android:clipToOutline="true"/>
 
-    <!-- Số lượng Quizzo -->
-    <TextView
-        android:id="@+id/detailCollectionTextQuizCount"
-        android:layout_width="wrap_content"
+    <!-- Search Bar -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchCardView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="245 Quizzo"
-        android:textSize="18sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detailCollectionImgBanner"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
-
-    <!-- Bộ lọc -->
-    <TextView
-        android:id="@+id/detailCollectionTextFilter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Default ⟳"
-        android:textSize="16sp"
-        android:textColor="#007BFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/detailCollectionImgBanner"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"/>
+        android:layout_marginHorizontal="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_search"
+                android:layout_marginEnd="8dp"
+                android:alpha="0.6"/>
+
+            <EditText
+                android:id="@+id/searchEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Search quizzes by name or keywords..."
+                android:background="@null"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:inputType="text"/>
+
+            <ImageView
+                android:id="@+id/clearSearchButton"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                android:alpha="0.6"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Header với số lượng quiz và sort button -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchCardView"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Số lượng Quizzo -->
+        <TextView
+            android:id="@+id/detailCollectionTextQuizCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0 Quizzo"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <!-- Bộ lọc -->
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/sortTextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Newest"
+            android:drawableRight="@drawable/sort"
+            android:drawablePadding="5dp"
+            android:textSize="16sp"
+            android:textColor="@color/purple"
+            android:fontFamily="@font/nunitobold"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?android:attr/selectableItemBackground"
+            android:padding="8dp"/>
+
+    </LinearLayout>
 
     <!-- Danh sách Quiz -->
     <androidx.recyclerview.widget.RecyclerView
@@ -88,8 +146,10 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detailCollectionTextQuizCount"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
         android:padding="16dp"
         android:scrollbars="none"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

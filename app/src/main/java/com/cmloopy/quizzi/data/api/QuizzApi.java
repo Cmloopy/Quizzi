@@ -1,6 +1,6 @@
 package com.cmloopy.quizzi.data.api;
 
-import com.cmloopy.quizzi.models.HomeLibrary.MyQuizzo.QuizCollection;
+import com.cmloopy.quizzi.models.TopCollections.QuizCollection;
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
 
 import java.util.List;
@@ -8,6 +8,7 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -29,12 +30,18 @@ public interface QuizzApi {
             @Part("shuffle") RequestBody shuffle,
             @Part MultipartBody.Part coverPhotoFile
     );
+
+    @DELETE("quizzes/{quizId}")
+    Call<Void> deleteQuiz(@Path("quizId") Long quizId);
+
     @GET("quizzes/{quizId}")
     Call<QuizResponse> getQuizById(@Path("quizId") long quizId);
     @GET("quizzes")
     Call<List<QuizResponse>> getAllQuiz();
     @GET("quizzes/user/{userId}")
+    Call<List<QuizResponse>> getUserQuizzes(@Path("userId") int userId);
+    @GET("quizzes/user/{userId}")
     Call<List<QuizResponse>> getQuizByUser(@Path("userId") int userId);
     @GET("quiz-collections")
-    Call<List<QuizResponse>> getQuizCollectionsByAuthor(@Query("authorId") int authorId);
+    Call<List<QuizCollection>> getQuizCollectionsByAuthor(@Query("authorId") int authorId);
 }

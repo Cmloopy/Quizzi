@@ -10,16 +10,30 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmloopy.quizzi.R;
+import com.cmloopy.quizzi.models.QuestionCreate.QuestionType;
 import com.cmloopy.quizzi.models.question.Question;
+import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCQuestionDataGenerator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 public class QuizzDetailsQuestionAdapter extends RecyclerView.Adapter<QuizzDetailsQuestionAdapter.QuestionViewHolder> {
     private Context context;
     private List<Question> questionList;
+    List<QuestionType> questionTypeDefaultList = QCQuestionDataGenerator.initializeQuestionTypes();
+    Map<String, String> mapQuestionType = new HashMap<>();
+
 
     public QuizzDetailsQuestionAdapter(Context context, List<Question> questionList) {
         this.context = context;
         this.questionList = questionList;
+        mapQuestionType.put("SINGLE_CHOICE", "Quiz");
+        mapQuestionType.put("MULTI_CHOICE", "Checkbox");
+        mapQuestionType.put("TRUE_FALSE", "True or False");
+        mapQuestionType.put("TEXT", "Type Answer");
+        mapQuestionType.put("PUZZLE", "Puzzle");
+        mapQuestionType.put("SLIDER", "Slider");
     }
 
     @NonNull
@@ -33,7 +47,17 @@ public class QuizzDetailsQuestionAdapter extends RecyclerView.Adapter<QuizzDetai
     public void onBindViewHolder(@NonNull QuestionViewHolder holder, int position) {
         Question question = questionList.get(position);
         holder.questionTitle.setText(question.content);
-        holder.questionDescription.setText(question.description);
+
+        holder.questionCategory.setText(mapQuestionType.get(question.questionType.getName()));
+        int targetIconId = -1;
+        for(QuestionType questionType: questionTypeDefaultList) {
+            if(question.questionType.getName().equals(questionType.getName())) {
+                targetIconId = questionType.getIconResource();
+            }
+        }
+        if(targetIconId != - 1) {
+            holder.questionCategoryIcon.setImageResource(targetIconId);
+        }
     }
 
     @Override
@@ -42,14 +66,16 @@ public class QuizzDetailsQuestionAdapter extends RecyclerView.Adapter<QuizzDetai
     }
 
     public static class QuestionViewHolder extends RecyclerView.ViewHolder {
-        TextView questionTitle, questionDescription;
+        TextView questionTitle, questionCategory;
+        ImageView questionCategoryIcon;
         ImageView questionImage;
 
         public QuestionViewHolder(@NonNull View itemView) {
             super(itemView);
             questionTitle = itemView.findViewById(R.id.questionTitle);
-            questionDescription = itemView.findViewById(R.id.questionDescription);
+            questionCategory = itemView.findViewById(R.id.questionCategory);
             questionImage = itemView.findViewById(R.id.questionImage);
+            questionCategoryIcon = itemView.findViewById(R.id.questionCategoryIcon);
         }
     }
 }

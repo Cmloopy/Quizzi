@@ -5,6 +5,7 @@ public class TopCollectionsCategory {
     private String name;
     private int imageResource;
     private int collectionId;
+    private String coverPhoto;
 
     public TopCollectionsCategory(String name, int imageResource) {
         this.name = name;
@@ -17,6 +18,14 @@ public class TopCollectionsCategory {
         this.imageResource = imageResource;
         this.collectionId = collectionId;
     }
+
+    public TopCollectionsCategory(String name, int imageResource, int collectionId, String coverPhoto) {
+        this.name = name;
+        this.imageResource = imageResource;
+        this.collectionId = collectionId;
+        this.coverPhoto = coverPhoto;
+    }
+
 
     public String getName() {
         return name;
@@ -42,4 +51,11 @@ public class TopCollectionsCategory {
         this.collectionId = collectionId;
     }
 
+    public String getCoverPhoto() {
+        return coverPhoto;
+    }
+
+    public void setCoverPhoto(String coverPhoto) {
+        this.coverPhoto = coverPhoto;
+    }
 }

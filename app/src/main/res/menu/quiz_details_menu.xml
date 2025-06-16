@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_edit"
+        android:title="Edit Quiz"
+        android:icon="@drawable/ic_edit"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_share"
+        android:title="Share"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_generate_qr"
+        android:title="Generate QR Code"
+        android:icon="@drawable/ic_37_qr"
+        app:showAsAction="never" />
+
+</menu>

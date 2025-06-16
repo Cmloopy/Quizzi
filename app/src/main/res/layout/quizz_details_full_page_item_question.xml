@@ -28,7 +28,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            >
 
             <TextView
                 android:id="@+id/questionTitle"
@@ -40,16 +42,36 @@
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@android:color/black"/>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"/>
 
-            <TextView
-                android:id="@+id/questionDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:text="....... do you get to school?\nby bus?"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"/>
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/questionCategoryIcon"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginRight="8dp"/>
+
+                <TextView
+                    android:id="@+id/questionCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:text="....... do youyou get to school?by bus?"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray"/>
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

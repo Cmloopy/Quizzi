@@ -28,7 +28,7 @@ public class QuizCollection {
     private String coverPhoto;
 
     @SerializedName("quizzes")
-    private List<Object> quizzes;  // Sử dụng Object vì mảng trống trong ví dụ
+    private List<QuizResponse> quizzes;  // Sử dụng Object vì mảng trống trong ví dụ
 
     // Constructor
     public QuizCollection() {
@@ -92,11 +92,11 @@ public class QuizCollection {
         this.coverPhoto = coverPhoto;
     }
 
-    public List<Object> getQuizzes() {
+    public List<QuizResponse> getQuizzes() {
         return quizzes;
     }
 
-    public void setQuizzes(List<Object> quizzes) {
+    public void setQuizzes(List<QuizResponse> quizzes) {
         this.quizzes = quizzes;
     }
 }

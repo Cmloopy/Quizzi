@@ -34,6 +34,9 @@
         @SerializedName("updatedAt")
         private String updatedAt;  // Using String for date representation
 
+        @SerializedName("numberQuestion")
+        private int numberQuestion;
+
         @SerializedName("visible")
         private boolean visible;
 
@@ -154,5 +157,13 @@
 
         public void setQuizGames(List<Object> quizGames) {
             this.quizGames = quizGames;
+        }
+
+        public int getNumberQuestion() {
+            return numberQuestion;
+        }
+
+        public void setNumberQuestion(int numberQuestion) {
+            this.numberQuestion = numberQuestion;
         }
     }

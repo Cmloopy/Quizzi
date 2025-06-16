@@ -5,6 +5,7 @@ import java.util.List;
 public class QuizResponse {
     private Long id;
     private int userId;
+    private int quizCollectionId;
     private String title;
     private String description;
     private String keyword;
@@ -15,6 +16,7 @@ public class QuizResponse {
     private boolean visible;
     private boolean visibleQuizQuestion;
     private boolean shuffle;
+    private int numberQuestion;
     private List<Object> quizGames; // tùy vào kiểu dữ liệu thật, có thể tạo class riêng
 
     // Getters and Setters
@@ -120,6 +122,22 @@ public class QuizResponse {
 
     public void setQuizGames(List<Object> quizGames) {
         this.quizGames = quizGames;
+    }
+
+    public int getQuizCollectionId() {
+        return quizCollectionId;
+    }
+
+    public void setQuizCollectionId(int quizCollectionId) {
+        this.quizCollectionId = quizCollectionId;
+    }
+
+    public int getNumberQuestion() {
+        return numberQuestion;
+    }
+
+    public void setNumberQuestion(int numberQuestion) {
+        this.numberQuestion = numberQuestion;
     }
 }
 

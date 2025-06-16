@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".views.UpdateQuizActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.playquiz.ReviewActivity"
             android:exported="false" />
         <activity
@@ -44,7 +47,7 @@
             android:exported="false" />
         <activity
             android:name=".views.SplashActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -95,7 +98,7 @@
             android:exported="false" />
         <activity
             android:name=".views.QuizzDetails"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".views.RecommendAuthorActivity"
             android:exported="false" />
@@ -130,13 +133,16 @@
             android:name=".views.CreateQuizActivity"
             android:exported="false" />
         <activity
+            android:name=".views.QuestionCreate.QuestionCreateActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.UI43"
             android:exported="false" />
         <activity
             android:name=".views.playquiz.FinalScoreboardActivity"
             android:exported="false" />
         <activity
-            android:name=".views.QuestionCreate.QuestionCreateActivity"
+            android:name=".views.CreateCollectionActivity"
             android:exported="false" />
     </application>
 

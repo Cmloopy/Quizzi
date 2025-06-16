@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Nội dung có thể cuộn -->
+    <!-- Scrollable content -->
     <ScrollView
         android:id="@+id/scroll_content"
         android:layout_width="match_parent"
@@ -13,7 +13,6 @@
         android:layout_above="@+id/layout_bottom_buttons"
         android:background="@android:color/white">
 
-        <!-- Nội dung như bạn đã có -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="Create Quizzo"
+                    android:text="Update Quiz"
                     android:textColor="@android:color/black"
                     android:textSize="18dp"
                     android:textStyle="bold" />
@@ -60,7 +59,7 @@
                     tools:ignore="TouchTargetSizeCheck" />
             </RelativeLayout>
 
-            <!-- Add Cover Image -->
+            <!-- Cover Image -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_cover_image"
                 android:layout_width="match_parent"
@@ -92,16 +91,16 @@
                             app:tint="#6046CC" />
 
                         <TextView
-                            android:id="@+id/tv_add_cover"
+                            android:id="@+id/tv_change_cover"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Add Cover Image"
+                            android:text="Change Cover Image"
                             android:textColor="#6046CC"
                             android:textStyle="normal" />
                     </LinearLayout>
 
-                    <!-- Selected image view (initially hidden) -->
+                    <!-- Selected image view -->
                     <ImageView
                         android:id="@+id/iv_selected_cover"
                         android:layout_width="match_parent"
@@ -112,8 +111,7 @@
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Form Fields -->
-            <!-- Title -->
+            <!-- Title Input -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -281,10 +279,11 @@
                 app:flexWrap="wrap"
                 app:alignItems="flex_start"
                 app:justifyContent="flex_start" />
+
         </LinearLayout>
     </ScrollView>
 
-    <!-- Phần nút luôn ở dưới cùng -->
+    <!-- Bottom Button Layout -->
     <LinearLayout
         android:id="@+id/layout_bottom_buttons"
         android:layout_width="match_parent"
@@ -302,9 +301,9 @@
             android:layout_weight="1"
             android:backgroundTint="#6046CC"
             app:cornerRadius="24dp"
-            android:text="Save Quiz"
-            android:textStyle="bold"
+            android:text="Update Quiz"
             android:textAllCaps="false"
+            android:textStyle="bold"
             android:textColor="@android:color/white" />
 
         <View
@@ -319,8 +318,9 @@
             android:backgroundTint="#6046CC"
             app:cornerRadius="24dp"
             android:text="Add Question"
-            android:textStyle="bold"
             android:textAllCaps="false"
+            android:textStyle="bold"
             android:textColor="@android:color/white" />
     </LinearLayout>
+
 </RelativeLayout>

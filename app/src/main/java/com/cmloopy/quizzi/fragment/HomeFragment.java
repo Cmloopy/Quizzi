@@ -31,6 +31,7 @@ import com.cmloopy.quizzi.views.TopCollections;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -154,10 +155,15 @@ public class HomeFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     List<QuizResponse> quizResponse = response.body();
                     discoverAdapter.setData(quizResponse);
-                    quizResponse.reversed();
-                    trendingAdapter.setData(quizResponse);
-                    quizResponse.reversed();
-                    topPickAdapter.setData(quizResponse);
+
+                    List<QuizResponse> reversed1 = new ArrayList<>(quizResponse);
+                    Collections.reverse(reversed1);
+                    trendingAdapter.setData(reversed1);
+
+                    List<QuizResponse> reversed2 = new ArrayList<>(quizResponse);
+                    Collections.reverse(reversed2);
+                    topPickAdapter.setData(reversed2);
+
                 } else {
                     discoverAdapter.setData(Collections.emptyList());
                     trendingAdapter.setData(Collections.emptyList());
