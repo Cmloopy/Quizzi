@@ -7,6 +7,8 @@ public class QuizCollectionResponse {
     private String createdAt;
     private String updatedAt;
     private boolean visible;
+    private String coverPhoto;
+
     public Long getId() {
         return id;
     }

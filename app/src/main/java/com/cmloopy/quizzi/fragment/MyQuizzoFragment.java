@@ -160,9 +160,12 @@ public class MyQuizzoFragment extends Fragment {
                 // Apply sort and search
                 performSearch(currentSearchQuery);
 
-                Toast.makeText(requireContext(),
-                        "Sorted by " + (isNewestFirst ? "newest" : "oldest"),
-                        Toast.LENGTH_SHORT).show();
+                // Check if fragment is still attached before showing Toast
+                if (isAdded() && getContext() != null) {
+                    Toast.makeText(getContext(),
+                            "Sorted by " + (isNewestFirst ? "newest" : "oldest"),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -240,19 +243,30 @@ public class MyQuizzoFragment extends Fragment {
     }
 
     private void updateQuizRecyclerView() {
+        // Check if fragment is still attached before accessing context
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping RecyclerView update");
+            return;
+        }
+
         QuizAdapter quizAdapter = new QuizAdapter(new ArrayList<>(filteredQuizList), userId);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext())); // Use getContext() instead of requireContext()
         recyclerView.setAdapter(quizAdapter);
     }
 
     private void updateCollectionRecyclerView() {
-        gridLayoutManager = new GridLayoutManager(requireContext(), 2);
+        // Check if fragment is still attached before accessing context
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping RecyclerView update");
+            return;
+        }
+
+        gridLayoutManager = new GridLayoutManager(getContext(), 2); // Use getContext() instead of requireContext()
         TopCollectionsCategoryAdapter collectionAdapter =
-                new TopCollectionsCategoryAdapter(requireContext(), new ArrayList<>(filteredCollectionList), userId);
+                new TopCollectionsCategoryAdapter(getContext(), new ArrayList<>(filteredCollectionList), userId);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(collectionAdapter);
     }
-
     private void handleSearchCategoryChange(int checkedId) {
         // Clear search when switching tabs
         currentSearchQuery = "";
@@ -271,15 +285,26 @@ public class MyQuizzoFragment extends Fragment {
     }
 
     private void fetchUserQuizzes() {
+        // Check if fragment is still attached
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping API call");
+            return;
+        }
+
         progressBar.setVisibility(View.VISIBLE);
         quizAPI.getUserQuizzes(userId).enqueue(new Callback<List<QuizResponse>>() {
             @Override
             public void onResponse(Call<List<QuizResponse>> call, Response<List<QuizResponse>> response) {
+                // Check if fragment is still attached before updating UI
+                if (!isAdded() || getContext() == null) {
+                    Log.w(TAG, "Fragment not attached, ignoring API response");
+                    return;
+                }
+
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
                     List<QuizResponse> quizResponses = response.body();
-//                    List<Quiz> quizzes = convertToQuizModel(quizResponses);
 
                     originalQuizList.clear();
                     originalQuizList.addAll(quizResponses);
@@ -289,26 +314,43 @@ public class MyQuizzoFragment extends Fragment {
                 } else {
                     String errorMessage = "Failed to load quizzes: " +
                             (response.code() != 0 ? "Error " + response.code() : "Unknown error");
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<QuizResponse>> call, Throwable t) {
+                // Check if fragment is still attached before updating UI
+                if (!isAdded() || getContext() == null) {
+                    Log.w(TAG, "Fragment not attached, ignoring API failure");
+                    return;
+                }
+
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireContext(),
+                Toast.makeText(getContext(),
                         "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void fetchUserCollections() {
+        // Check if fragment is still attached
+        if (!isAdded() || getContext() == null) {
+            Log.w(TAG, "Fragment not attached, skipping API call");
+            return;
+        }
+
         progressBar.setVisibility(View.VISIBLE);
 
         quizAPI.getQuizCollectionsByAuthor(userId).enqueue(new Callback<List<QuizCollection>>() {
             @Override
             public void onResponse(Call<List<QuizCollection>> call, Response<List<QuizCollection>> response) {
+                // Check if fragment is still attached before updating UI
+                if (!isAdded() || getContext() == null) {
+                    Log.w(TAG, "Fragment not attached, ignoring API response");
+                    return;
+                }
+
                 progressBar.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -321,7 +363,6 @@ public class MyQuizzoFragment extends Fragment {
                         }
                     }
 
-
                     // Store original data
                     originalCollectionList.clear();
                     originalCollectionList.addAll(filteredCollections);
@@ -331,18 +372,25 @@ public class MyQuizzoFragment extends Fragment {
                 } else {
                     String errorMessage = "Failed to load collections: " +
                             (response.code() != 0 ? "Error " + response.code() : "Unknown error");
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<QuizCollection>> call, Throwable t) {
+                // Check if fragment is still attached before updating UI
+                if (!isAdded() || getContext() == null) {
+                    Log.w(TAG, "Fragment not attached, ignoring API failure");
+                    return;
+                }
+
                 progressBar.setVisibility(View.GONE);
-                Toast.makeText(requireContext(),
+                Toast.makeText(getContext(),
                         "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     @Override
     public void onResume() {

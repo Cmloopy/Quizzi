@@ -59,6 +59,9 @@ public interface QuizAPI {
     @GET("quiz-collections")
     Call<List<QuizCollectionResponse>> getAllQuizCollections();
 
+    @GET("quiz-collections/{quizCollectionId}")
+    Call<QuizCollectionResponse> getQuizCollectionById(@Path("quizCollectionId") Long quizCollectionId);
+
     @Multipart
     @POST("quiz-collections")
     Call<QuizCollectionResponse> uploadQuizCollection(
@@ -67,6 +70,10 @@ public interface QuizAPI {
             @Part("visibleTo") RequestBody visible,
             @Part MultipartBody.Part coverPhotoFile
     );
+
+    @Multipart
+    @DELETE("quiz-collections/{quizCollectionId}")
+    Call<Void> deleteQuizCollection(@Path("quizCollectionId") Long quizCollectionId);
 
     @Multipart
     @PUT("quiz-collections/{quizCollectionId}")

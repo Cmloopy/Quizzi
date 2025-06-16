@@ -3,7 +3,7 @@ package com.cmloopy.quizzi.views;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,11 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.TopCollectionsCategoryAdapter;
 import com.cmloopy.quizzi.data.RetrofitClient;
-import com.cmloopy.quizzi.data.api.CollectionService;
+import com.cmloopy.quizzi.data.api.QuizCollectionAPI;
 import com.cmloopy.quizzi.models.TopCollections.QuizCollection;
-import com.cmloopy.quizzi.models.TopCollectionsCategory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -45,10 +43,10 @@ public class TopCollections extends AppCompatActivity {
     private void fetchCollections() {
 
         // Lấy instance của CollectionService
-        CollectionService collectionService = RetrofitClient.getCollectionService();
+        QuizCollectionAPI quizCollectionAPI = RetrofitClient.getCollectionService();
 
         // Debug log URL sẽ được gọi
-        Call<List<QuizCollection>> call = collectionService.getAllCollections();
+        Call<List<QuizCollection>> call = quizCollectionAPI.getAllCollections();
 
         // Gọi API
         call.enqueue(new Callback<List<QuizCollection>>() {

@@ -120,62 +120,40 @@
                 android:textSize="14sp"
                 android:textStyle="bold"/>
 
-            <EditText
-                android:id="@+id/et_title"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="Enter Title"
-                android:inputType="text"
-                android:minHeight="48dp"
-                android:padding="4dp"
-                android:textColorHint="#AAAAAA"
-                android:textSize="14sp" />
+                android:layout_marginBottom="16dp"
+                android:hint="Enter title">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#6046CC" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Visible"
+                android:text="Visibility"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
-                android:textStyle="bold"/>
+                android:layout_marginBottom="8dp" />
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="40dp"
-                android:background="@null"
-                android:gravity="center_vertical">
-
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/ui_qu_spinner_background"
+                >
                 <Spinner
                     android:id="@+id/spinner_visibility"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:background="@null"
-                    android:minHeight="40dp"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="30dp"
-                    android:popupBackground="@android:color/white"
-                    android:spinnerMode="dropdown"
-                    tools:ignore="TouchTargetSizeCheck" />
-
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="4dp"
-                    android:src="@drawable/ic_dropdown"
-                    app:tint="#6046CC"
-                    android:contentDescription="Select Visibility" />
-            </RelativeLayout>
+                    />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
@@ -198,7 +176,7 @@
             android:layout_weight="1"
             android:backgroundTint="#6046CC"
             app:cornerRadius="24dp"
-            android:text="Save Quiz"
+            android:text="Save Collection"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
 

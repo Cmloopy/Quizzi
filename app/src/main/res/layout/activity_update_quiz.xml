@@ -206,7 +206,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Question Visibility"
+                android:text="Visibility"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:layout_marginBottom="8dp" />

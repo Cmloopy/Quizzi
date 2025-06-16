@@ -1,7 +1,5 @@
 package com.cmloopy.quizzi.data;
 
-import android.util.Log;
-
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -77,8 +75,8 @@ public class RetrofitClient {
         return getCustomRetrofit().create(CollectionApi.class);
     }
 
-    public static CollectionService getCollectionService() {
-        return getCustomRetrofit().create(CollectionService.class);
+    public static QuizCollectionAPI getCollectionService() {
+        return getCustomRetrofit().create(QuizCollectionAPI.class);
     }
 
 //    public static MyQuizAPI getMyQuizApi() {
