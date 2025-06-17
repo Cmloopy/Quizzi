@@ -175,6 +175,38 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/noQuizContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/noQuizIcon"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_empty_questions"
+            android:layout_marginBottom="16dp"
+            android:alpha="0.6"
+            android:contentDescription="No quiz icon" />
+
+        <TextView
+            android:id="@+id/noQuizMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No quizzes available in this collection yet"
+            android:textSize="16sp"
+            android:textColor="@color/gray"
+            android:textAlignment="center"
+            android:gravity="center" />
+
+    </LinearLayout>
+
     <!-- Danh sách Quiz -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/detailCollectionRecyclerQuiz"
@@ -187,5 +219,6 @@
         android:layout_marginTop="8dp"
         android:padding="16dp"
         android:scrollbars="none"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

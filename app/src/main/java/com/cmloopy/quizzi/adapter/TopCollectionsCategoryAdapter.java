@@ -43,9 +43,12 @@ public class TopCollectionsCategoryAdapter extends RecyclerView.Adapter<TopColle
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuizCollection category = categories.get(position);
         holder.categoryName.setText(category.getCategory());
-        if(category.getCoverPhoto() != null) {
-            Picasso.get().load(category.getCoverPhoto()).into(holder.categoryImage);
-        }
+        Picasso.get()
+                .load(category.getCoverPhoto())
+                .placeholder(R.drawable.ic_image_placeholder_2)
+                .error(R.drawable.ic_image_placeholder_2)
+                .into(holder.categoryImage);
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

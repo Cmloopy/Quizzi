@@ -76,7 +76,13 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
                 User user = response.body();
                 if(user != null) {
                     holder.authorName.setText(user.getFullName());
-                    Glide.with(holder.itemView.getContext()).load(user.getAvatar()).placeholder(R.drawable.bus).into(holder.authorAvatar);
+                    Glide.with(holder.itemView.getContext())
+                            .load(user.getAvatar()).placeholder(R.drawable.bus)
+                            .placeholder(R.drawable.ic_image_placeholder_2)
+                            .error(R.drawable.ic_image_placeholder_2)
+                            .into(holder.authorAvatar)
+
+                    ;
                 }
             }
             @Override
@@ -90,6 +96,8 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
                 .load(quiz.getCoverPhoto())
                 .fit()
                 .centerInside()
+                .placeholder(R.drawable.ic_image_placeholder_2)
+                .error(R.drawable.ic_image_placeholder_2)
                 .into(holder.podcastImage);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

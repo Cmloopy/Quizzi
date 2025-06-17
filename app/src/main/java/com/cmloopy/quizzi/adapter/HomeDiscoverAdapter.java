@@ -46,7 +46,7 @@ public class HomeDiscoverAdapter extends RecyclerView.Adapter<HomeDiscoverAdapte
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuizResponse item = items.get(position);
         Glide.with(context).load(item.getCoverPhoto()).into(holder.podcastImage);
-        holder.questionsText.setText("8 Qs");
+        holder.questionsText.setText(item.getNumberQuestion() + " Qs");
         holder.titleText.setText(item.getTitle());
         Call<User> call = RetrofitClient.getUserApi().getInfoUserById(item.getUserId());
         call.enqueue(new Callback<User>() {
@@ -62,6 +62,7 @@ public class HomeDiscoverAdapter extends RecyclerView.Adapter<HomeDiscoverAdapte
             public void onFailure(Call<User> call, Throwable t) {
             }
         });
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

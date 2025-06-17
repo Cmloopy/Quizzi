@@ -1,6 +1,9 @@
 package com.cmloopy.quizzi.views;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cmloopy.quizzi.data.RetrofitClient;
@@ -17,7 +20,7 @@ public class AuthorDetailsActivity extends AppCompatActivity {
     private ActivityAuthorDetailsBinding binding;
     private int authorId;
     private int userId;
-
+    private ImageView btnBack;
     private UserApi userApi;
 
     @Override
@@ -25,7 +28,12 @@ public class AuthorDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityAuthorDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        binding.btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         userId = getIntent().getIntExtra("userId", -1);
         authorId = getIntent().getIntExtra("authorId", -1);
 
@@ -60,5 +68,10 @@ public class AuthorDetailsActivity extends AppCompatActivity {
                 binding.followingCount.setText("");
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

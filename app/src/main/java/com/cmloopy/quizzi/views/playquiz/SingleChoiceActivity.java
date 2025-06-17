@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,7 +38,9 @@ public class SingleChoiceActivity extends AppCompatActivity {
     private int userId;
     private long quizId;
     private int isChoose = -1;
+    private SingleChoiceQuestion singleChoiceQuestion;
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,138 +64,157 @@ public class SingleChoiceActivity extends AppCompatActivity {
                     Question q = response.body();
                     if (q instanceof SingleChoiceQuestion) {
                         binding.txtTitleSingleChoice.setText(q.content);
-                        SingleChoiceQuestion singleChoiceQuestion = (SingleChoiceQuestion) q;
+                        singleChoiceQuestion = (SingleChoiceQuestion) q;
                         List<ChoiceOption> options = singleChoiceQuestion.choiceOptions;
                         binding.txtSingleChoiceOp1.setText(options.get(0).text);
                         binding.txtSingleChoiceOp2.setText(options.get(1).text);
                         binding.txtSingleChoiceOp3.setText(options.get(2).text);
                         binding.txtSingleChoiceOp4.setText(options.get(3).text);
 
-                        binding.cardOp1.setOnClickListener(v -> {
-                            binding.cbSingleChoiceOp1.setChecked(true);
-                            binding.cbSingleChoiceOp2.setChecked(false);
-                            binding.cbSingleChoiceOp3.setChecked(false);
-                            binding.cbSingleChoiceOp4.setChecked(false);
-                            isChoose = 0;
-                        });
-                        binding.cardOp2.setOnClickListener(v -> {
-                            binding.cbSingleChoiceOp1.setChecked(false);
-                            binding.cbSingleChoiceOp2.setChecked(true);
-                            binding.cbSingleChoiceOp3.setChecked(false);
-                            binding.cbSingleChoiceOp4.setChecked(false);
-                            isChoose = 1;
-                        });
-                        binding.cardOp3.setOnClickListener(v -> {
-                            binding.cbSingleChoiceOp1.setChecked(false);
-                            binding.cbSingleChoiceOp2.setChecked(false);
-                            binding.cbSingleChoiceOp3.setChecked(true);
-                            binding.cbSingleChoiceOp4.setChecked(false);
-                            isChoose = 2;
-                        });
-                        binding.cardOp4.setOnClickListener(v -> {
-                            binding.cbSingleChoiceOp1.setChecked(false);
-                            binding.cbSingleChoiceOp2.setChecked(false);
-                            binding.cbSingleChoiceOp3.setChecked(false);
-                            binding.cbSingleChoiceOp4.setChecked(true);
-                            isChoose = 3;
-                        });
-
-                        binding.materialButtonSubmitSinglechoice.setOnClickListener(v->{
-                            if(options.get(isChoose).isCorrect){
-                                totalScore += singleChoiceQuestion.getPoint();
-                                int myColor = ContextCompat.getColor(SingleChoiceActivity.this, R.color.correct_green);
-                                binding.notiStatusSinglechoice.setBackgroundTintList(ColorStateList.valueOf(myColor));
-                                binding.textCountPointSg.setText("+"+ (singleChoiceQuestion.point+"") + "pts");
-                                binding.notiStatusSinglechoice.setVisibility(View.VISIBLE);
-                            } else {
-                                Log.e("Incorrect", "false");
-                                int myColor = ContextCompat.getColor(SingleChoiceActivity.this, R.color.incorrect_light_red);
-                                binding.notiStatusSinglechoice.setBackgroundTintList(ColorStateList.valueOf(myColor));
-                                binding.textCountPointSg.setText("No Problem! Try Again!!");
-                                binding.txtStatusSc.setText("Incorrect!");
-                                binding.notiStatusSinglechoice.setVisibility(View.VISIBLE);
-                            }
-                            Log.e("totalPoint", totalScore+ "");
-                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                                if (questionId + 1 < listQuesId.length) {
-                                    nextQuestion(questionId + 1, totalScore, listQuesId, listQuesType);
-                                } else {
-                                    Intent intent = new Intent(SingleChoiceActivity.this, ReviewActivity.class);
-                                    intent.putExtra("userId",userId);
-                                    intent.putExtra("quizId", quizId);
-                                    intent.putExtra("totalPoint",totalScore);
-                                    startActivity(intent);
-                                }
-                            }, 3000);
-                        });
+                        setupOptionClickListeners();
+                        setupSubmitButton(questionId, listQuesId, listQuesType);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<Question> call, Throwable t) {
-
+                Log.e("SingleChoiceActivity", "Failed to load question", t);
             }
         });
     }
+
+    private void setupOptionClickListeners() {
+        binding.cardOp1.setOnClickListener(v -> {
+            selectOption(0);
+        });
+
+        binding.cardOp2.setOnClickListener(v -> {
+            selectOption(1);
+        });
+
+        binding.cardOp3.setOnClickListener(v -> {
+            selectOption(2);
+        });
+
+        binding.cardOp4.setOnClickListener(v -> {
+            selectOption(3);
+        });
+
+        // Also add click listeners to checkboxes to prevent conflicts
+        binding.cbSingleChoiceOp1.setOnClickListener(v -> selectOption(0));
+        binding.cbSingleChoiceOp2.setOnClickListener(v -> selectOption(1));
+        binding.cbSingleChoiceOp3.setOnClickListener(v -> selectOption(2));
+        binding.cbSingleChoiceOp4.setOnClickListener(v -> selectOption(3));
+    }
+
+    private void selectOption(int optionIndex) {
+        // Clear all checkboxes first
+        binding.cbSingleChoiceOp1.setChecked(false);
+        binding.cbSingleChoiceOp2.setChecked(false);
+        binding.cbSingleChoiceOp3.setChecked(false);
+        binding.cbSingleChoiceOp4.setChecked(false);
+
+        // Set the selected option
+        switch(optionIndex) {
+            case 0:
+                binding.cbSingleChoiceOp1.setChecked(true);
+                break;
+            case 1:
+                binding.cbSingleChoiceOp2.setChecked(true);
+                break;
+            case 2:
+                binding.cbSingleChoiceOp3.setChecked(true);
+                break;
+            case 3:
+                binding.cbSingleChoiceOp4.setChecked(true);
+                break;
+        }
+
+        isChoose = optionIndex;
+        Log.d("SingleChoiceActivity", "Selected option: " + isChoose);
+    }
+
+    private void setupSubmitButton(int questionId, int[] listQuesId, String[] listQuesType) {
+        binding.materialButtonSubmitSinglechoice.setOnClickListener(v -> {
+            Log.d("SingleChoiceActivity", "Submit clicked, isChoose: " + isChoose);
+
+            if(isChoose == -1) {
+                Toast.makeText(SingleChoiceActivity.this, "Please select an option", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if(singleChoiceQuestion == null || singleChoiceQuestion.choiceOptions == null) {
+                Toast.makeText(SingleChoiceActivity.this, "Question data not loaded", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            List<ChoiceOption> options = singleChoiceQuestion.choiceOptions;
+            if(isChoose >= 0 && isChoose < options.size() && options.get(isChoose).isCorrect){
+                totalScore += singleChoiceQuestion.getPoint();
+                int myColor = ContextCompat.getColor(SingleChoiceActivity.this, R.color.correct_green);
+                binding.notiStatusSinglechoice.setBackgroundTintList(ColorStateList.valueOf(myColor));
+                binding.textCountPointSg.setText("+"+ (singleChoiceQuestion.point+"") + "pts");
+                binding.txtStatusSc.setText("Correct!");
+                binding.notiStatusSinglechoice.setVisibility(View.VISIBLE);
+            } else {
+                Log.e("Incorrect", "false");
+                int myColor = ContextCompat.getColor(SingleChoiceActivity.this, R.color.incorrect_light_red);
+                binding.notiStatusSinglechoice.setBackgroundTintList(ColorStateList.valueOf(myColor));
+                binding.textCountPointSg.setText("No Problem! Try Again!!");
+                binding.txtStatusSc.setText("Incorrect!");
+                binding.notiStatusSinglechoice.setVisibility(View.VISIBLE);
+            }
+            Log.e("totalPoint", totalScore+ "");
+
+            // Disable submit button to prevent multiple clicks
+            binding.materialButtonSubmitSinglechoice.setEnabled(false);
+
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (questionId + 1 < listQuesId.length) {
+                    nextQuestion(questionId + 1, totalScore, listQuesId, listQuesType);
+                } else {
+                    Intent intent = new Intent(SingleChoiceActivity.this, ReviewActivity.class);
+                    intent.putExtra("userId",userId);
+                    intent.putExtra("quizId", quizId);
+                    intent.putExtra("totalPoint",totalScore);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 3000);
+        });
+    }
+
     private void nextQuestion(int questionId, int totalScore, int[] listQuesId, String[] listQuesType) {
-        if(listQuesType[questionId].equals("TRUE_FALSE")){
-            Intent intent = new Intent(SingleChoiceActivity.this, TrueFalseActivity.class);
-            intent.putExtra("userId", userId);
-            intent.putExtra("quizId", quizId);
-            intent.putExtra("questionId", questionId);
-            intent.putExtra("listIdQues", listQuesId);
-            intent.putExtra("listTypeQues", listQuesType);
-            intent.putExtra("totalPoint", totalScore);
-            startActivity(intent);
-            finish();
+        Intent intent = null;
+        Class<?> targetActivity = null;
+
+        switch(listQuesType[questionId]) {
+            case "TRUE_FALSE":
+                targetActivity = TrueFalseActivity.class;
+                break;
+            case "SINGLE_CHOICE":
+                targetActivity = SingleChoiceActivity.class;
+                break;
+            case "MULTI_CHOICE":
+                targetActivity = MultiChoiceActivity.class;
+                break;
+            case "TEXT":
+                targetActivity = TextActivity.class;
+                break;
+            case "PUZZLE":
+                targetActivity = PuzzleActivity.class;
+                break;
+            case "SLIDER":
+                targetActivity = SliderActivity.class;
+                break;
+            default:
+                Log.e("SingleChoiceActivity", "Unknown question type: " + listQuesType[questionId]);
+                return;
         }
-        if(listQuesType[questionId].equals("SINGLE_CHOICE")){
-            Intent intent = new Intent(SingleChoiceActivity.this, SingleChoiceActivity.class);
-            intent.putExtra("userId", userId);
-            intent.putExtra("quizId", quizId);
-            intent.putExtra("questionId", questionId);
-            intent.putExtra("listIdQues", listQuesId);
-            intent.putExtra("listTypeQues", listQuesType);
-            intent.putExtra("totalPoint", totalScore);
-            startActivity(intent);
-            finish();
-        }
-        if(listQuesType[questionId].equals("MULTI_CHOICE")){
-            Intent intent = new Intent(SingleChoiceActivity.this, MultiChoiceActivity.class);
-            intent.putExtra("userId", userId);
-            intent.putExtra("quizId", quizId);
-            intent.putExtra("questionId", questionId);
-            intent.putExtra("listIdQues", listQuesId);
-            intent.putExtra("listTypeQues", listQuesType);
-            intent.putExtra("totalPoint", totalScore);
-            startActivity(intent);
-            finish();
-        }
-        if(listQuesType[questionId].equals("TEXT")){
-            Intent intent = new Intent(SingleChoiceActivity.this, TextActivity.class);
-            intent.putExtra("userId", userId);
-            intent.putExtra("quizId", quizId);
-            intent.putExtra("questionId", questionId);
-            intent.putExtra("listIdQues", listQuesId);
-            intent.putExtra("listTypeQues", listQuesType);
-            intent.putExtra("totalPoint", totalScore);
-            startActivity(intent);
-            finish();
-        }
-        if(listQuesType[questionId].equals("PUZZLE")){
-            Intent intent = new Intent(SingleChoiceActivity.this, PuzzleActivity.class);
-            intent.putExtra("userId", userId);
-            intent.putExtra("quizId", quizId);
-            intent.putExtra("questionId", questionId);
-            intent.putExtra("listIdQues", listQuesId);
-            intent.putExtra("listTypeQues", listQuesType);
-            intent.putExtra("totalPoint", totalScore);
-            startActivity(intent);
-            finish();
-        }
-        if(listQuesType[questionId].equals("SLIDER")){
-            Intent intent = new Intent(SingleChoiceActivity.this, SliderActivity.class);
+
+        if(targetActivity != null) {
+            intent = new Intent(SingleChoiceActivity.this, targetActivity);
             intent.putExtra("userId", userId);
             intent.putExtra("quizId", quizId);
             intent.putExtra("questionId", questionId);

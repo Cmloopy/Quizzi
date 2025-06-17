@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,11 @@ public class DetailTopCollections extends AppCompatActivity {
     private TextView sortTextButton;
     private ProgressDialog progressDialog;
 
+    // No quiz found section
+    private LinearLayout noQuizContainer;
+    private ImageView noQuizIcon;
+    private TextView noQuizMessage;
+
     private int collectionId = -1;
     private int userId = -1;
     private boolean isNewestFirst = true;
@@ -108,6 +114,11 @@ public class DetailTopCollections extends AppCompatActivity {
         clearSearchButton = findViewById(R.id.clearSearchButton);
         sortTextButton = findViewById(R.id.sortTextButton);
 
+        // Initialize no quiz found section
+        noQuizContainer = findViewById(R.id.noQuizContainer);
+        noQuizIcon = findViewById(R.id.noQuizIcon);
+        noQuizMessage = findViewById(R.id.noQuizMessage);
+
         originalQuizList = new ArrayList<>();
         filteredQuizList = new ArrayList<>();
 
@@ -121,7 +132,6 @@ public class DetailTopCollections extends AppCompatActivity {
                 finish();
             }
         });
-
 
         if (btnEdit != null) {
             btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -299,9 +309,9 @@ public class DetailTopCollections extends AppCompatActivity {
         }
 
         sortQuizzes(filteredQuizList);
-
         updateQuizRecyclerView();
         updateQuizCount();
+        updateNoQuizVisibility();
     }
 
     private void toggleSortOrder() {
@@ -360,6 +370,30 @@ public class DetailTopCollections extends AppCompatActivity {
         tvQuizCount.setText(filteredQuizList.size() + " Quizzo");
     }
 
+    private void updateNoQuizVisibility() {
+        boolean hasQuizzes = !filteredQuizList.isEmpty();
+
+        // Show/hide RecyclerView and No Quiz section
+        recyclerView.setVisibility(hasQuizzes ? View.VISIBLE : View.GONE);
+        noQuizContainer.setVisibility(hasQuizzes ? View.GONE : View.VISIBLE);
+
+        // Update message and icon based on the situation
+        if (!hasQuizzes) {
+            if (!currentSearchQuery.isEmpty()) {
+                noQuizIcon.setImageResource(R.drawable.ic_empty_questions);
+                noQuizMessage.setText("No quizzes found matching \"" + currentSearchQuery + "\"");
+            } else if (originalQuizList.isEmpty()) {
+                noQuizIcon.setImageResource(R.drawable.ic_empty_questions);
+                noQuizMessage.setText("This collection doesn't have any quizzes yet");
+            } else {
+                noQuizIcon.setImageResource(R.drawable.ic_empty_questions);
+                noQuizMessage.setText("No quizzes available");
+            }
+        }
+
+        Log.d(TAG, "No quiz visibility updated - hasQuizzes: " + hasQuizzes + ", searchQuery: '" + currentSearchQuery + "'");
+    }
+
     private void fetchCollectionDetails(int collectionId) {
         Toast.makeText(this, "Loading collection details...", Toast.LENGTH_SHORT).show();
 
@@ -377,18 +411,17 @@ public class DetailTopCollections extends AppCompatActivity {
 
                     tvTitle.setText(quizCollection.getCategory());
 
+                    imgBanner.setVisibility(View.VISIBLE);
                     if (quizCollection.getCoverPhoto() != null && !quizCollection.getCoverPhoto().isEmpty()) {
-                        imgBanner.setVisibility(View.VISIBLE);
 
                         Glide.with(DetailTopCollections.this)
                                 .load(quizCollection.getCoverPhoto())
-                                .placeholder(R.drawable.img_02)
-                                .error(R.drawable.img_02)
+                                .placeholder(R.drawable.ic_image_placeholder_2)
+                                .error(R.drawable.ic_image_placeholder_2)
                                 .into(imgBanner);
                     } else {
-                        imgBanner.setImageResource(R.drawable.img_02);
+                        imgBanner.setImageResource(R.drawable.ic_image_placeholder_2);
                     }
-
 
                     if(userId != quizCollection.getAuthorId()) {
                         btnEdit.setVisibility(View.GONE);
@@ -406,9 +439,8 @@ public class DetailTopCollections extends AppCompatActivity {
                         filteredQuizList.clear();
                         updateQuizRecyclerView();
                         updateQuizCount();
-                        Toast.makeText(DetailTopCollections.this,
-                                "Collection has no quizzes.",
-                                Toast.LENGTH_SHORT).show();
+                        updateNoQuizVisibility();
+                        Log.d(TAG, "Collection has no quizzes - showing empty state");
                     }
                 } else {
                     Log.e(TAG, "API error: " + response.message());
@@ -473,7 +505,6 @@ public class DetailTopCollections extends AppCompatActivity {
                     Log.d(TAG, "Quiz with ID " + updatedQuizId + " was updated, reloading data");
                 }
             }
-
 
             if (shouldReload) {
                 if (!message.isEmpty()) {

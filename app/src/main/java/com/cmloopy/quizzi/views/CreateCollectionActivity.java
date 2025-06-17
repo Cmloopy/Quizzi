@@ -220,6 +220,11 @@ public class CreateCollectionActivity extends AppCompatActivity {
 
         btnSaveQuizCollection.setOnClickListener(v -> {
             saveQuizCollectionOnly(idUser);
+            if (!validateForm()) {
+                Toast.makeText(this, "Please complete the form", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             clearQuizCollectionCreationState();
             finish();
         });
@@ -396,6 +401,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
 
         progressDialog.show();
         createNewQuizCollection(idUser, false);
+
     }
 
     private void createNewQuizCollection(int idUser, boolean navigateToQuestions) {

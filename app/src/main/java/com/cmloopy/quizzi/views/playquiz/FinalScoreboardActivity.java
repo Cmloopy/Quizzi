@@ -89,11 +89,19 @@ public class FinalScoreboardActivity extends AppCompatActivity {
 
             }
         });
-        binding.ivBack.setOnClickListener(v->{
+//        binding.ivBack.setOnClickListener(v->{
+//            Intent intent = new Intent(this, MainActivity.class);
+//            intent.putExtra("idUser", userId);
+//            startActivity(intent);
+//            finish();
+//        });
+
+        binding.ivBack.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("idUser", userId);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-            finish();
+            finishAffinity();
         });
     }
 }

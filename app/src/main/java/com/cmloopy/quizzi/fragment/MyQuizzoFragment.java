@@ -6,7 +6,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -60,6 +64,12 @@ public class MyQuizzoFragment extends Fragment {
     private ProgressBar progressBar;
     private QuizzApi quizAPI;
 
+    // Empty state views
+    private LinearLayout emptyStateContainer;
+    private ImageView emptyStateIcon;
+    private TextView emptyStateTitle;
+    private TextView emptyStateMessage;
+
     private int userId = -1;
 
     RecyclerView.Adapter<?> adapter = null;
@@ -74,6 +84,7 @@ public class MyQuizzoFragment extends Fragment {
     // Sort state
     private boolean isNewestFirst = true;
     private String currentSearchQuery = "";
+    private boolean isInitialLoadComplete = false;
 
     public MyQuizzoFragment() {}
 
@@ -93,8 +104,44 @@ public class MyQuizzoFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "onViewCreated called, userId: " + userId);
+
+        if (userId != -1) {
+            // Add a delay to ensure the fragment is fully ready
+            view.postDelayed(() -> {
+                if (isAdded() && !isInitialLoadComplete) {
+                    reloadCurrentTab();
+                    isInitialLoadComplete = true;
+                }
+            }, 100);
+        } else {
+            Log.e(TAG, "Invalid userId in onViewCreated");
+        }
+    }
+
+    public void refreshData() {
+        Log.d(TAG, "refreshData called, userId: " + userId + ", isAdded: " + isAdded());
+
+        if (isAdded() && getContext() != null && userId != -1) {
+            // Reset the flag when manually refreshing
+            isInitialLoadComplete = false;
+            reloadCurrentTab();
+        } else {
+            Log.w(TAG, "Cannot refresh data - fragment not ready or invalid userId");
+        }
+    }
+
     private void reloadCurrentTab() {
-        Log.d(TAG, "Reloading current tab: " + currentSelectedTab);
+        Log.d(TAG, "Reloading current tab: " + currentSelectedTab + ", userId: " + userId);
+
+        if (userId == -1) {
+            Log.e(TAG, "Invalid userId in reloadCurrentTab");
+            return;
+        }
+
         handleSearchCategoryChange(currentSelectedTab);
     }
 
@@ -112,6 +159,12 @@ public class MyQuizzoFragment extends Fragment {
         materialTextView = view.findViewById(R.id.txt_title_lib_my_quizzo);
         progressBar = view.findViewById(R.id.progress_bar);
         sortTextButton = view.findViewById(R.id.sortTextButton);
+
+        // Initialize empty state views
+        emptyStateContainer = view.findViewById(R.id.emptyStateContainer);
+        emptyStateIcon = view.findViewById(R.id.emptyStateIcon);
+        emptyStateTitle = view.findViewById(R.id.emptyStateTitle);
+        emptyStateMessage = view.findViewById(R.id.emptyStateMessage);
 
         // Setup search functionality
         setupSearchBar();
@@ -200,6 +253,9 @@ public class MyQuizzoFragment extends Fragment {
         // Update UI
         updateQuizRecyclerView();
         materialTextView.setText(filteredQuizList.size() + " Quizzo");
+
+        // Handle empty state
+        handleEmptyState(filteredQuizList.isEmpty(), true, query);
     }
 
     private void searchCollections(String query) {
@@ -218,6 +274,49 @@ public class MyQuizzoFragment extends Fragment {
         // Update UI
         updateCollectionRecyclerView();
         materialTextView.setText(filteredCollectionList.size() + " Collections");
+
+        // Handle empty state
+        handleEmptyState(filteredCollectionList.isEmpty(), false, query);
+    }
+
+    private void handleEmptyState(boolean isEmpty, boolean isQuizTab, String searchQuery) {
+        if (isEmpty) {
+            // Show empty state
+            recyclerView.setVisibility(View.GONE);
+            emptyStateContainer.setVisibility(View.VISIBLE);
+
+            if (isQuizTab) {
+                // Quiz empty state
+                emptyStateIcon.setImageResource(R.drawable.ic_empty_questions != 0 ? R.drawable.ic_empty_questions : android.R.drawable.ic_menu_help);
+
+                if (!searchQuery.isEmpty()) {
+                    // No search results
+                    emptyStateTitle.setText("No quizzes found");
+                    emptyStateMessage.setText("No quizzes match your search \"" + searchQuery + "\".\nTry using different keywords.");
+                } else {
+                    // No quizzes at all
+                    emptyStateTitle.setText("No quizzes yet");
+                    emptyStateMessage.setText("You haven't created any quizzes yet.\nCreate your first quiz to get started!");
+                }
+            } else {
+                // Collection empty state
+                emptyStateIcon.setImageResource(R.drawable.ic_empty_questions != 0 ? R.drawable.ic_empty_questions : android.R.drawable.ic_menu_gallery);
+
+                if (!searchQuery.isEmpty()) {
+                    // No search results
+                    emptyStateTitle.setText("No collections found");
+                    emptyStateMessage.setText("No collections match your search \"" + searchQuery + "\".\nTry using different keywords.");
+                } else {
+                    // No collections at all
+                    emptyStateTitle.setText("No collections yet");
+                    emptyStateMessage.setText("You haven't created any collections yet.\nCreate your first collection to organize your quizzes!");
+                }
+            }
+        } else {
+            // Hide empty state, show content
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyStateContainer.setVisibility(View.GONE);
+        }
     }
 
     private void sortQuizzes(List<QuizResponse> quizzes) {
@@ -243,8 +342,10 @@ public class MyQuizzoFragment extends Fragment {
             }
         });
     }
+
     boolean initQuizRecyclerView = true;
     boolean initCollectionRecyclerView = true;
+
     private void updateQuizRecyclerView() {
         if (!isAdded() || getContext() == null) {
             Log.w(TAG, "Fragment not attached, skipping RecyclerView update");
@@ -275,8 +376,8 @@ public class MyQuizzoFragment extends Fragment {
             recyclerView.addItemDecoration(new QCHelper.GridItemDecoration(2, 15));
         }
         initCollectionRecyclerView = false;
-
     }
+
     private void handleSearchCategoryChange(int checkedId) {
         // Clear search when switching tabs
         currentSearchQuery = "";
@@ -286,35 +387,49 @@ public class MyQuizzoFragment extends Fragment {
             // Show sort button for quizzes
             sortTextButton.setVisibility(View.VISIBLE);
             sortTextButton.setText(isNewestFirst ? "Newest" : "Oldest");
+            // Update search hint for quizzes
+            searchEditText.setHint("Search quizzes by name or keywords...");
             fetchUserQuizzes();
         } else if (checkedId == R.id.radioLibCollectionBtn) {
             // Hide sort button for collections
             sortTextButton.setVisibility(View.GONE);
+            // Update search hint for collections
+            searchEditText.setHint("Search collections by category...");
             fetchUserCollections();
         }
     }
 
     private void fetchUserQuizzes() {
-        // Check if fragment is still attached
         if (!isAdded() || getContext() == null) {
             Log.w(TAG, "Fragment not attached, skipping API call");
             return;
         }
 
+        if (userId == -1) {
+            Log.e(TAG, "Invalid userId, cannot fetch quizzes");
+            return;
+        }
+
+        Log.d(TAG, "Fetching quizzes for userId: " + userId);
         progressBar.setVisibility(View.VISIBLE);
+
+        // Hide empty state while loading
+        emptyStateContainer.setVisibility(View.GONE);
+
         quizAPI.getUserQuizzes(userId).enqueue(new Callback<List<QuizResponse>>() {
             @Override
             public void onResponse(Call<List<QuizResponse>> call, Response<List<QuizResponse>> response) {
-                // Check if fragment is still attached before updating UI
                 if (!isAdded() || getContext() == null) {
                     Log.w(TAG, "Fragment not attached, ignoring API response");
                     return;
                 }
 
                 progressBar.setVisibility(View.GONE);
+                Log.d(TAG, "API Response received, success: " + response.isSuccessful());
 
                 if (response.isSuccessful() && response.body() != null) {
                     List<QuizResponse> quizResponses = response.body();
+                    Log.d(TAG, "Received " + quizResponses.size() + " quizzes");
 
                     originalQuizList.clear();
                     originalQuizList.addAll(quizResponses);
@@ -322,23 +437,30 @@ public class MyQuizzoFragment extends Fragment {
                     // Apply search and sort
                     performSearch(currentSearchQuery);
                 } else {
+                    Log.e(TAG, "API call failed with code: " + response.code());
                     String errorMessage = "Failed to load quizzes: " +
                             (response.code() != 0 ? "Error " + response.code() : "Unknown error");
                     Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+
+                    // Show empty state on error
+                    handleEmptyState(true, true, currentSearchQuery);
                 }
             }
 
             @Override
             public void onFailure(Call<List<QuizResponse>> call, Throwable t) {
-                // Check if fragment is still attached before updating UI
                 if (!isAdded() || getContext() == null) {
                     Log.w(TAG, "Fragment not attached, ignoring API failure");
                     return;
                 }
 
                 progressBar.setVisibility(View.GONE);
+                Log.e(TAG, "API call failed", t);
                 Toast.makeText(getContext(),
                         "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                // Show empty state on network error
+                handleEmptyState(true, true, currentSearchQuery);
             }
         });
     }
@@ -351,6 +473,9 @@ public class MyQuizzoFragment extends Fragment {
         }
 
         progressBar.setVisibility(View.VISIBLE);
+
+        // Hide empty state while loading
+        emptyStateContainer.setVisibility(View.GONE);
 
         quizAPI.getQuizCollectionsByAuthor(userId).enqueue(new Callback<List<QuizCollection>>() {
             @Override
@@ -383,6 +508,9 @@ public class MyQuizzoFragment extends Fragment {
                     String errorMessage = "Failed to load collections: " +
                             (response.code() != 0 ? "Error " + response.code() : "Unknown error");
                     Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+
+                    // Show empty state on error
+                    handleEmptyState(true, false, currentSearchQuery);
                 }
             }
 
@@ -397,15 +525,22 @@ public class MyQuizzoFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(),
                         "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                // Show empty state on network error
+                handleEmptyState(true, false, currentSearchQuery);
             }
         });
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
-        reloadCurrentTab();
+        Log.d(TAG, "onResume called, isInitialLoadComplete: " + isInitialLoadComplete);
+
+        if (!isInitialLoadComplete && userId != -1) {
+            reloadCurrentTab();
+            isInitialLoadComplete = true;
+        }
     }
 
     @Override
@@ -425,5 +560,4 @@ public class MyQuizzoFragment extends Fragment {
             }
         }
     }
-
 }

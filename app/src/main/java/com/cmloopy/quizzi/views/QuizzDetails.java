@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +68,14 @@ public class QuizzDetails extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private boolean quizUpdated = false;
 
+    private LinearLayout hiddenQuestionsContainer;
+    private TextView hiddenQuestionsMessage;
+    private ImageView hiddenQuestionsIcon;
+
+    private LinearLayout noQuestionsContainer;
+    private TextView noQuestionsMessage;
+    private ImageView noQuestionsIcon;
+
     UserApi userApi = RetrofitClient.getUserApi();
     QuizzApi quizzApi = RetrofitClient.getQuizzApi();
     QuestionApi questionApi = RetrofitClient.getQuestionApi();
@@ -101,6 +110,14 @@ public class QuizzDetails extends AppCompatActivity {
         // Initialize button references
         btnClose = findViewById(R.id.btnClose);
         btnEdit = findViewById(R.id.btnEdit);
+
+        hiddenQuestionsContainer = findViewById(R.id.hiddenQuestionsContainer);
+        hiddenQuestionsMessage = findViewById(R.id.hiddenQuestionsMessage);
+        hiddenQuestionsIcon = findViewById(R.id.hiddenQuestionsIcon);
+
+        noQuestionsContainer = findViewById(R.id.noQuestionsContainer);
+        noQuestionsMessage = findViewById(R.id.noQuestionsMessage);
+        noQuestionsIcon = findViewById(R.id.noQuestionsIcon);
     }
 
     private void setupClickListeners() {
@@ -327,9 +344,74 @@ public class QuizzDetails extends AppCompatActivity {
 //                    .into(quizCoverImage);
             Glide.with(this)
                     .load(quizResponse.getCoverPhoto())
-                    .placeholder(R.drawable.ic_image_placeholder) // Add placeholder drawable
-                    .error(R.drawable.ic_launcher_background) // Add error drawable
+                    .placeholder(R.drawable.ic_image_placeholder_2)
+                    .error(R.drawable.ic_image_placeholder_2)
                     .into(quizCoverImage);
+        }
+        handleQuestionVisibility(quizResponse.isVisibleQuizQuestion());
+    }
+
+    private void handleQuestionVisibility(boolean isVisible) {
+        if (isVisible) {
+            if (questionRecyclerView != null) {
+                questionRecyclerView.setVisibility(View.VISIBLE);
+            }
+            hideAllMessageContainers();
+            setUpRecycleView();
+        } else {
+            if (questionRecyclerView != null) {
+                questionRecyclerView.setVisibility(View.GONE);
+            }
+            showHiddenQuestionsView();
+        }
+    }
+
+    private void hideAllMessageContainers() {
+        if (hiddenQuestionsContainer != null) {
+            hiddenQuestionsContainer.setVisibility(View.GONE);
+        }
+        if (noQuestionsContainer != null) {
+            noQuestionsContainer.setVisibility(View.GONE);
+        }
+    }
+    private void showHiddenQuestionsView() {
+        hideAllMessageContainers();
+        if (hiddenQuestionsContainer != null) {
+            hiddenQuestionsContainer.setVisibility(View.VISIBLE);
+        }
+        setupHiddenQuestionsView();
+    }
+
+    private void showNoQuestionsView() {
+        hideAllMessageContainers();
+        if (questionRecyclerView != null) {
+            questionRecyclerView.setVisibility(View.GONE);
+        }
+        if (noQuestionsContainer != null) {
+            noQuestionsContainer.setVisibility(View.VISIBLE);
+        }
+        setupNoQuestionsView();
+    }
+
+    private void setupHiddenQuestionsView() {
+        if (hiddenQuestionsIcon != null) {
+            // Set the eye-off icon
+            hiddenQuestionsIcon.setImageResource(R.drawable.ic_visibility_off);
+        }
+
+        if (hiddenQuestionsMessage != null) {
+            hiddenQuestionsMessage.setText("Question content is hidden by the creator");
+        }
+    }
+
+    private void setupNoQuestionsView() {
+        if (noQuestionsIcon != null) {
+            // Set the empty/no content icon
+            noQuestionsIcon.setImageResource(R.drawable.ic_empty_questions); // You'll need this drawable
+        }
+
+        if (noQuestionsMessage != null) {
+            noQuestionsMessage.setText("No questions available in this quiz yet");
         }
     }
 
@@ -338,14 +420,19 @@ public class QuizzDetails extends AppCompatActivity {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(QuizzDetails.this, UI43.class);
-                    intent.putExtra("userId", idUser);
-                    intent.putExtra("quizId", idQuizz);
-                    startActivity(intent);
+                    if (quizResponse.getNumberQuestion() != 0) {
+                        Intent intent = new Intent(QuizzDetails.this, UI43.class);
+                        intent.putExtra("userId", idUser);
+                        intent.putExtra("quizId", idQuizz);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(QuizzDetails.this, "No question available!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
     }
+
 
     // Keep the original options menu methods for fallback
     @Override
@@ -447,17 +534,32 @@ public class QuizzDetails extends AppCompatActivity {
     }
 
     private void setUpRecycleView() {
+        if (quizResponse != null && !quizResponse.isVisibleQuizQuestion()) {
+            Log.d("QuizzDetails", "Questions are hidden by creator");
+            return;
+        }
+
         Call<List<Question>> calll = questionApi.getQuestionByQuiz(idQuizz);
+
         calll.enqueue(new Callback<List<Question>>() {
             @Override
             public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Question> questionList = response.body();
 
+                    if (questionList.isEmpty()) {
+                        Log.d("QuizzDetails", "No questions found for this quiz");
+                        showNoQuestionsView();
+                        return;
+                    }
+
+                    hideAllMessageContainers();
+
                     if (questionRecyclerView == null) {
                         questionRecyclerView = findViewById(R.id.quizDetailsQuestionRecyclerView);
                     }
 
+                    questionRecyclerView.setVisibility(View.VISIBLE);
                     questionRecyclerView.setLayoutManager(new LinearLayoutManager(QuizzDetails.this));
                     questionRecyclerView.setHasFixedSize(true);
 
@@ -465,6 +567,8 @@ public class QuizzDetails extends AppCompatActivity {
                     questionRecyclerView.setAdapter(questionAdapter);
                 } else {
                     Log.e("get list quest", "Failed: " + response.code());
+                    // Show no questions view on API error
+                    showNoQuestionsView();
                 }
             }
 
@@ -472,6 +576,8 @@ public class QuizzDetails extends AppCompatActivity {
             public void onFailure(Call<List<Question>> call, Throwable t) {
                 Log.e("get list quest", "Error: " + t.getMessage());
                 t.printStackTrace();
+                // Show no questions view on network error
+                showNoQuestionsView();
             }
         });
     }
