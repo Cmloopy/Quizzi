@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.cmloopy.quizzi.R;
 import com.cmloopy.quizzi.adapter.QuizzDetailsQuestionAdapter;
 import com.cmloopy.quizzi.adapter.QuestionCreate.QCMenuItem;
@@ -62,7 +63,9 @@ public class QuizzDetails extends AppCompatActivity {
     private ImageView quizCoverImage;
     private ImageView btnClose;
     private ImageView btnEdit;
+    private ImageView btnFavorite;
     private ProgressDialog progressDialog;
+    private boolean quizUpdated = false;
 
     UserApi userApi = RetrofitClient.getUserApi();
     QuizzApi quizzApi = RetrofitClient.getQuizzApi();
@@ -93,6 +96,7 @@ public class QuizzDetails extends AppCompatActivity {
         questionRecyclerView = findViewById(R.id.quizDetailsQuestionRecyclerView);
         profileImage = findViewById(R.id.profileImage);
         quizCoverImage = findViewById(R.id.quizCoverImage);
+        btnFavorite = findViewById(R.id.btnFavorite);
 
         // Initialize button references
         btnClose = findViewById(R.id.btnClose);
@@ -100,26 +104,29 @@ public class QuizzDetails extends AppCompatActivity {
     }
 
     private void setupClickListeners() {
+        btnFavorite.setVisibility(View.GONE);
         // Setup close button
         if (btnClose != null) {
             btnClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.d("QuizzDetails", "Close button clicked");
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("quiz_updated", quizUpdated);
+                    setResult(RESULT_OK, resultIntent);
                     finish();
                 }
             });
         } else {
             Log.e("QuizzDetails", "btnClose is null - check if ID exists in layout");
         }
-
         // Setup options menu button - now shows custom popup
         if (btnEdit != null) {
             btnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Log.d("QuizzDetails", "Options button clicked");
-                    showPopupMenu(v);
+                    showPopupMenuAlternative(v);
                 }
             });
         } else {
@@ -312,10 +319,16 @@ public class QuizzDetails extends AppCompatActivity {
             quizDescriptionDetail.setText(quizResponse.getDescription());
         }
         if(quizCoverImage != null) {
-            Picasso.get()
+            quizCoverImage.setVisibility(View.VISIBLE);
+//            Picasso.get()
+//                    .load(quizResponse.getCoverPhoto())
+//                    .resize(200, 200)
+//                    .centerInside()
+//                    .into(quizCoverImage);
+            Glide.with(this)
                     .load(quizResponse.getCoverPhoto())
-                    .resize(200, 200)
-                    .centerInside()
+                    .placeholder(R.drawable.ic_image_placeholder) // Add placeholder drawable
+                    .error(R.drawable.ic_launcher_background) // Add error drawable
                     .into(quizCoverImage);
         }
     }
@@ -382,13 +395,12 @@ public class QuizzDetails extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == UPDATE_QUIZ_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            boolean quizUpdated = data.getBooleanExtra("quiz_updated", false);
+            quizUpdated = data.getBooleanExtra("quiz_updated", false);
              if (quizUpdated) {
                 Toast.makeText(this, "Quiz updated successfully", Toast.LENGTH_SHORT).show();
                 reloadQuizData();

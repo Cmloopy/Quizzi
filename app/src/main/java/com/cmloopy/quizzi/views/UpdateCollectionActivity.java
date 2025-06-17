@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -64,6 +67,7 @@ public class UpdateCollectionActivity extends AppCompatActivity {
     private EditText etTitle;
     private Spinner spinnerVisibility;
     private Button btnUpdateQuizCollection;
+    private TextView headerTitle;
     private ImageButton btnClose, btnMore;
     private FlexboxLayout chipContainer;
 
@@ -81,7 +85,8 @@ public class UpdateCollectionActivity extends AppCompatActivity {
     // Intent extras
     private int collectionId = -1;
     private int userId = -1;
-
+    private static final int MAX_TITLE_LENGTH = 50;
+    private TextView tvTitleCounter;
     private QuizCollection originalCollection;
     QuizCollectionAPI quizCollectionAPI = RetrofitClient.getCollectionService();
 
@@ -129,14 +134,59 @@ public class UpdateCollectionActivity extends AppCompatActivity {
         ivSelectedCover = findViewById(R.id.iv_selected_cover);
 
         etTitle = findViewById(R.id.et_title);
+        tvTitleCounter = findViewById(R.id.tv_title_counter);
         chipContainer = findViewById(R.id.chipContainer);
 
         spinnerVisibility = findViewById(R.id.spinner_visibility);
-
+        headerTitle = findViewById(R.id.headerTitle);
+        headerTitle.setText("Update Quiz Collection");
         btnUpdateQuizCollection = findViewById(R.id.btn_save_quiz);
         btnUpdateQuizCollection.setText("Update Collection"); // Change button text
         btnClose = findViewById(R.id.btn_close);
         btnMore = findViewById(R.id.btn_more);
+        btnMore.setVisibility(View.GONE);
+
+        setupTitleTextWatcher(etTitle, tvTitleCounter, "Title", MAX_TITLE_LENGTH);
+    }
+
+    private void setupTitleTextWatcher(TextView textView, TextView textCounter, String fieldType, int maxLength) {
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Not needed for this implementation
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Update counter in real-time
+                updateTitleCounter(textCounter, s.length(), maxLength);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > maxLength) {
+                    s.delete(maxLength, s.length());
+                    Toast.makeText(UpdateCollectionActivity.this,
+                            fieldType + " cannot exceed " + maxLength + " characters",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        updateTitleCounter(textCounter, 0, maxLength);
+    }
+
+    private void updateTitleCounter(TextView textCounter, int currentLength, int maxLength) {
+        String counterText = currentLength + "/" + maxLength;
+        textCounter.setText(counterText);
+
+        if (currentLength >= maxLength * 0.9) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        } else if (currentLength >= maxLength * 0.7) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else {
+            textCounter.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
     }
 
     private void setupClickListeners() {

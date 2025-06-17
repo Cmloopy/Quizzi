@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -82,7 +85,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
     private ImageButton btnClose, btnMore;
     private FlexboxLayout chipContainer;
     private Long quizId = -1L;
-    private QuizResponse currentQuiz;
+    private QuizResponse originalQuiz;
     private static final String TAG = "UpdateQuizActivity";
     private ProgressDialog progressDialog;
 
@@ -99,10 +102,17 @@ public class UpdateQuizActivity extends AppCompatActivity {
     private List<QuizCollectionResponse> quizCollectionResponses;
     private ArrayList<String> collections;
     private int collectionSelectedPosition = 0;
-    private boolean isImageChanged = false;
-    private boolean hasUnsavedChanges = false;
+    private int originalCollectionPosition = 0;
+    private boolean hasImageChanged = false;
     private boolean collectionsLoaded = false;
     private boolean quizDataLoaded = false;
+
+    private static final int MAX_TITLE_LENGTH = 50;
+    private static final int MAX_DESCRIPTION_LENGTH = 150;
+    private static final int MAX_KEYWORD_LENGTH = 30;
+    private TextView tvTitleCounter;
+    private TextView tvDescriptionCounter;
+    private TextView tvKeywordCounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +153,6 @@ public class UpdateQuizActivity extends AppCompatActivity {
 
         initializeViews();
         setupClickListeners();
-        setupChangeListeners();
         setupSpinners();
         loadQuizDetails();
         setupCollectionSpinner();// Now safe to call since progressDialog is initialized
@@ -158,6 +167,11 @@ public class UpdateQuizActivity extends AppCompatActivity {
         etTitle = findViewById(R.id.et_title);
         etDescription = findViewById(R.id.et_desc_title);
         etKeyword = findViewById(R.id.et_keyword);
+
+        tvTitleCounter = findViewById(R.id.tv_title_counter);
+        tvDescriptionCounter = findViewById(R.id.tv_description_counter);
+        tvKeywordCounter = findViewById(R.id.tv_keyword_counter);
+
         chipContainer = findViewById(R.id.chipContainer);
 
         spinnerCollection = findViewById(R.id.spinner_collection);
@@ -169,17 +183,60 @@ public class UpdateQuizActivity extends AppCompatActivity {
         btnAddQuestion = findViewById(R.id.btn_add_question);
         btnClose = findViewById(R.id.btn_close);
         btnMore = findViewById(R.id.btn_more);
+
+        setupTitleTextWatcher(etTitle, tvTitleCounter, "Title", MAX_TITLE_LENGTH);
+        setupTitleTextWatcher(etDescription, tvDescriptionCounter, "Description", MAX_DESCRIPTION_LENGTH);
+        setupTitleTextWatcher(etKeyword, tvKeywordCounter, "Keyword", MAX_KEYWORD_LENGTH);
     }
 
-    private void setupClickListeners() {
-        cardCoverImage.setOnClickListener(v -> {
-            openImagePicker();
-            hasUnsavedChanges = true;
+    private void setupTitleTextWatcher(TextView textView, TextView textCounter, String fieldType, int maxLength) {
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Not needed for this implementation
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Update counter in real-time
+                updateTitleCounter(textCounter, s.length(), maxLength);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > maxLength) {
+                    s.delete(maxLength, s.length());
+                    Toast.makeText(UpdateQuizActivity.this,
+                            fieldType + " cannot exceed " + maxLength + " characters",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
         });
 
-        btnClose.setOnClickListener(v -> handleBackAction());
+        updateTitleCounter(textCounter, 0, maxLength);
+    }
+
+    private void updateTitleCounter(TextView textCounter, int currentLength, int maxLength) {
+        String counterText = currentLength + "/" + maxLength;
+        textCounter.setText(counterText);
+
+        if (currentLength >= maxLength * 0.9) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        } else if (currentLength >= maxLength * 0.7) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else {
+            textCounter.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
+    }
+
+
+    private void setupClickListeners() {
+        cardCoverImage.setOnClickListener(v -> openImagePicker());
+
+        btnClose.setOnClickListener(v -> showExitConfirmationDialog());
 
         btnMore.setOnClickListener(v -> showMoreOptionsMenu());
+        btnMore.setVisibility(View.GONE);
 
         btnSaveQuiz.setOnClickListener(v -> updateQuiz());
         btnAddQuestion.setOnClickListener(v -> saveQuizAndAddQuestion());
@@ -193,22 +250,10 @@ public class UpdateQuizActivity extends AppCompatActivity {
                     keywordsList.add(keyword);
                     addChip(keyword);
                     etKeyword.setText("");
-                    hasUnsavedChanges = true;
                 }
                 return true;
             }
             return false;
-        });
-    }
-
-    private void setupChangeListeners() {
-        // Text change listeners to track unsaved changes
-        etTitle.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) hasUnsavedChanges = true;
-        });
-
-        etDescription.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) hasUnsavedChanges = true;
         });
     }
 
@@ -254,14 +299,10 @@ public class UpdateQuizActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position > 0) {
                     String selectedCollection = parent.getItemAtPosition(position).toString();
-                    if (collectionSelectedPosition != position) {
-                        hasUnsavedChanges = true;
-                    }
                     collectionSelectedPosition = position;
                     Log.d(TAG, "Selected collection: " + selectedCollection);
                 }
             }
-
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -291,11 +332,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
         spinnerVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String newVisibility = position == 0 ? "true" : "false";
-                if (!visibility.equals(newVisibility)) {
-                    hasUnsavedChanges = true;
-                }
-                visibility = newVisibility;
+                visibility = position == 0 ? "true" : "false";
                 Log.d(TAG, "Quiz visibility set to: " + visibility);
             }
 
@@ -316,11 +353,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
         spinnerQuestionVisibility.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String newQuestionVisibility = position == 0 ? "true" : "false";
-                if (!questionVisibility.equals(newQuestionVisibility)) {
-                    hasUnsavedChanges = true;
-                }
-                questionVisibility = newQuestionVisibility;
+                questionVisibility = position == 0 ? "true" : "false";
                 Log.d(TAG, "Question visibility set to: " + questionVisibility);
             }
 
@@ -346,7 +379,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
                 }
 
                 if (response.isSuccessful() && response.body() != null) {
-                    currentQuiz = response.body();
+                    originalQuiz = response.body();
                     populateQuizData();
                 } else {
                     Log.e(TAG, "Failed to load quiz: " + response.code());
@@ -368,30 +401,33 @@ public class UpdateQuizActivity extends AppCompatActivity {
     }
 
     private void populateQuizData() {
-        if (currentQuiz == null) return;
+        if (originalQuiz == null) return;
 
         // Populate text fields
-        etTitle.setText(currentQuiz.getTitle());
-        etDescription.setText(currentQuiz.getDescription());
+        etTitle.setText(originalQuiz.getTitle());
+        etDescription.setText(originalQuiz.getDescription());
 
         // Load cover image if exists
-        if (currentQuiz.getCoverPhoto() != null && !currentQuiz.getCoverPhoto().isEmpty()) {
+        if (originalQuiz.getCoverPhoto() != null && !originalQuiz.getCoverPhoto().isEmpty()) {
             layoutCoverPlaceholder.setVisibility(View.GONE);
             ivSelectedCover.setVisibility(View.VISIBLE);
 
             // Load image using Glide or your preferred image loading library
             Glide.with(this)
-                    .load(currentQuiz.getCoverPhoto())
+                    .load(originalQuiz.getCoverPhoto())
                     .into(ivSelectedCover);
         }
 
         // Set visibility spinners
-        spinnerVisibility.setSelection(currentQuiz.isVisible() ? 0 : 1);
-        spinnerQuestionVisibility.setSelection(currentQuiz.isVisibleQuizQuestion() ? 0 : 1);
+        spinnerVisibility.setSelection(originalQuiz.isVisible() ? 0 : 1);
+        visibility = originalQuiz.isVisible() ? "true" : "false";
+
+        spinnerQuestionVisibility.setSelection(originalQuiz.isVisibleQuizQuestion() ? 0 : 1);
+        questionVisibility = originalQuiz.isVisibleQuizQuestion() ? "true" : "false";
 
         // Handle keywords
-        if (currentQuiz.getKeyword() != null && !currentQuiz.getKeyword().isEmpty()) {
-            String[] keywords = currentQuiz.getKeyword().split(",");
+        if (originalQuiz.getKeyword() != null && !originalQuiz.getKeyword().isEmpty()) {
+            String[] keywords = originalQuiz.getKeyword().split(",");
             keywordsList.clear();
             chipContainer.removeAllViews();
 
@@ -407,23 +443,20 @@ public class UpdateQuizActivity extends AppCompatActivity {
         // Mark quiz data as loaded and try to set collection selection
         quizDataLoaded = true;
         checkAndSetCollectionSelection();
-
-        // Reset unsaved changes flag after loading data
-        hasUnsavedChanges = false;
     }
 
     private void setCollectionSelection() {
-        if (currentQuiz == null || collections == null || collections.isEmpty()) {
+        if (originalQuiz == null || collections == null || collections.isEmpty()) {
             Log.d(TAG, "Cannot set collection selection - missing data");
             return;
         }
 
-        Log.d(TAG, "Setting collection selection for quiz collection ID: " + currentQuiz.getQuizCollectionId());
+        Log.d(TAG, "Setting collection selection for quiz collection ID: " + originalQuiz.getQuizCollectionId());
         String currentCollection = "";
         for (int i = 0; i < quizCollectionResponses.size(); i++) {
-            Log.d(TAG, "Response id: " + quizCollectionResponses.get(i).getId() + " - Current Quiz Id: " + currentQuiz.getQuizCollectionId());
+            Log.d(TAG, "Response id: " + quizCollectionResponses.get(i).getId() + " - Current Quiz Id: " + originalQuiz.getQuizCollectionId());
 
-            if (quizCollectionResponses.get(i).getId() == currentQuiz.getQuizCollectionId()) {
+            if (quizCollectionResponses.get(i).getId() == originalQuiz.getQuizCollectionId()) {
                 Log.d(TAG, "Found matching collection at position: " + (i + 1));
                 currentCollection = quizCollectionResponses.get(i).getCategory();
             }
@@ -433,15 +466,16 @@ public class UpdateQuizActivity extends AppCompatActivity {
             if(currentCollection.equals(collections.get(i))) {
                 spinnerCollection.setSelection(i);
                 collectionSelectedPosition = i;
+                originalCollectionPosition = i;
                 return;
             }
         }
 
-        Log.w(TAG, "No matching collection found for ID: " + currentQuiz.getQuizCollectionId());
+        Log.w(TAG, "No matching collection found for ID: " + originalQuiz.getQuizCollectionId());
     }
 
     private void checkAndSetCollectionSelection() {
-        if (collectionsLoaded && quizDataLoaded && currentQuiz != null) {
+        if (collectionsLoaded && quizDataLoaded && originalQuiz != null) {
             setCollectionSelection();
         }
     }
@@ -451,6 +485,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
             return;
         }
 
+        progressDialog.setMessage("Updating quiz...");
         progressDialog.show();
 
         String titles = etTitle.getText().toString().trim();
@@ -465,7 +500,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
         File file = null;
         MultipartBody.Part filePart = null;
 
-        if (isImageChanged && selectedImageUri != null) {
+        if (hasImageChanged && selectedImageUri != null) {
             file = getFileFromUri(selectedImageUri);
             if (file != null) {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
@@ -498,13 +533,19 @@ public class UpdateQuizActivity extends AppCompatActivity {
         call.enqueue(new Callback<QuizResponse>() {
             @Override
             public void onResponse(Call<QuizResponse> call, Response<QuizResponse> response) {
-                if (progressDialog.isShowing()) {
+                if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
 
                 if (response.isSuccessful() && response.body() != null) {
-                    hasUnsavedChanges = false;
-                    showSuccessDialog();
+                    Toast.makeText(UpdateQuizActivity.this, "Quiz updated successfully!", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Quiz updated with ID: " + quizId);
+
+                    // Set result to indicate successful update
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("quiz_updated", true);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
                 } else {
                     Toast.makeText(UpdateQuizActivity.this, "Failed to update quiz: " + response.code(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Failed to update quiz: " + response.code());
@@ -513,7 +554,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<QuizResponse> call, Throwable t) {
-                if (progressDialog.isShowing()) {
+                if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
                 Toast.makeText(UpdateQuizActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
@@ -534,24 +575,6 @@ public class UpdateQuizActivity extends AppCompatActivity {
             }
         }
         return sb.toString();
-    }
-
-    private void showSuccessDialog() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Quiz Updated Successfully")
-                .setMessage("Your quiz has been updated successfully.")
-                .setPositiveButton("Go Back", (dialog, which) -> {
-                    // Set result to indicate successful update
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("quiz_updated", true);
-                    setResult(RESULT_OK, resultIntent);
-                    finish();
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .setCancelable(true)
-                .show();
     }
 
     private boolean validateForm() {
@@ -587,7 +610,6 @@ public class UpdateQuizActivity extends AppCompatActivity {
     }
 
     private void saveQuizAndAddQuestion() {
-
         if (!validateForm()) {
             return;
         }
@@ -613,8 +635,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
 
         if (requestCode == IMAGE_PICK_CODE && resultCode == RESULT_OK && data != null) {
             selectedImageUri = data.getData();
-            isImageChanged = true;
-            hasUnsavedChanges = true;
+            hasImageChanged = true;
 
             // Hide placeholder content and show selected image
             layoutCoverPlaceholder.setVisibility(View.GONE);
@@ -626,26 +647,42 @@ public class UpdateQuizActivity extends AppCompatActivity {
         }
     }
 
-    private void handleBackAction() {
-        if (hasUnsavedChanges) {
-            showExitConfirmationDialog();
+    private void showExitConfirmationDialog() {
+        if (hasDataChanged()) {
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle("Discard changes?")
+                    .setMessage("You have unsaved changes. Are you sure you want to leave?")
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButton("Discard", (dialog, which) -> {
+                        setResult(RESULT_CANCELED);
+                        finish();
+                    })
+                    .show();
         } else {
-            finishWithoutUpdates();
+            setResult(RESULT_CANCELED);
+            finish();
         }
     }
 
-    private void showExitConfirmationDialog() {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Leave without saving?")
-                .setMessage("Your changes will be lost if you leave without saving.")
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .setPositiveButton("Leave", (dialog, which) -> finishWithoutUpdates())
-                .show();
-    }
+    private boolean hasDataChanged() {
+        if (originalQuiz == null) return false;
 
-    private void finishWithoutUpdates() {
-        setResult(RESULT_CANCELED);
-        finish();
+        String currentTitle = etTitle.getText().toString().trim();
+        String currentDescription = etDescription.getText().toString().trim();
+        String currentKeywords = buildKeywordsString();
+        boolean currentVisibility = visibility.equals("true");
+        boolean currentQuestionVisibility = questionVisibility.equals("true");
+
+        // Compare original keywords with current keywords
+        String originalKeywords = originalQuiz.getKeyword() != null ? originalQuiz.getKeyword() : "";
+
+        return !currentTitle.equals(originalQuiz.getTitle()) ||
+                !currentDescription.equals(originalQuiz.getDescription() != null ? originalQuiz.getDescription() : "") ||
+                !currentKeywords.equals(originalKeywords) ||
+                currentVisibility != originalQuiz.isVisible() ||
+                currentQuestionVisibility != originalQuiz.isVisibleQuizQuestion() ||
+                collectionSelectedPosition != originalCollectionPosition ||
+                hasImageChanged;
     }
 
     private void showMoreOptionsMenu() {
@@ -679,7 +716,6 @@ public class UpdateQuizActivity extends AppCompatActivity {
         chip.setOnCloseIconClickListener(v -> {
             chipContainer.removeView(chip);
             keywordsList.remove(keyword);
-            hasUnsavedChanges = true;
         });
 
         chipContainer.addView(chip);
@@ -734,7 +770,7 @@ public class UpdateQuizActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        handleBackAction();
+        showExitConfirmationDialog();
     }
 
     @Override

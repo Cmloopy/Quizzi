@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -39,6 +42,8 @@ import com.cmloopy.quizzi.views.QuestionCreate.QuestionCreateActivity;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -79,6 +84,10 @@ public class CreateCollectionActivity extends AppCompatActivity {
     private List<String> keywordsList = new ArrayList<>();
     private Map<String, Object> user;
     int idUser = -1;
+
+    private static final int MAX_TITLE_LENGTH = 50;
+    private TextView tvTitleCounter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +144,7 @@ public class CreateCollectionActivity extends AppCompatActivity {
         ivSelectedCover = findViewById(R.id.iv_selected_cover);
 
         etTitle = findViewById(R.id.et_title);
+        tvTitleCounter = findViewById(R.id.tv_title_counter);
         chipContainer = findViewById(R.id.chipContainer);
 
         spinnerVisibility = findViewById(R.id.spinner_visibility);
@@ -142,6 +152,49 @@ public class CreateCollectionActivity extends AppCompatActivity {
         btnSaveQuizCollection = findViewById(R.id.btn_save_quiz);
         btnClose = findViewById(R.id.btn_close);
         btnMore = findViewById(R.id.btn_more);
+
+        setupTitleTextWatcher(etTitle, tvTitleCounter, "Title", MAX_TITLE_LENGTH);
+
+    }
+
+    private void setupTitleTextWatcher(TextView textView, TextView textCounter, String fieldType, int maxLength) {
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Not needed for this implementation
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Update counter in real-time
+                updateTitleCounter(textCounter, s.length(), maxLength);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > maxLength) {
+                    s.delete(maxLength, s.length());
+                    Toast.makeText(CreateCollectionActivity.this,
+                            fieldType + " cannot exceed " + maxLength + " characters",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        updateTitleCounter(textCounter, 0, maxLength);
+    }
+
+    private void updateTitleCounter(TextView textCounter, int currentLength, int maxLength) {
+        String counterText = currentLength + "/" + maxLength;
+        textCounter.setText(counterText);
+
+        if (currentLength >= maxLength * 0.9) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        } else if (currentLength >= maxLength * 0.7) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else {
+            textCounter.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
     }
 
     private void setupClickListeners(int idUser) {

@@ -42,20 +42,44 @@
     </RelativeLayout>
 
     <!-- Hình ảnh chính -->
-    <ImageView
-        android:id="@+id/detailCollectionImgBanner"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/detailCollectionImgBannerWrap"
         android:layout_width="0dp"
-        android:layout_height="180dp"
-        android:src="@drawable/img_02"
+        android:layout_height="160dp"
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="#F8F5FF"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="#6046CC"
+        android:layout_marginHorizontal="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleBar"
-        android:layout_marginTop="16dp"
-        android:layout_marginHorizontal="16dp"
-        app:layout_constraintDimensionRatio="16:9"
-        android:scaleType="centerCrop"
-        android:background="@drawable/top_collections_rounded_background"
-        android:clipToOutline="true"/>
+        app:layout_constraintTop_toBottomOf="@id/titleBar">
+
+            <!-- Selected image view (initially hidden) -->
+            <ImageView
+                android:id="@+id/detailCollectionImgBanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:contentDescription="Selected Cover Image" />
+    </com.google.android.material.card.MaterialCardView>
+<!--    <ImageView-->
+<!--        android:id="@+id/detailCollectionImgBanner"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="180dp"-->
+<!--        android:src="@drawable/img_02"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/titleBar"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_marginHorizontal="16dp"-->
+<!--        app:layout_constraintDimensionRatio="16:9"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:background="@drawable/top_collections_rounded_background"-->
+<!--        android:clipToOutline="true"/>-->
 
     <!-- Search Bar -->
     <androidx.cardview.widget.CardView
@@ -64,7 +88,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detailCollectionImgBanner"
+        app:layout_constraintTop_toBottomOf="@id/detailCollectionImgBannerWrap"
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="16dp"
         app:cardCornerRadius="8dp"

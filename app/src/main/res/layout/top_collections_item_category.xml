@@ -1,28 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+app:cardCornerRadius="20dp"
+android:layout_width="170dp"
+android:layout_height="120dp">
+
+<com.google.android.material.imageview.ShapeableImageView
+    android:id="@+id/categoryImage"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop"
+    android:src="@drawable/ic_launcher_background"/>
+<com.google.android.material.textview.MaterialTextView
+    android:id="@+id/categoryName"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@drawable/top_collections_rounded_background"
-    android:padding="8dp"
-    android:clipToOutline="true">
-
-    <!-- Hình ảnh danh mục -->
-    <ImageView
-        android:id="@+id/categoryImage"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:scaleType="centerCrop"
-        android:clipToOutline="true"/>
-
-    <!-- Tên danh mục -->
-    <TextView
-        android:id="@+id/categoryName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="12dp"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
-</RelativeLayout>
+    android:layout_gravity="bottom"
+    android:layout_marginStart="15dp"
+    android:layout_marginBottom="13dp"
+    android:textColor="@color/white"
+    android:textStyle="bold"
+    android:textSize="15sp"
+    android:text="Education"/>
+</androidx.cardview.widget.CardView>

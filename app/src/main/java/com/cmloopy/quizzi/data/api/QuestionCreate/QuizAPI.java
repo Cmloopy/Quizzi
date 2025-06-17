@@ -71,7 +71,6 @@ public interface QuizAPI {
             @Part MultipartBody.Part coverPhotoFile
     );
 
-    @Multipart
     @DELETE("quiz-collections/{quizCollectionId}")
     Call<Void> deleteQuizCollection(@Path("quizCollectionId") Long quizCollectionId);
 

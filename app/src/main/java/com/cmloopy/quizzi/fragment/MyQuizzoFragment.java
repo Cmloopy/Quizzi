@@ -29,6 +29,8 @@ import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.TopCollections.QuizCollection;
 import com.cmloopy.quizzi.models.TopCollectionsCategory;
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
+import com.cmloopy.quizzi.utils.QuestionCreate.dialogs.QCGenericSelectionDialog;
+import com.cmloopy.quizzi.utils.QuestionCreate.helper.QCHelper;
 import com.google.android.material.textview.MaterialTextView;
 
 import java.text.ParseException;
@@ -241,31 +243,39 @@ public class MyQuizzoFragment extends Fragment {
             }
         });
     }
-
+    boolean initQuizRecyclerView = true;
+    boolean initCollectionRecyclerView = true;
     private void updateQuizRecyclerView() {
-        // Check if fragment is still attached before accessing context
         if (!isAdded() || getContext() == null) {
             Log.w(TAG, "Fragment not attached, skipping RecyclerView update");
             return;
         }
 
         QuizAdapter quizAdapter = new QuizAdapter(new ArrayList<>(filteredQuizList), userId);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext())); // Use getContext() instead of requireContext()
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(quizAdapter);
+        if(initQuizRecyclerView) {
+            recyclerView.addItemDecoration(new QCHelper.LinearItemDecoration(5));
+        }
+        initQuizRecyclerView = false;
     }
 
     private void updateCollectionRecyclerView() {
-        // Check if fragment is still attached before accessing context
         if (!isAdded() || getContext() == null) {
             Log.w(TAG, "Fragment not attached, skipping RecyclerView update");
             return;
         }
 
-        gridLayoutManager = new GridLayoutManager(getContext(), 2); // Use getContext() instead of requireContext()
+        gridLayoutManager = new GridLayoutManager(getContext(), 2);
         TopCollectionsCategoryAdapter collectionAdapter =
                 new TopCollectionsCategoryAdapter(getContext(), new ArrayList<>(filteredCollectionList), userId);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(collectionAdapter);
+        if(initCollectionRecyclerView) {
+            recyclerView.addItemDecoration(new QCHelper.GridItemDecoration(2, 15));
+        }
+        initCollectionRecyclerView = false;
+
     }
     private void handleSearchCategoryChange(int checkedId) {
         // Clear search when switching tabs

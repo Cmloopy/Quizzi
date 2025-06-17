@@ -54,17 +54,22 @@ public class LibraryFragment extends Fragment {
         } else {
             userId = -1;
         }
+        Fragment myQuizzoFragment = MyQuizzoFragment.newInstance(userId);
+        getChildFragmentManager()
+                .beginTransaction()
+                .replace(R.id.library_fragment_container, myQuizzoFragment)
+                .commit();
 
         // Tạo adapter với userId
-        libTablayoutAdapter = new LibTablayoutAdapter(this, userId);
-        tabLayout = view.findViewById(R.id.tab_layout_lib);
-        viewPager = view.findViewById(R.id.vpg_lib);
-
-        viewPager.setAdapter(libTablayoutAdapter);
-
-        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
-            tab.setText(tabTitles[position]);
-        }).attach();
+//        libTablayoutAdapter = new LibTablayoutAdapter(this, userId);
+//        tabLayout = view.findViewById(R.id.tab_layout_lib);
+//        viewPager = view.findViewById(R.id.vpg_lib);
+//
+//        viewPager.setAdapter(libTablayoutAdapter);
+//
+//        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+//            tab.setText(tabTitles[position]);
+//        }).attach();
 
         fab = view.findViewById(R.id.fab_add_collection);
         fab.setOnClickListener(v -> {

@@ -28,5 +28,6 @@ public class LibTablayoutAdapter extends FragmentStateAdapter {
         } else {
             return new FavoriteFragment(); // Hoặc FavoriteFragment.newInstance(userId) nếu cần
         }
+
     }
 }

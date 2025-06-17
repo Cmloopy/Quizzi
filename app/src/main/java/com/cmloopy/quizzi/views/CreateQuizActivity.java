@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -94,6 +97,13 @@ public class CreateQuizActivity extends AppCompatActivity {
     private QuizAPI quizApi; // Changed from QuizzApi to QuizAPI
     private List<QuizCollectionResponse> quizCollectionResponses;
     private ArrayList<String> collections;
+
+    private static final int MAX_TITLE_LENGTH = 50;
+    private static final int MAX_DESCRIPTION_LENGTH = 150;
+    private static final int MAX_KEYWORD_LENGTH = 30;
+    private TextView tvTitleCounter;
+    private TextView tvDescriptionCounter;
+    private TextView tvKeywordCounter;
     private int collectionSelectedPosition = 0;
 
     @Override
@@ -157,6 +167,11 @@ public class CreateQuizActivity extends AppCompatActivity {
         etTitle = findViewById(R.id.et_title);
         etDescription = findViewById(R.id.et_desc_title);
         etKeyword = findViewById(R.id.et_keyword);
+
+        tvTitleCounter = findViewById(R.id.tv_title_counter);
+        tvDescriptionCounter = findViewById(R.id.tv_description_counter);
+        tvKeywordCounter = findViewById(R.id.tv_keyword_counter);
+
         chipContainer = findViewById(R.id.chipContainer);
 
         spinnerCollection = findViewById(R.id.spinner_collection);
@@ -168,7 +183,66 @@ public class CreateQuizActivity extends AppCompatActivity {
         btnSaveQuiz = findViewById(R.id.btn_save_quiz);
         btnClose = findViewById(R.id.btn_close);
         btnMore = findViewById(R.id.btn_more);
+
+        setupTitleTextWatcher(etTitle, tvTitleCounter, "Title", MAX_TITLE_LENGTH);
+        setupTitleTextWatcher(etDescription, tvDescriptionCounter, "Description", MAX_DESCRIPTION_LENGTH);
+        setupTitleTextWatcher(etKeyword, tvKeywordCounter, "Keyword", MAX_KEYWORD_LENGTH);
+
     }
+
+    private void setupTitleTextWatcher(TextView textView, TextView textCounter, String fieldType, int maxLength) {
+        textView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Not needed for this implementation
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Update counter in real-time
+                updateTitleCounter(textCounter, s.length(), maxLength);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > maxLength) {
+                    s.delete(maxLength, s.length());
+                    Toast.makeText(CreateQuizActivity.this,
+                            fieldType + " cannot exceed " + maxLength + " characters",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        updateTitleCounter(textCounter, 0, maxLength);
+    }
+
+    private void updateTitleCounter(TextView textCounter, int currentLength, int maxLength) {
+        String counterText = currentLength + "/" + maxLength;
+        textCounter.setText(counterText);
+
+        if (currentLength >= maxLength * 0.9) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        } else if (currentLength >= maxLength * 0.7) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else {
+            textCounter.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
+    }
+
+    private void updateTitleCounter(TextView textCounter, int currentLength) {
+        String counterText = currentLength + "/" + MAX_TITLE_LENGTH;
+        textCounter.setText(counterText);
+
+        if (currentLength >= MAX_TITLE_LENGTH * 0.9) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        } else if (currentLength >= MAX_TITLE_LENGTH * 0.7) {
+            textCounter.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+        } else {
+            textCounter.setTextColor(getResources().getColor(android.R.color.darker_gray));
+        }
+    }
+
 
     private void setupClickListeners(int idUser) {
         cardCoverImage.setOnClickListener(v -> {

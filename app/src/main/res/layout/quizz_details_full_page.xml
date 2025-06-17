@@ -49,18 +49,41 @@
     </RelativeLayout>
 
     <!-- Ảnh bìa -->
-    <ImageView
-        android:id="@+id/quizCoverImage"
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/quizCoverImageWrap"
         android:layout_width="0dp"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/back_to_school"
-        android:background="@drawable/detail_top_collections_rounded_background"
-        android:clipToOutline="true"
-        app:layout_constraintWidth_percent="0.9"
+        android:layout_height="160dp"
+        android:layout_marginBottom="24dp"
+        app:cardBackgroundColor="#F8F5FF"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="#6046CC"
+        android:layout_marginHorizontal="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleBar"/>
+        app:layout_constraintTop_toBottomOf="@+id/titleBar">
+        <ImageView
+                android:id="@+id/quizCoverImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:contentDescription="Selected Cover Image" />
+    </com.google.android.material.card.MaterialCardView>
+<!--    <ImageView-->
+<!--        android:id="@+id/quizCoverImage"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@drawable/back_to_school"-->
+<!--        android:background="@drawable/detail_top_collections_rounded_background"-->
+<!--        android:clipToOutline="true"-->
+<!--        app:layout_constraintWidth_percent="0.9"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/titleBar"/>-->
 
     <!-- Tiêu đề -->
     <TextView
@@ -73,9 +96,10 @@
         android:textColor="@color/black"
         android:maxLines="2"
         android:ellipsize="end"
-        app:layout_constraintTop_toBottomOf="@id/quizCoverImage"
-        app:layout_constraintStart_toStartOf="@+id/quizCoverImage"
-        android:padding="12dp"/>
+        app:layout_constraintTop_toBottomOf="@id/quizCoverImageWrap"
+        app:layout_constraintStart_toStartOf="@+id/quizCoverImageWrap"
+        android:paddingVertical="8dp"
+        />
 
     <!-- Thông tin người tạo -->
     <LinearLayout
@@ -153,8 +177,8 @@
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/quizCoverImage"
-            app:layout_constraintStart_toStartOf="@+id/quizCoverImage"
+            app:layout_constraintTop_toBottomOf="@id/quizCoverImageWrap"
+            app:layout_constraintStart_toStartOf="@+id/quizCoverImageWrap"
             android:paddingHorizontal="12dp">
         </TextView>
         <TextView
@@ -164,8 +188,8 @@
             android:text="This is description"
             android:textSize="14sp"
             android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/quizCoverImage"
-            app:layout_constraintStart_toStartOf="@+id/quizCoverImage"
+            app:layout_constraintTop_toBottomOf="@id/quizCoverImageWrap"
+            app:layout_constraintStart_toStartOf="@+id/quizCoverImageWrap"
             android:paddingHorizontal="12dp"
             android:maxLines="3"
             android:ellipsize="end"

@@ -47,6 +47,7 @@ import retrofit2.Response;
 public class DetailTopCollections extends AppCompatActivity {
     private static final String TAG = "DetailTopCollections";
     private static final int UPDATE_COLLECTION_REQUEST_CODE = 1002;
+    private static final int QUIZ_DETAILS_REQUEST_CODE = 1003;
 
     private RecyclerView recyclerView;
     private QuizAdapter quizAdapter;
@@ -68,7 +69,6 @@ public class DetailTopCollections extends AppCompatActivity {
     private String currentSearchQuery = "";
     private QuizCollection quizCollection;
 
-    // API clients
     QuizCollectionAPI quizCollectionAPI = RetrofitClient.getCollectionService();
     QuizAPI quizAPI = RetrofitClient.getQuizApi();
 
@@ -111,12 +111,10 @@ public class DetailTopCollections extends AppCompatActivity {
         originalQuizList = new ArrayList<>();
         filteredQuizList = new ArrayList<>();
 
-        // Initialize sort button text
         sortTextButton.setText(isNewestFirst ? "Newest" : "Oldest");
     }
 
     private void setupEventListeners() {
-        // Back button
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +122,7 @@ public class DetailTopCollections extends AppCompatActivity {
             }
         });
 
-        // Edit/Options button - shows popup menu
+
         if (btnEdit != null) {
             btnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -137,7 +135,6 @@ public class DetailTopCollections extends AppCompatActivity {
             Log.e(TAG, "btnEdit is null - check if ID exists in layout");
         }
 
-        // Search functionality
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -146,7 +143,6 @@ public class DetailTopCollections extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 currentSearchQuery = s.toString().trim();
                 performSearch(currentSearchQuery);
-                // Show/hide clear button based on text length
                 clearSearchButton.setVisibility(s.length() > 0 ? View.VISIBLE : View.GONE);
             }
 
@@ -154,7 +150,6 @@ public class DetailTopCollections extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        // Clear search button
         clearSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,7 +159,6 @@ public class DetailTopCollections extends AppCompatActivity {
             }
         });
 
-        // Sort button
         sortTextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,7 +173,6 @@ public class DetailTopCollections extends AppCompatActivity {
             return;
         }
 
-        // Check if user is the owner of the collection
         if (userId != quizCollection.getAuthorId()) {
             Log.d(TAG, "User is not collection owner, menu not displayed");
             return;
@@ -200,7 +193,6 @@ public class DetailTopCollections extends AppCompatActivity {
         RecyclerView recyclerView = popupView.findViewById(R.id.recycler_menu);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Collection-specific menu items
         List<QCMenuItem> menuItems = Arrays.asList(
                 new QCMenuItem("Edit Collection", R.drawable.ic_edit_dark, false),
                 new QCMenuItem("Delete Collection", R.drawable.ic_78_delete, false)
@@ -230,12 +222,10 @@ public class DetailTopCollections extends AppCompatActivity {
     }
 
     private void openEditCollection() {
-         Intent intent = new Intent(DetailTopCollections.this, UpdateCollectionActivity.class);
-         intent.putExtra("collectionId", collectionId);
-         intent.putExtra("userId", userId);
-         startActivityForResult(intent, UPDATE_COLLECTION_REQUEST_CODE);
-
-        Toast.makeText(this, "Edit Collection feature coming soon", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(DetailTopCollections.this, UpdateCollectionActivity.class);
+        intent.putExtra("collectionId", collectionId);
+        intent.putExtra("userId", userId);
+        startActivityForResult(intent, UPDATE_COLLECTION_REQUEST_CODE);
     }
 
     private void deleteCollection() {
@@ -255,7 +245,7 @@ public class DetailTopCollections extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        Call<Void> call = quizAPI.deleteQuizCollection((long) collectionId);
+        Call<Void> call = quizAPI.deleteQuizCollection((long) quizCollection.getId());
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -269,7 +259,7 @@ public class DetailTopCollections extends AppCompatActivity {
                     finish();
                 } else {
                     Toast.makeText(DetailTopCollections.this, "Failed to delete collection", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Delete failed with code: " + response.code());
+                    Log.e(TAG, "Delete failed with code: " + response.code() + " Quiz collection id" + quizCollection.getId() + " - " + collectionId);
                 }
             }
 
@@ -292,13 +282,11 @@ public class DetailTopCollections extends AppCompatActivity {
             for (QuizResponse quiz : originalQuizList) {
                 boolean matches = false;
 
-                // Search by title
                 if (quiz.getTitle() != null &&
                         quiz.getTitle().toLowerCase().contains(searchQuery)) {
                     matches = true;
                 }
 
-                // Search by description
                 if (!matches && quiz.getDescription() != null &&
                         quiz.getDescription().toLowerCase().contains(searchQuery)) {
                     matches = true;
@@ -310,10 +298,8 @@ public class DetailTopCollections extends AppCompatActivity {
             }
         }
 
-        // Apply sorting
         sortQuizzes(filteredQuizList);
 
-        // Update UI
         updateQuizRecyclerView();
         updateQuizCount();
     }
@@ -321,10 +307,8 @@ public class DetailTopCollections extends AppCompatActivity {
     private void toggleSortOrder() {
         isNewestFirst = !isNewestFirst;
 
-        // Update button text
         sortTextButton.setText(isNewestFirst ? "Newest" : "Oldest");
 
-        // Apply search and sort
         performSearch(currentSearchQuery);
 
         Toast.makeText(this,
@@ -339,7 +323,6 @@ public class DetailTopCollections extends AppCompatActivity {
                 try {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault());
 
-                    // Try to get creation dates
                     String dateStr1 = q1.getCreatedAt() != null ? q1.getCreatedAt() : q1.getUpdatedAt();
                     String dateStr2 = q2.getCreatedAt() != null ? q2.getCreatedAt() : q2.getUpdatedAt();
 
@@ -353,13 +336,10 @@ public class DetailTopCollections extends AppCompatActivity {
                         date2 = format.parse(dateStr2);
                     }
 
-                    // Handle null dates
                     if (date1 == null && date2 == null) return 0;
                     if (date1 == null) return isNewestFirst ? 1 : -1;
                     if (date2 == null) return isNewestFirst ? -1 : 1;
 
-                    // If newest first, sort descending (newer dates first)
-                    // If oldest first, sort ascending (older dates first)
                     return isNewestFirst ? date2.compareTo(date1) : date1.compareTo(date2);
                 } catch (ParseException e) {
                     Log.e(TAG, "Error parsing date for sorting", e);
@@ -370,7 +350,6 @@ public class DetailTopCollections extends AppCompatActivity {
     }
 
     private void updateQuizRecyclerView() {
-        // Create a new adapter instance with filtered list
         quizAdapter = new QuizAdapter(new ArrayList<>(filteredQuizList), userId);
         recyclerView.setAdapter(quizAdapter);
 
@@ -382,10 +361,8 @@ public class DetailTopCollections extends AppCompatActivity {
     }
 
     private void fetchCollectionDetails(int collectionId) {
-        // Display loading message
         Toast.makeText(this, "Loading collection details...", Toast.LENGTH_SHORT).show();
 
-        // Call API to get collection details
         Call<QuizCollection> call = quizCollectionAPI.getCollectionById(collectionId);
         Log.d(TAG, "Fetching collection details from URL: " + call.request().url().toString());
 
@@ -398,33 +375,33 @@ public class DetailTopCollections extends AppCompatActivity {
                     quizCollection = response.body();
                     Log.d(TAG, "Received collection: " + quizCollection.getCategory());
 
-                    // Display collection info from API
                     tvTitle.setText(quizCollection.getCategory());
 
-                    // Display cover photo if available
                     if (quizCollection.getCoverPhoto() != null && !quizCollection.getCoverPhoto().isEmpty()) {
-                        // Use Glide to load and display image
+                        imgBanner.setVisibility(View.VISIBLE);
+
                         Glide.with(DetailTopCollections.this)
                                 .load(quizCollection.getCoverPhoto())
                                 .placeholder(R.drawable.img_02)
                                 .error(R.drawable.img_02)
                                 .into(imgBanner);
                     } else {
-                        // Use default image
                         imgBanner.setImageResource(R.drawable.img_02);
                     }
 
-                    // Log collection info
+
+                    if(userId != quizCollection.getAuthorId()) {
+                        btnEdit.setVisibility(View.GONE);
+                    }
+
                     Log.d(TAG, "Collection description: " + quizCollection.getDescription());
                     Log.d(TAG, "Collection author ID: " + quizCollection.getAuthorId());
                     Log.d(TAG, "Collection timestamp: " + quizCollection.getTimestamp());
                     Log.d(TAG, "Collection visibleTo: " + quizCollection.isVisibleTo());
 
-                    // If collection has quizzes, setup RecyclerView
                     if (quizCollection.getQuizzes() != null && !quizCollection.getQuizzes().isEmpty()) {
                         setupQuizRecyclerView(quizCollection.getQuizzes());
                     } else {
-                        // Clear lists and update UI to show empty state
                         originalQuizList.clear();
                         filteredQuizList.clear();
                         updateQuizRecyclerView();
@@ -452,11 +429,9 @@ public class DetailTopCollections extends AppCompatActivity {
     }
 
     private void setupQuizRecyclerView(List<QuizResponse> quizzes) {
-        // Store original data
         originalQuizList.clear();
         originalQuizList.addAll(quizzes);
 
-        // Apply initial search and sort
         performSearch(currentSearchQuery);
 
         Log.d(TAG, "Loaded " + originalQuizList.size() + " quizzes from collection");
@@ -466,13 +441,53 @@ public class DetailTopCollections extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == UPDATE_COLLECTION_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            boolean collectionUpdated = data.getBooleanExtra("collection_updated", false);
-            if (collectionUpdated) {
-                Toast.makeText(this, "Collection updated successfully", Toast.LENGTH_SHORT).show();
-                // Reload collection data
+        Log.d(TAG, "Current request code: " + requestCode);
+        if (resultCode == RESULT_OK && data != null) {
+            boolean shouldReload = false;
+            String message = "";
+
+            if (requestCode == UPDATE_COLLECTION_REQUEST_CODE) {
+                boolean collectionUpdated = data.getBooleanExtra("updatedCollection", false);
+                if (collectionUpdated) {
+                    shouldReload = true;
+                    message = "Collection updated successfully";
+                    Log.d(TAG, "Collection was updated, reloading data");
+                }
+            }
+            else if (requestCode == QUIZ_DETAILS_REQUEST_CODE) {
+                boolean quizDeleted = data.getBooleanExtra("quiz_deleted", false);
+                boolean quizUpdated = data.getBooleanExtra("quiz_updated", false);
+                Log.d(TAG, "Current request code: " + data.getBooleanExtra("quiz_updated", false));
+                Log.d(TAG, "Current request code: " + data.getBooleanExtra("quiz_deleted", false));
+
+                if (quizDeleted) {
+                    int deletedQuizId = data.getIntExtra("quizId", -1);
+                    shouldReload = true;
+                    message = "Quiz deleted successfully";
+                    Log.d(TAG, "Quiz with ID " + deletedQuizId + " was deleted, reloading data");
+                }
+                else if (quizUpdated) {
+                    long updatedQuizId = data.getLongExtra("quizId", -1);
+                    shouldReload = true;
+                    message = "Quiz updated successfully";
+                    Log.d(TAG, "Quiz with ID " + updatedQuizId + " was updated, reloading data");
+                }
+            }
+
+
+            if (shouldReload) {
+                if (!message.isEmpty()) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                }
                 fetchCollectionDetails(collectionId);
             }
         }
+    }
+
+    public void startQuizDetailsActivity(Long quizId) {
+        Intent intent = new Intent(this, QuizzDetails.class);
+        intent.putExtra("quizId", quizId);
+        intent.putExtra("userId", userId);
+        startActivityForResult(intent, QUIZ_DETAILS_REQUEST_CODE);
     }
 }

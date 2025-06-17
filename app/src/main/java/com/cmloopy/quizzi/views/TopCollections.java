@@ -3,6 +3,8 @@ package com.cmloopy.quizzi.views;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -23,6 +25,7 @@ import retrofit2.Response;
 public class TopCollections extends AppCompatActivity {
     private static final String TAG = "TopCollections";
     private RecyclerView recyclerView;
+    private ImageView backBtn;
     private TopCollectionsCategoryAdapter adapter;
     private int userId;
 
@@ -30,15 +33,23 @@ public class TopCollections extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.top_collections);
+        backBtn = findViewById(R.id.TopCollectionsBackButton);
 
         recyclerView = findViewById(R.id.TopCollectionsRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setNestedScrollingEnabled(false);
-
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         userId = getIntent().getIntExtra("userId", -1);
         // Gọi API để lấy danh sách collection
         fetchCollections();
     }
+
+
 
     private void fetchCollections() {
 

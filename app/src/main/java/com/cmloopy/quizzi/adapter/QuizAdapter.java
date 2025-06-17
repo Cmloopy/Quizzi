@@ -19,6 +19,7 @@ import com.cmloopy.quizzi.models.Quiz;
 import com.cmloopy.quizzi.models.quiz.QuizResponse;
 import com.cmloopy.quizzi.models.user.User;
 import com.cmloopy.quizzi.views.AuthorDetailsActivity;
+import com.cmloopy.quizzi.views.DetailTopCollections;
 import com.cmloopy.quizzi.views.QuizzDetails;
 import com.squareup.picasso.Picasso;
 
@@ -58,26 +59,16 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         QuizResponse quiz = items.get(position);
 
-        //holder.podcastImage.setImageResource(item.getImageResource());
-        //holder.titleText.setText(item.getTitle());
-        //holder.dateAndPlaysText.setText(item.getDate() + " • " + item.getPlays());
-        //holder.authorName.setText(item.getAuthor());
-        //holder.authorAvatar.setImageResource(item.getAuthorAvatarResource());
-        //holder.questionsText.setText(item.getQuestions().size() + " Qs");
-        // Thiết lập tiêu đề quiz sử dụng getter
+        // Set quiz title
         holder.titleText.setText(quiz.getTitle());
 
-        // Thiết lập thông tin ngày và lượt chơi
-//        StringBuilder dateAndPlays = new StringBuilder();
-//        dateAndPlays.append(quiz.getDate());
-//        if (quiz.getPlays() != null && !quiz.getPlays().isEmpty()) {
-//            dateAndPlays.append(" • ").append(quiz.getPlays());
-//        }
+        // Set date and plays information
         LocalDateTime dateTime = LocalDateTime.parse(quiz.getCreatedAt());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MMM, dd");
         String formatted = dateTime.format(formatter);
         holder.dateAndPlaysText.setText(formatted);
 
+        // Load user information
         Call<User> call = RetrofitClient.getUserApi().getInfoUserById(quiz.getUserId());
         call.enqueue(new Callback<User>() {
             @Override
@@ -92,6 +83,7 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
             public void onFailure(Call<User> call, Throwable t) {
             }
         });
+
         holder.questionsText.setText(quiz.getNumberQuestion() + (quiz.getNumberQuestion() > 1 ? " questions" : " question"));
 
         Picasso.get()
@@ -100,19 +92,26 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
                 .centerInside()
                 .into(holder.podcastImage);
 
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Intent intent = new Intent(context, QuizzDetails.class);
-                intent.putExtra("quizId", items.get(position).getId());
-                intent.putExtra("userId", userId);
-                context.startActivity(intent);
+
+                if (context instanceof DetailTopCollections) {
+                    DetailTopCollections activity = (DetailTopCollections) context;
+                    Long quizId = items.get(position).getId();
+                    int tmpId = quizId.intValue();
+                    activity.startQuizDetailsActivity(quizId);
+                } else {
+                    Intent intent = new Intent(context, QuizzDetails.class);
+                    intent.putExtra("quizId", items.get(position).getId());
+                    intent.putExtra("userId", userId);
+                    context.startActivity(intent);
+                }
             }
         });
 
-        // Thêm click listener cho tác giả
+        // Add click listener for author
         View.OnClickListener authorClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,8 +121,9 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
             }
         };
 
-//        holder.authorAvatar.setOnClickListener(authorClickListener);
-//        holder.authorName.setOnClickListener(authorClickListener);
+        // Uncomment these if you want author click functionality
+        // holder.authorAvatar.setOnClickListener(authorClickListener);
+        // holder.authorName.setOnClickListener(authorClickListener);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.ViewHolder> {
         return items;
     }
 
-    // Thêm phương thức để cập nhật dữ liệu
+    // Method to update data
     public void updateQuizzes(List<QuizResponse> newQuizzes) {
         this.items = newQuizzes;
         notifyDataSetChanged();
